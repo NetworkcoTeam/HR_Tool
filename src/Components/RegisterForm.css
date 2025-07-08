@@ -1,0 +1,262 @@
+/* Registration Popup Styles - Matches Login Styling */
+
+.registration-component {
+  display: inline-block;
+}
+
+.register-trigger {
+  padding: 10px 20px;
+  background: #0C21C1;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.register-trigger:hover {
+  background: #000842;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.popup-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.popup-content {
+  background: white;
+  border-radius: 15px;
+  position: relative;
+  max-height: 90vh;
+  overflow: auto;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.close-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #999;
+  z-index: 1001;
+  transition: all 0.2s ease;
+}
+
+.close-button:hover {
+  color: #000842;
+  transform: rotate(90deg);
+}
+
+.registration-container {
+  display: flex;
+  width: 1190px;
+  max-width: 90vw;
+}
+
+.registration-form {
+  width: 455px;
+  padding: 40px;
+  background: white;
+  border-radius: 15px 0 0 15px;
+}
+
+.side-panel {
+  width: 735px;
+  height: 859px;
+  background: #000842;
+  border-radius: 0 15px 15px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.panel-image {
+  width: 521px;
+  height: 521px;
+}
+
+.panel-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.form-title {
+  font-size: 30px;
+  font-weight: 500;
+  color: #000000;
+  text-align: center;
+  margin-bottom: 60px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.form-group {
+  margin-bottom: 40px;
+}
+
+.input-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #999999;
+  margin-bottom: 8px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 10px;
+  color: #000842;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px 10px 10px 35px;
+  font-size: 16px;
+  border: none;
+  border-bottom: 1px solid #999999;
+  outline: none;
+  color: #000842;
+  background: transparent;
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.3s ease;
+}
+
+.form-input:focus {
+  border-bottom-color: #000842;
+}
+
+.show-password-btn {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #ABABAB;
+  padding: 0;
+}
+
+.register-btn {
+  width: 100%;
+  padding: 15px;
+  background: #0C21C1;
+  color: white;
+  border: none;
+  border-radius: 32px;
+  font-size: 17px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0px 4px 26px rgba(0, 0, 0, 0.25);
+  margin: 30px 0;
+  transition: all 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+.register-btn:hover {
+  background: #000842;
+  transform: translateY(-2px);
+  box-shadow: 0px 6px 30px rgba(0, 0, 0, 0.3);
+}
+
+.login-prompt {
+  text-align: center;
+  font-size: 16px;
+  color: #000000;
+  font-family: 'Poppins', sans-serif;
+}
+
+.login-link {
+  color: #0C21C1;
+  font-weight: 600;
+  text-decoration: none;
+  margin-left: 5px;
+  transition: all 0.2s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+.login-link:hover {
+  text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .registration-container {
+    flex-direction: column;
+    width: auto;
+  }
+  
+  .side-panel {
+    order: -1;
+    width: 100%;
+    height: 300px;
+    border-radius: 15px 15px 0 0;
+  }
+  
+  .registration-form {
+    width: 100%;
+    border-radius: 0 0 15px 15px;
+  }
+  
+  .panel-image {
+    width: 300px;
+    height: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .registration-form {
+    padding: 30px;
+  }
+  
+  .form-title {
+    font-size: 24px;
+    margin-bottom: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .registration-form {
+    padding: 20px;
+  }
+  
+  .form-title {
+    font-size: 20px;
+    margin-bottom: 30px;
+  }
+  
+  .form-group {
+    margin-bottom: 30px;
+  }
+}

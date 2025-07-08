@@ -4,12 +4,14 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import LoginForm from './Components/LoginForm'; // Importing the LoginForm component
+import RegistrationForm from './Components/RegisterForm'; // Importing the RegistrationForm component
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <App />
     <LoginForm />
+    <RegistrationForm />
   </React.StrictMode>
 );
 
