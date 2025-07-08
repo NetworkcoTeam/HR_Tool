@@ -1,0 +1,31 @@
+/*.Hero-grid{
+    display:grid;
+}*/
+.Hero-image{
+margin-top: 175px;
+
+}
+
+.List{
+color:#282EA4;
+margin-left: 30px;
+
+}
+
+.checkmark{
+width:20px;
+margin-left: 20px;
+}
+
+button{
+    background-color: #282EA4;
+    color:white;
+    size: 30px;
+}
+h1{
+color:blue;
+margin-left: 280px;
+}
+
+    
+
