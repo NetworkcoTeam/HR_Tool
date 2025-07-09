@@ -3,28 +3,24 @@
     height:80px;
     background-color:#282EA4;
     display: flex;
+    margin-bottom: 20px;
     
     
 }
 
 .navbar-logo{
     margin-left: 20px;
-  /*  margin-top: 9px;*/
+   margin-top: 9px;
     text-decoration: none;
     color: white;
     font-size: 30px;
     font-weight: bold;
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-
 }
 
-    .nav-link{
-    text-decoration:none;
-    color: White;
-    font-size: 20px;
-    margin-top:10px;
-    font-style: bold;
-    margin-left: 600px;
+    .Login-container{
+    margin-top: 25px;
+    
+    margin-left: 800px;
 }
 li{
     list-style-type: none;
