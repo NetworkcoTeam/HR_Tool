@@ -5,14 +5,14 @@
 }
 
 .register-trigger {
-  padding: 10px 20px;
+  padding: 10px 50px;
   background: #0C21C1;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: 25px;
   transition: all 0.3s ease;
 }
 
