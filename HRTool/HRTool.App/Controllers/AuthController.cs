@@ -1,1 +1,0 @@
-// Handles user registration and authentication API endpoints.
