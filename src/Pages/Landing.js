@@ -27,7 +27,7 @@ function Landing() {
           </ul>
           <p>New here?</p>
           <div className="registerButton">
-             <RegisterForm />
+             <RegisterForm  />
              </div>
           </div>
 
