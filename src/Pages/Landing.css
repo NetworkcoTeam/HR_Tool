@@ -1,11 +1,11 @@
 
 .HeroImg{
-margin-top: 150px;
+margin-top: 200px;
 width:650px;
 height:550px;
 margin-left: 20px;
 margin-right: 50px;
-margin-bottom: -105px;
+margin-bottom: -550px;
 
 }
  
@@ -13,7 +13,7 @@ margin-bottom: -105px;
 color:black;
 margin-left: 70px;
 font:'poppins' sans-serif;
-/*padding-left: 320px;*/
+
 font-size:25px;
 font-weight:bold;
 
@@ -41,7 +41,7 @@ margin-top: 30px;
 
 h2{
     color:#182E58;
-    margin-left:380px;
+    margin-left:400px;
     font-size: 44px;
     margin-bottom:-50px;
 }
@@ -59,34 +59,43 @@ h2{
 
 .Hero-image{
     margin-top:0;
-    flex-basis:40%;
+    flex-basis:60%;
     margin-left:60px;
     
     width:100px;
 
 }
 .text{
-    flex-basis:60%;
+    flex-basis:40%;
     color:black;
     list-style-type: none;
     margin-left: 70px;
     font-size: 20px;
+    margin-bottom: -500px;
 }
     
-
+button{
+    border-radius: 20px;
+    font-size: 25px;
+    color:white;
+    padding: 24px;
+    padding-left:20px;
+    padding-right:20px;
+    margin-left:50px;
+}
 
 .title-platform{
 color:#3614F6;
 font-weight:bold;
+margin-left: 70px;
 
 }
 
 p{
-    color:#ED5454;
+    color:#f01414;
     font-size:24px;
+    margin-left: 120px;
+    font-weight:bold;
 }
 
-.registerButton{
-    padding: 30px;
-    font-size: 15px;
-}
+
