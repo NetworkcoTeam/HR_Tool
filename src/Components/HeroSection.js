@@ -1,5 +1,6 @@
 import './HeroSection';
-
+//<!--do not use pictures as ticks, use icons instead-->
+//do not make it a hero section, make it a landing page
 function HeroSection(){
     return(<>
         <h1 className="header-message">Simplify HR </h1>
@@ -10,6 +11,7 @@ function HeroSection(){
          <img src="/images/hero-image.png" alt=" " className="HeroImg" />
         </div>
           
+
           <div className="text">
             <h1 className="title-platform">All-in-one Platform</h1>
           <ul className="list">
