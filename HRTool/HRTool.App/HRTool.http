@@ -1,0 +1,6 @@
+@HRTool_HostAddress = http://localhost:5271
+
+GET {{HRTool_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
