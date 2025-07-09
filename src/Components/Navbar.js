@@ -1,5 +1,6 @@
 import {Link} from 'react-router-dom';
 import './Navbar.css';
+import LoginForm from './LoginForm';
 
 function Navbar(){
     return(
@@ -7,10 +8,8 @@ function Navbar(){
          <Link to="/" className="navbar-logo">
               ATLASHR
             </Link>
-        <ul><li>
-            <Link to='/Login'>Login</Link>
-            </li>
-            </ul>
+            <LoginForm/>
+      
     </div>
     )
 }
