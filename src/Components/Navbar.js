@@ -8,7 +8,9 @@ function Navbar(){
          <Link to="/" className="navbar-logo">
               ATLASHR
             </Link>
+            <div className="Login-container">
             <LoginForm/>
+            </div>
       
     </div>
     )
