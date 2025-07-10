@@ -10,24 +10,10 @@
 
 .navbar-logo{
     margin-left: 27px;
-   margin-top: 9px;
+   margin-top: 10px;
     text-decoration: none;
     color: white;
     font-size: 40px;
     font-weight: bold;
 }
 
-    .Login-container{
-    margin-top: 25px;
-    
-    margin-left: 800px;
-}
-li{
-    list-style-type: none;
-}
-
-button{
-    background-color: blue;
-    size: 100px;
-    
-}
