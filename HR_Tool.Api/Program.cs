@@ -7,7 +7,7 @@ Env.Load(@"..\Backend\.env"); // Adjust path if needed
 // Add services to the container.
 builder.Services.AddControllers();
 
-// Add Swagger/OpenAPI support via Swashbuckle
+// Add Swagger support via Swashbuckle
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
@@ -67,7 +67,6 @@ app.MapGet("/weatherforecast", () =>
 
 app.Run();
 
-// Consider moving this record to a separate Models/WeatherForecast.cs file
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
