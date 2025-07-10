@@ -1,36 +1,30 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\flash\\Documents\\work\\HR_Tool\\HR_Tool.Api\\HR_Tool.Api.csproj": {}
+    "/home/bucibo/HR_Tool/HR_Tool.Api/HR_Tool.Api.csproj": {}
   },
   "projects": {
-    "C:\\Users\\flash\\Documents\\work\\HR_Tool\\HR_Tool.Api\\HR_Tool.Api.csproj": {
+    "/home/bucibo/HR_Tool/HR_Tool.Api/HR_Tool.Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\flash\\Documents\\work\\HR_Tool\\HR_Tool.Api\\HR_Tool.Api.csproj",
+        "projectUniqueName": "/home/bucibo/HR_Tool/HR_Tool.Api/HR_Tool.Api.csproj",
         "projectName": "HR_Tool.Api",
-        "projectPath": "C:\\Users\\flash\\Documents\\work\\HR_Tool\\HR_Tool.Api\\HR_Tool.Api.csproj",
-        "packagesPath": "C:\\Users\\flash\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\flash\\Documents\\work\\HR_Tool\\HR_Tool.Api\\obj\\",
+        "projectPath": "/home/bucibo/HR_Tool/HR_Tool.Api/HR_Tool.Api.csproj",
+        "packagesPath": "/home/bucibo/.nuget/packages/",
+        "outputPath": "/home/bucibo/HR_Tool/HR_Tool.Api/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\flash\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/home/bucibo/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
-          "net9.0"
+          "net8.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net9.0": {
-            "targetAlias": "net9.0",
+          "net8.0": {
+            "targetAlias": "net8.0",
             "projectReferences": {}
           }
         },
@@ -43,24 +37,31 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "9.0.100"
+        }
       },
       "frameworks": {
-        "net9.0": {
-          "targetAlias": "net9.0",
+        "net8.0": {
+          "targetAlias": "net8.0",
           "dependencies": {
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.0.3, )"
+            },
             "DotNetEnv": {
               "target": "Package",
               "version": "[3.1.1, )"
             },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
-              "version": "[9.0.1, )"
+              "version": "[8.0.0, )"
             },
             "Supabase": {
               "target": "Package",
               "version": "[1.1.1, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[6.6.0, )"
             }
           },
           "imports": [
@@ -82,7 +83,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.412/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
