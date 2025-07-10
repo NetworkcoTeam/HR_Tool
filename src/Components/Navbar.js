@@ -1,6 +1,6 @@
 import {Link} from 'react-router-dom';
 import './Navbar.css';
-import LoginForm from './LoginForm';
+
 
 function Navbar(){
     return(
@@ -8,9 +8,7 @@ function Navbar(){
          <Link to="/" className="navbar-logo">
               ATLASHR
             </Link>
-            <div className="Login-container">
-            <LoginForm/>
-            </div>
+            
       
     </div>
     )
