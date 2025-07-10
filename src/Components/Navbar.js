@@ -7,7 +7,7 @@ function Navbar(){
     <div className="Navbar">
          <Link to="/" className="navbar-logo">
               ATLASHR
-            </Link>
+            </Link> 
             
       
     </div>
