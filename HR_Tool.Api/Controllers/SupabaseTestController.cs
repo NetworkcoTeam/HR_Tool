@@ -9,7 +9,7 @@ using BCrypt.Net;
 public class RegisterController : ControllerBase
 {
     private readonly string _url = "https://mdgmlbenfmvnfoamvwkr.supabase.co";
-    private readonly string _key = "YOUR_SUPABASE_API_KEY"; // don’t commit secrets!
+    private readonly string _key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kZ21sYmVuZm12bmZvYW12d2tyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE5NjE5NDQsImV4cCI6MjA2NzUzNzk0NH0.92S3AWVWvVkdbJGqsuzFJW9j6nXHFOK43IvfXbkEFrE"; // don’t commit secrets!
 
     public class RegisterRequest
     {
