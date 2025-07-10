@@ -1,6 +1,7 @@
 using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
+
 Env.Load(@"..\Backend\.env"); // Adjust path if needed
 
 // Add services to the container.

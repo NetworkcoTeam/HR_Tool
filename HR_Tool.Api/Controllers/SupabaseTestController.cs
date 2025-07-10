@@ -10,8 +10,9 @@ public class RegisterController : ControllerBase
 {
     //private readonly string _url = Environment.GetEnvironmentVariable("SUPABASE_URL");
     //private readonly string _key = Environment.GetEnvironmentVariable("SUPABASE_KEY");
-private readonly string _url ="https://mdgmlbenfmvnfoamvwkr.supabase.co";
-private readonly string _key="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kZ21sYmVuZm12bmZvYW12d2tyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE5NjE5NDQsImV4cCI6MjA2NzUzNzk0NH0.92S3AWVWvVkdbJGqsuzFJW9j6nXHFOK43IvfXbkEFrE";
+
+    private readonly string _url ="https://mdgmlbenfmvnfoamvwkr.supabase.co";
+    private readonly string _key="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kZ21sYmVuZm12bmZvYW12d2tyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE5NjE5NDQsImV4cCI6MjA2NzUzNzk0NH0.92S3AWVWvVkdbJGqsuzFJW9j6nXHFOK43IvfXbkEFrE";
 
     public class RegisterRequest
     {
