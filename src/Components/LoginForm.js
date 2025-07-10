@@ -84,7 +84,7 @@ const LoginPopup = () => {
                 {/* Register Link */}
                 <div className="register-link">
                   <span>If you don't have an account register </span>
-                  <a href="#">Register here!</a>
+                  
                 </div>
               </div>
 
