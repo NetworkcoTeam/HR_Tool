@@ -22,11 +22,46 @@ const RegisterForm = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  /**const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Registration data:', formData);
     // Add your registration logic here
-  };
+  };*/
+
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  // Optional: Basic client-side validation
+  if (formData.password !== formData.confirmPassword) {
+    alert("Passwords do not match!");
+    return;
+  }
+
+  try {
+    const response = await fetch('http://localhost:5143/api/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: formData.email,
+        username: formData.username,
+        password: formData.password
+      }),
+    });
+
+    if (response.ok) {
+      console.log('User registered successfully!');
+      // Optional: Redirect or show success message
+    } else {
+      console.error('Registration failed.');
+      // Handle errors — maybe show a message
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
 
   return (
     <div className="registration-component">
