@@ -4,8 +4,12 @@ import './RegisterForm.css';
 const RegisterForm = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState({
+    name: '',
+    surname: '',
     email: '',
-    username: '',
+    role: '',
+    IdNumber: '',
+    startDate: '',
     password: '',
     confirmPassword: ''
   });
@@ -22,46 +26,43 @@ const RegisterForm = () => {
     }));
   };
 
-  /**const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Registration data:', formData);
-    // Add your registration logic here
-  };*/
-
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  // Optional: Basic client-side validation
-  if (formData.password !== formData.confirmPassword) {
-    alert("Passwords do not match!");
-    return;
-  }
-
-  try {
-    const response = await fetch('http://localhost:5143/api/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: formData.email,
-        username: formData.username,
-        password: formData.password
-      }),
-    });
-
-    if (response.ok) {
-      console.log('User registered successfully!');
-      // Optional: Redirect or show success message
-    } else {
-      console.error('Registration failed.');
-      // Handle errors — maybe show a message
+    // Basic client-side validation
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match!");
+      return;
     }
-  } catch (error) {
-    console.error('Error:', error);
-  }
-};
 
+    try {
+      const response = await fetch('http://localhost:5143/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          surname: formData.surname,
+          email: formData.email,
+          role: formData.role,
+          IdNumber: formData.IdNumber,
+          startDate: formData.startDate,
+          password: formData.password
+        }),
+      });
+
+      if (response.ok) {
+        console.log('User registered successfully!');
+        // Optional: Redirect or show success message
+      } else {
+        console.error('Registration failed.');
+        // Handle errors — maybe show a message
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
   return (
     <div className="registration-component">
@@ -82,6 +83,38 @@ const RegisterForm = () => {
                 
                 <form onSubmit={handleSubmit}>
                   <div className="form-group">
+                    <label className="input-label">Name</label>
+                    <div className="input-wrapper">
+                      <span className="input-icon user-icon"></span>
+                      <input
+                        type="text"
+                        name="name"
+                        className="form-input"
+                        placeholder=""
+                        value={formData.name}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label className="input-label">Surname</label>
+                    <div className="input-wrapper">
+                      <span className="input-icon user-icon"></span>
+                      <input
+                        type="text"
+                        name="surname"
+                        className="form-input"
+                        placeholder=""
+                        value={formData.surname}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group">
                     <label className="input-label">Email</label>
                     <div className="input-wrapper">
                       <span className="input-icon email-icon"></span>
@@ -98,15 +131,48 @@ const RegisterForm = () => {
                   </div>
 
                   <div className="form-group">
-                    <label className="input-label">Username</label>
+                    <label className="input-label">Role</label>
                     <div className="input-wrapper">
-                      <span className="input-icon user-icon"></span>
+                      <span className="input-icon role-icon"></span>
+                      <select
+                        name="role"
+                        className="form-input"
+                        value={formData.role}
+                        onChange={handleChange}
+                        required
+                      >
+                        <option value="">Select a role</option>
+                        <option value="admin">Admin</option>
+                        <option value="employee">Employee</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label className="input-label">ID Number</label>
+                    <div className="input-wrapper">
+                      <span className="input-icon id-icon"></span>
                       <input
                         type="text"
-                        name="username"
+                        name="IdNumber"
                         className="form-input"
                         placeholder=""
-                        value={formData.username}
+                        value={formData.IdNumber}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label className="input-label">Start Date</label>
+                    <div className="input-wrapper">
+                      <span className="input-icon date-icon"></span>
+                      <input
+                        type="date"
+                        name="startDate"
+                        className="form-input"
+                        value={formData.startDate}
                         onChange={handleChange}
                         required
                       />
