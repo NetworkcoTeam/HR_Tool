@@ -1,6 +1,5 @@
-
+import LoginForm from '../Components/LoginForm';
 import RegisterForm from '../Components/RegisterForm';
-
 import './Landing.css';
 
 
@@ -8,8 +7,8 @@ import './Landing.css';
 function Landing() {
     return (
         <>
-           <h1 className="header-message">Simplify HR. </h1> 
-            <h2>Empower Teams</h2>
+          
+            
 
             < div className="Hero-grid">
        
@@ -18,6 +17,8 @@ function Landing() {
         </div>
 
                <div className="text">
+                
+           <h1 className="header-message"> Simplify HR.<br/> Empower Teams </h1> 
             <h1 className="title-platform">All-in-one Platform</h1>
           <ul className="list">
           <li><i class="fa-regular fa-circle-check"/>Payroll</li>
@@ -27,10 +28,10 @@ function Landing() {
           </ul>
           <p>New here?</p>
           <div className="registerButton">
-             <RegisterForm />
+             <RegisterForm />  <LoginForm/>
              </div>
-          </div>
-
+             </div>
+ 
 
         </div>
             

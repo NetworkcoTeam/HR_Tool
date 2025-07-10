@@ -6,7 +6,7 @@
 
 .register-trigger {
   padding: 10px 50px;
-  background: #0C21C1;
+  background: #161c70;
   color: white;
   border: none;
   border-radius: 5px;
@@ -14,6 +14,7 @@
   font-family: 'Poppins', sans-serif;
   font-size: 25px;
   transition: all 0.3s ease;
+  
 }
 
 .register-trigger:hover {

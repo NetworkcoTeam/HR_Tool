@@ -88,6 +88,8 @@ const LoginPopup = () => {
                 <div className="register-link">
                   <span>If you don't have an account, register </span>
                   <a href="#">Register here!</a>
+                  <span>If you don't have an account register </span>
+                  
                 </div>
               </div>
 
