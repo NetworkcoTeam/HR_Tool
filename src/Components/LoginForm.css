@@ -5,12 +5,13 @@
 }
 
 .login-trigger {
-  padding: 10px 20px;
-  background: #0C21C1;
+  padding: 10px 50px;
+  background: #161c70;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  font-size: 25px;
 }
 
 /* Popup styles */
