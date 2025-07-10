@@ -2,7 +2,7 @@
 .HeroImg{
 margin-top: 200px;
 width:650px;
-height:550px;
+height:600px;
 margin-left: 20px;
 margin-right: 50px;
 margin-bottom: -550px;
@@ -11,11 +11,12 @@ margin-bottom: -550px;
  
 .list{
 color:black;
-margin-left: 70px;
+/*margin-left: 70px;*/
 font:'poppins' sans-serif;
 
-font-size:25px;
+font-size:30px;
 font-weight:bold;
+text-align: start;
 
 
 }
@@ -24,19 +25,19 @@ font-weight:bold;
 
 i {
 color:green;
-width:50px;
+width:60px;
 margin-left: 20px;
 
 }
 
 
 .header-message{
-
-color:#282EA4;
-margin-left: 380px;
-font-size:40px;
+text-align: start;
+color:#161c70;
+/*margin-left: 400px;*/
+font-size:80px;
 font-weight:bold;
-margin-top: 30px;
+
 }
 
 h2{
@@ -59,19 +60,20 @@ h2{
 
 .Hero-image{
     margin-top:0;
-    flex-basis:60%;
+    flex-basis:50%;
     margin-left:60px;
     
     width:100px;
 
 }
 .text{
-    flex-basis:40%;
+    flex-basis:50%;
     color:black;
     list-style-type: none;
-    margin-left: 70px;
+    /*margin-left: 70px;*/
     font-size: 20px;
     margin-bottom: -500px;
+    text-align: start;
 }
     
 button{
@@ -85,17 +87,63 @@ button{
 }
 
 .title-platform{
-color:#3614F6;
+color:#161c70;
 font-weight:bold;
 margin-left: 70px;
+text-align: start;
 
 }
 
 p{
-    color:#f01414;
-    font-size:24px;
-    margin-left: 120px;
+    color:#161c70;
+    font-size:27px;
+    margin-left: 70px;
     font-weight:bold;
+    
 }
 
+.registerButton{
+    display:flex;
+}
 
+@media (max-width : 1300px){
+    .HeroImg{
+        width:500px; height: 400px; margin-bottom:-60; }
+        .header-message{
+            font-size: 48px;
+            margin-top: 80px;
+        }
+        .title-platform{
+            font-size:33px ;
+        }
+        .list{
+            font-size:27px;
+        }
+        p{
+            font-size: 20px;
+        }
+        .text{
+            padding:28px;
+        }
+} 
+
+
+@media (max-width: 768px) {
+    .HeroImg{width:390px; height: 350px; margin-bottom:13px; margin-top:12px;}
+    
+.Hero-image{
+    flex-basis: 0;
+    margin-bottom: 14px;
+
+}
+.text{
+ 
+
+    flex-basis: 0;
+
+}
+.Hero-grid{
+    display: inline;
+}
+
+}
