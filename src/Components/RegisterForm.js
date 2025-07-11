@@ -53,7 +53,8 @@ const RegisterForm = () => {
       });
 
       if (response.ok) {
-        console.log('User registered successfully!');
+        alert('Registration Successful!');
+        togglePopup();
         // Optional: Redirect or show success message
       } else {
         console.error('Registration failed.');
@@ -235,11 +236,6 @@ const RegisterForm = () => {
                     Register
                   </button>
                 </form>
-
-                <div className="login-prompt">
-                  Already have an account? 
-                  <a href="#" className="login-link">Login here!</a>
-                </div>
               </div>
 
               <div className="side-panel">

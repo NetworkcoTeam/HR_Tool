@@ -8,16 +8,11 @@ function App() {
   return (
     <>
     
+    
     <Navbar />
      
       <Landing />
-    
    {/*  <HeroSection /> */} 
-      
-      
-      
-       
-       
        
     </>
   );

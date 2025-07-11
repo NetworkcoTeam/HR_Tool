@@ -1,25 +1,27 @@
 {
   "format": 1,
   "restore": {
-    "/home/bucibo/HR_Tool/HR_Tool.Api/HR_Tool.Api.csproj": {}
+    "C:\\Users\\HomePC\\HR_Tool\\HR_Tool.Api\\HR_Tool.Api.csproj": {}
   },
   "projects": {
-    "/home/bucibo/HR_Tool/HR_Tool.Api/HR_Tool.Api.csproj": {
+    "C:\\Users\\HomePC\\HR_Tool\\HR_Tool.Api\\HR_Tool.Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/bucibo/HR_Tool/HR_Tool.Api/HR_Tool.Api.csproj",
+        "projectUniqueName": "C:\\Users\\HomePC\\HR_Tool\\HR_Tool.Api\\HR_Tool.Api.csproj",
         "projectName": "HR_Tool.Api",
-        "projectPath": "/home/bucibo/HR_Tool/HR_Tool.Api/HR_Tool.Api.csproj",
-        "packagesPath": "/home/bucibo/.nuget/packages/",
-        "outputPath": "/home/bucibo/HR_Tool/HR_Tool.Api/obj/",
+        "projectPath": "C:\\Users\\HomePC\\HR_Tool\\HR_Tool.Api\\HR_Tool.Api.csproj",
+        "packagesPath": "C:\\Users\\HomePC\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\HomePC\\HR_Tool\\HR_Tool.Api\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/bucibo/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\HomePC\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -83,7 +85,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.412/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.412/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

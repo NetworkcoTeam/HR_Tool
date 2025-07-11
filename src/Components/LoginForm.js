@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';  
 import './LoginForm.css';
 
 const LoginPopup = () => {
@@ -6,6 +7,7 @@ const LoginPopup = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();  
 
   const togglePopup = () => setIsOpen(!isOpen);
 
@@ -20,9 +22,8 @@ const LoginPopup = () => {
       });
 
       if (response.ok) {
-        console.log('Login successful!');
-        alert('Login successful!');
         togglePopup();
+        navigate('./Pages/Home');  // Redirect to Home page on successful login
       } else {
         const errorData = await response.json();
         alert(errorData.message || 'Login failed');
@@ -33,6 +34,7 @@ const LoginPopup = () => {
     }
   };
 
+ 
   return (
     <div className="app-container">
       <button onClick={togglePopup} className="login-trigger">
@@ -85,12 +87,6 @@ const LoginPopup = () => {
 
                 <button className="login-btn" onClick={handleLogin}>Login</button>
 
-                <div className="register-link">
-                  <span>If you don't have an account, register </span>
-                  <a href="#">Register here!</a>
-                  <span>If you don't have an account register </span>
-                  
-                </div>
               </div>
 
               <div className="side-panel">
