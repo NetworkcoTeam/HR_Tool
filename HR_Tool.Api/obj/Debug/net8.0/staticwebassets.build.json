@@ -1,11 +1,12 @@
 {
   "Version": 1,
-  "Hash": "lllAxEkZz3OTZWsUkD0kGJW9buEq7G1oiFT4MqButeI=",
+  "Hash": "gaNbvJwavkzccTb9zrjTH4gsyDbE5QlRf3K8GfjwaGU=",
   "Source": "HR_Tool.Api",
   "BasePath": "_content/HR_Tool.Api",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
   "DiscoveryPatterns": [],
-  "Assets": []
+  "Assets": [],
+  "Endpoints": []
 }
