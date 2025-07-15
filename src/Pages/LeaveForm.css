@@ -1,0 +1,12 @@
+.LeaveForm{
+    display:flex;
+    width:100%
+}
+.sidebar{
+    flex-basis: 30%;
+}
+
+form{
+    flex-basis:70%;
+}
+
