@@ -1,11 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "maatkloitME=",
+  "dgSpecHash": "ItTN1rk+th4=",
   "success": true,
   "projectFilePath": "C:\\Users\\flash\\Documents\\work\\HR_Tool\\HR_Tool.Api\\HR_Tool.Api.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\flash\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\flash\\.nuget\\packages\\dotnetenv\\3.1.1\\dotnetenv.3.1.1.nupkg.sha512",
-    "C:\\Users\\flash\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.1\\microsoft.aspnetcore.openapi.9.0.1.nupkg.sha512",
+    "C:\\Users\\flash\\.nuget\\packages\\microsoft.aspnetcore.openapi\\8.0.0\\microsoft.aspnetcore.openapi.8.0.0.nupkg.sha512",
+    "C:\\Users\\flash\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
     "C:\\Users\\flash\\.nuget\\packages\\microsoft.extensions.configuration\\1.1.2\\microsoft.extensions.configuration.1.1.2.nupkg.sha512",
     "C:\\Users\\flash\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\1.1.2\\microsoft.extensions.configuration.abstractions.1.1.2.nupkg.sha512",
     "C:\\Users\\flash\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\8.0.0\\microsoft.extensions.dependencyinjection.abstractions.8.0.0.nupkg.sha512",
@@ -18,7 +20,7 @@
     "C:\\Users\\flash\\.nuget\\packages\\microsoft.io.recyclablememorystream\\3.0.0\\microsoft.io.recyclablememorystream.3.0.0.nupkg.sha512",
     "C:\\Users\\flash\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.1\\microsoft.netcore.platforms.1.1.1.nupkg.sha512",
     "C:\\Users\\flash\\.nuget\\packages\\microsoft.netcore.targets\\1.1.3\\microsoft.netcore.targets.1.1.3.nupkg.sha512",
-    "C:\\Users\\flash\\.nuget\\packages\\microsoft.openapi\\1.6.17\\microsoft.openapi.1.6.17.nupkg.sha512",
+    "C:\\Users\\flash\\.nuget\\packages\\microsoft.openapi\\1.6.14\\microsoft.openapi.1.6.14.nupkg.sha512",
     "C:\\Users\\flash\\.nuget\\packages\\microsoft.win32.primitives\\4.3.0\\microsoft.win32.primitives.4.3.0.nupkg.sha512",
     "C:\\Users\\flash\\.nuget\\packages\\mimemapping\\3.0.1\\mimemapping.3.0.1.nupkg.sha512",
     "C:\\Users\\flash\\.nuget\\packages\\netstandard.library\\1.6.1\\netstandard.library.1.6.1.nupkg.sha512",
@@ -47,6 +49,10 @@
     "C:\\Users\\flash\\.nuget\\packages\\supabase.postgrest\\4.0.3\\supabase.postgrest.4.0.3.nupkg.sha512",
     "C:\\Users\\flash\\.nuget\\packages\\supabase.realtime\\7.0.2\\supabase.realtime.7.0.2.nupkg.sha512",
     "C:\\Users\\flash\\.nuget\\packages\\supabase.storage\\2.0.2\\supabase.storage.2.0.2.nupkg.sha512",
+    "C:\\Users\\flash\\.nuget\\packages\\swashbuckle.aspnetcore\\6.6.1\\swashbuckle.aspnetcore.6.6.1.nupkg.sha512",
+    "C:\\Users\\flash\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.6.1\\swashbuckle.aspnetcore.swagger.6.6.1.nupkg.sha512",
+    "C:\\Users\\flash\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.6.1\\swashbuckle.aspnetcore.swaggergen.6.6.1.nupkg.sha512",
+    "C:\\Users\\flash\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\6.6.1\\swashbuckle.aspnetcore.swaggerui.6.6.1.nupkg.sha512",
     "C:\\Users\\flash\\.nuget\\packages\\system.appcontext\\4.3.0\\system.appcontext.4.3.0.nupkg.sha512",
     "C:\\Users\\flash\\.nuget\\packages\\system.buffers\\4.3.0\\system.buffers.4.3.0.nupkg.sha512",
     "C:\\Users\\flash\\.nuget\\packages\\system.collections\\4.3.0\\system.collections.4.3.0.nupkg.sha512",
@@ -107,5 +113,16 @@
     "C:\\Users\\flash\\.nuget\\packages\\system.xml.xdocument\\4.3.0\\system.xml.xdocument.4.3.0.nupkg.sha512",
     "C:\\Users\\flash\\.nuget\\packages\\websocket.client\\5.1.1\\websocket.client.5.1.1.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1603",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "HR_Tool.Api depends on Swashbuckle.AspNetCore (>= 6.6.0) but Swashbuckle.AspNetCore 6.6.0 was not found. Swashbuckle.AspNetCore 6.6.1 was resolved instead.",
+      "libraryId": "Swashbuckle.AspNetCore",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    }
+  ]
 }
