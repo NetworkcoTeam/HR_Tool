@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import './LoginForm.css';
-
+import { useNavigate } from 'react-router-dom';
 const LoginPopup = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   const togglePopup = () => setIsOpen(!isOpen);
 
@@ -21,7 +22,7 @@ const LoginPopup = () => {
 
       if (response.ok) {
         console.log('Login successful!');
-        alert('Login successful!');
+        navigate('/home'); // Redirect to home page on successful login
         togglePopup();
       } else {
         const errorData = await response.json();

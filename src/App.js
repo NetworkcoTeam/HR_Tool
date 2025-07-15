@@ -1,25 +1,34 @@
-//import Landing from './Pages/Landing';
+import {  Route, Routes } from 'react-router-dom';
 import Navbar from './Components/Navbar'; 
 import './App.css';
-//import HeroSection from './Components/HeroSection';
+import Home from './Pages/Home';
 import Landing from './Pages/Landing';
 
 function App() {
   return (
-    <>
     
-    <Navbar />
+    
+
      
-      <Landing />
+     <>
+          <Navbar />
+      <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/home" element={<Home />} />
+          {/* Add more routes as needed */}
+      </Routes>
+         
+     </>
+  
     
-   {/*  <HeroSection /> */} 
+  
       
       
       
        
        
        
-    </>
+   
   );
 }
 
