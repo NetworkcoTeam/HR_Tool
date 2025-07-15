@@ -1,4 +1,6 @@
-sidebar{
-    background-color: blue;
+.sidebar{
+    background-color: #161c70;
     color:white;
+    width: 500px;
+    height: 100%;
 }
