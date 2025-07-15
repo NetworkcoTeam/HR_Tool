@@ -6065,11 +6065,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Dimpho Setsile\\HR_TOOL\\HR_TOOL.Api\\HR_Tool.Api.csproj",
+      "projectUniqueName": "C:\\Users\\Dimpho Setsile\\HR_TOOL\\HR_Tool.Api\\HR_Tool.Api.csproj",
       "projectName": "HR_Tool.Api",
-      "projectPath": "C:\\Users\\Dimpho Setsile\\HR_TOOL\\HR_TOOL.Api\\HR_Tool.Api.csproj",
+      "projectPath": "C:\\Users\\Dimpho Setsile\\HR_TOOL\\HR_Tool.Api\\HR_Tool.Api.csproj",
       "packagesPath": "C:\\Users\\Dimpho Setsile\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Dimpho Setsile\\HR_TOOL\\HR_TOOL.Api\\obj\\",
+      "outputPath": "C:\\Users\\Dimpho Setsile\\HR_TOOL\\HR_Tool.Api\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
