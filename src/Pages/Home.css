@@ -2,8 +2,16 @@ h1{
     color:blue;
 }
 
+.Home-container{
+display: flex;
+width:100%;
+}
+.sidebar{
+    flex-basis:30%;
+}
 .dashboard{
     background-color: #e8ddea;
+    flex-basis:70%;
 }
 .first-grid{
     display: flex;
