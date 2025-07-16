@@ -1,0 +1,244 @@
+/* Dashboard.css - Complete Styling */
+
+/* Main Container */
+.dashboard-content {
+  width: 100%;
+  min-height: 100vh;
+  background: #F5EDED;
+  font-family: 'Inter', sans-serif;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Top Navigation - Centered Header */
+.dashboard-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background: #161C70;
+  color: white;
+  border-radius: 10px;
+  margin-bottom: 25px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header-title {
+  font-weight: 700;
+  font-size: 1.25rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+/* Main Content Grid Layout */
+.dashboard-sections {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 25px;
+}
+
+/* Section Styling (Common for all sections) */
+.section {
+  background: #F5EDED;
+  border: 1px solid #FFFFFF;
+  border-radius: 12px;
+  padding: 0;
+  min-height: 240px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.section h3 {
+  color: #161C70;
+  margin: 0;
+  padding: 15px 20px;
+  font-size: 1rem;
+  text-transform: uppercase;
+  background: #F5EDED;
+  border-bottom: 1px solid #E0E0E0;
+}
+
+.section-content {
+  background: white;
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Employee Records Specific Styles */
+.employee-records .section-content {
+  justify-content: flex-start;
+  align-items: center;
+  gap: 12px;
+}
+
+.records-content {
+  font-weight: 600;
+  color: #161C70;
+  font-size: 1rem;
+  text-align: center;
+  width: 100%;
+  text-decoration: none;
+  display: block;
+  padding: 8px 0;
+  transition: all 0.2s ease;
+}
+
+.records-content:hover {
+  color: #0f144d;
+  transform: translateY(-1px);
+}
+
+/* Payslip Specific Styles */
+.payslip .section-content {
+  justify-content: center;
+  align-items: center;
+}
+
+.generate-button {
+  background: #161C70;
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: inline-block;
+}
+
+.generate-button:hover {
+  background: #0f144d;
+  transform: translateY(-1px);
+}
+
+/* Leave Applications Specific Styles */
+.appointments .section-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 15px;
+}
+
+.appointment-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+  text-decoration: none;
+  color: inherit;
+}
+
+.appointment-item:last-child {
+  border-bottom: none;
+}
+
+.appointment-item span:first-child {
+  color: #333;
+  font-weight: 500;
+}
+
+.status-badge {
+  background: #161C70;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* View All Button Styles (Updated for both tiles) */
+.view-all-container {
+  margin-top: auto;
+  padding-top: 15px;
+  text-align: center;
+  width: 100%;
+}
+
+.view-all-button {
+  background: transparent;
+  color: #161C70;
+  border: 1px solid #161C70;
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.view-all-button:hover {
+  background: #161C70;
+  color: white;
+}
+
+/* Appointments (Terms) Specific Styles */
+.terms .section-content {
+  justify-content: flex-start;
+  padding-top: 0;
+}
+
+.terms-info {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  margin-top: 0;
+}
+
+.terms-info span {
+  color: #333;
+  font-weight: 500;
+}
+
+.terms-date {
+  font-weight: 600;
+  color: #161C70;
+  font-size: 0.9rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+  .dashboard-sections {
+    grid-template-columns: 1fr;
+  }
+  
+  .section {
+    min-height: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-content {
+    padding: 15px;
+  }
+  
+  .dashboard-header {
+    padding: 15px;
+  }
+  
+  .generate-button {
+    padding: 10px 22px;
+    font-size: 0.9rem;
+  }
+  
+  .view-all-button {
+    padding: 6px 16px;
+    font-size: 0.8rem;
+  }
+  
+  .records-content {
+    padding: 6px 0;
+    font-size: 0.9rem;
+  }
+}
