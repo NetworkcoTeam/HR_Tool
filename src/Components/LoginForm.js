@@ -1,38 +1,53 @@
 import React, { useState } from 'react';
 import './LoginForm.css';
-import  {useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { Spin, message } from 'antd';
 
 const LoginPopup = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const navigate =useNavigate();
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const togglePopup = () => setIsOpen(!isOpen);
+const handleLogin = async (e) => {
+  e.preventDefault();
+  
+  if (!email || !password) {
+    message.error('Please enter both email and password');
+    return;
+  }
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  setLoading(true);
+  
+  try {
+    const response = await fetch('http://localhost:5143/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
 
-    try {
-      const response = await fetch('http://localhost:5143/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
+    const userData = await response.json();
 
-      if (response.ok) {
-        togglePopup();
-        navigate('/home');
-      } else {
-        const errorData = await response.json();
-        alert(errorData.message || 'Login failed');
-      }
-    } catch (err) {
-      console.error(err);
-      alert('An error occurred. See console.');
+    if (!response.ok) {
+      throw new Error(userData.message || 'Login failed');
     }
-  };
+
+    // Store just the user data (no token)
+    localStorage.setItem('user', JSON.stringify(userData));
+    console.log('Login successful:', userData);
+    message.success('Login successful!');
+    togglePopup();
+    navigate('/home');
+  } catch (err) {
+    console.error('Login error:', err);
+    message.error(err.message || 'Login failed. Please try again.');
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="app-container">
@@ -59,6 +74,7 @@ const LoginPopup = () => {
                       placeholder="Enter your email"
                       className="form-input"
                       required
+                      disabled={loading}
                     />
                   </div>
                 </div>
@@ -73,24 +89,29 @@ const LoginPopup = () => {
                       placeholder="Enter your password"
                       className="form-input"
                       required
+                      disabled={loading}
                     />
                     <button 
                       type="button" 
                       className="show-password-btn"
                       onClick={() => setShowPassword(!showPassword)}
+                      disabled={loading}
                     >
                       {showPassword ? 'Hide' : 'Show'}
                     </button>
                   </div>
                 </div>
 
-                <button className="login-btn" onClick={handleLogin}>Login</button>
+                <button 
+                  className="login-btn" 
+                  onClick={handleLogin}
+                  disabled={loading}
+                >
+                  {loading ? <Spin size="small" /> : 'Login'}
+                </button>
 
                 <div className="register-link">
-                  <span>If you don't have an account, register </span>
-                  <a href="#">Register here!</a>
-                  <span>If you don't have an account register </span>
-                  
+                  Don't have an account? <a href="/register">Register here</a>
                 </div>
               </div>
 

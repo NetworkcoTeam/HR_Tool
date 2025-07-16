@@ -1,23 +1,55 @@
 import './Sidebar.css';
-import {Link} from 'react-router-dom';
-import LeaveForm from '../Pages/LeaveForm';
+import { useNavigate } from 'react-router-dom';
+import { FaHouse, FaUser, FaFileInvoiceDollar, FaFolder, FaCalendarCheck, FaRightFromBracket } from 'react-icons/fa6';
 
 function Sidebar() {
-    return(
-<div className="sidebar">
-            <h1>ATLASHR</h1>
-            <ul>
-                <li><i class="fa-solid fa-house" />Home</li><br/>
-                <li><i class="fa-regular fa-circle-user"/>Profile</li><br/>
-                 <li>Payslip</li><br/>
-                  <li>Documents</li><br/>
-                   <li><Link to="/leaveForm" onClick={<LeaveForm />} >Leave form </Link></li><br/>
-                    <li><i class="fa-solid fa-calendar-check"/>Book appointment</li><br/>
-                     <li><i class="fa-solid fa-arrow-right-form-bracket"/>Log out</li>
-                      
-            </ul>
-        </div>
+  const navigate = useNavigate();
 
-    )}
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
 
-    export default Sidebar;
+  return (
+    <div className="sidebar">
+      <h1 className='logo'>ATLASHR</h1>
+      <ul className="sidebar-menu">
+        <li onClick={() => handleNavigation('/')}>
+          <FaHouse className="sidebar-icon" />
+          <span>Home</span>
+        </li>
+        
+        <li onClick={() => handleNavigation('/profile')}>
+          <FaUser className="sidebar-icon" />
+          <span>Profile</span>
+        </li>
+        
+        <li onClick={() => handleNavigation('/payslip')}>
+          <FaFileInvoiceDollar className="sidebar-icon" />
+          <span>Payslip</span>
+        </li>
+        
+        <li onClick={() => handleNavigation('/documents')}>
+          <FaFolder className="sidebar-icon" />
+          <span>Documents</span>
+        </li>
+        
+        <li onClick={() => handleNavigation('/leaveForm')}>
+          <FaCalendarCheck className="sidebar-icon" />
+          <span>Leave Form</span>
+        </li>
+        
+        <li onClick={() => handleNavigation('/appointments')}>
+          <FaCalendarCheck className="sidebar-icon" />
+          <span>Book Appointment</span>
+        </li>
+        
+        <li className="logout" onClick={() => handleNavigation('/logout')}>
+          <FaRightFromBracket className="sidebar-icon" />
+          <span>Log out</span>
+        </li>
+      </ul>
+    </div>
+  );
+}
+
+export default Sidebar;

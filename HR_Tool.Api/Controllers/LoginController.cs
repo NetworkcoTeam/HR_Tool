@@ -44,7 +44,13 @@ public class LoginController : ControllerBase
         {
             return Unauthorized(new { message = "Invalid email or password." });
         }
-
-        return Ok(new { message = "Login successful!" });
+        return Ok(new 
+        { 
+            name = user.Name,
+            surname = user.Surname,
+            email = user.Email,
+            role = user.Role,
+            idNumber = user.IdNumber            
+        });
     }
 }

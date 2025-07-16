@@ -1,84 +1,100 @@
-h1{
-    color:blue;
+.site-layout {
+  margin-left: 200px;
+  background: #f0f2f5;
 }
 
-.Home-container{
-display: flex;
-width:100%;
-}
-.sidebar{
-    flex-basis:30%;
-}
-.dashboard{
-    background-color: #e8ddea;
-    flex-basis:70%;
-}
-.first-grid{
-    display: flex;
-    height: 400px;
-    margin-bottom: 40px;
-    padding:40px;
-    
-    
+.home-content {
+  margin: 24px 16px;
+  padding: 24px;
+  min-height: 280px;
 }
 
-.Todo-List{
-    Flex-basis: 50%;
-    
-    margin-right: 20px;
-    border-radius:10px;
-    border-color: white;
-    border-style: solid;
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
 }
 
-
-
-.Todo-list-container{
-   
-   width:500px;
-   height: 210px;
-   border-style: solid;
-   border-color: white;
-   
-}
-.Payslips{
-    flex-basis: 50%;
-    border-color: white;
-    border-style: solid;
-    width: 500px;
-    border-radius:10px;
-}
-.Payslips-container{
-   
-   width:100%;
-   height: 210px;
-   border-style: solid;
-   border-color: white;
-   border-radius: 10px;
+.dashboard-header h1 {
+  margin: 0;
+  color: #1890ff;
 }
 
-/* second grid */
-.second-grid{
-     display: flex;
-    height: 400px;
-    margin-bottom: 40px;
-    padding:40px;
+.current-date {
+  color: #666;
 }
 
-.Leave{
-    Flex-basis: 50%;
-      width:100%;
-   height: 210px;
-   border-style: solid;
-   border-color: white;
-   border-radius: 10px;
+.dashboard-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
-.Appointments{
-   flex-basis: 50%;
-   width:100%;
-   height: 210px;
-   border-style: solid;
-   border-color: white;
-   border-radius: 10px;
-   
+
+.dashboard-row {
+  display: flex;
+  gap: 24px;
+}
+
+.dashboard-card {
+  flex: 1;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+}
+
+.dashboard-card .ant-card-head {
+  border-bottom: none;
+}
+
+.dashboard-card .ant-card-head-title {
+  font-weight: 500;
+}
+
+.completed-task {
+  text-decoration: line-through;
+  color: #999;
+}
+
+.appointments-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.loading-state, .error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 50vh;
+  text-align: center;
+}
+
+.error-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (max-width: 992px) {
+  .dashboard-row {
+    flex-direction: column;
+  }
+  
+  .site-layout {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .home-content {
+    margin: 12px;
+    padding: 12px;
+  }
+  
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
 }

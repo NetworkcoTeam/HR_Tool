@@ -1,0 +1,156 @@
+.frame {
+  position: relative;
+  width: 1224px;
+  height: 602px;
+  background: #F5EDED;
+}
+
+.rectangle-large {
+  box-sizing: border-box;
+  position: absolute;
+  width: 970px;
+  height: 389px;
+  left: 222px;
+  top: 87px;
+  background: #F5EDED;
+  border: 1px solid #FFFFFF;
+  border-radius: 10px;
+}
+
+.leave-applications-title {
+  position: absolute;
+  width: 187px;
+  height: 24px;
+  left: 574px;
+  top: 19px;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 24px;
+  color: #161C70;
+}
+
+.content-container {
+  position: absolute;
+  width: 912px;
+  height: 317px;
+  left: 247px;
+  top: 126px;
+}
+
+.white-card {
+  width: 100%;
+  height: 100%;
+  background: #FFFFFF;
+  border: 1px solid #FFFFFF;
+  border-radius: 10px;
+}
+
+.headers {
+  display: flex;
+  padding: 20px 40px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.start-date-header {
+  width: 200px;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 19px;
+  color: #161C70;
+}
+
+.leave-type-header {
+  width: 200px;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 19px;
+  color: #161C70;
+}
+
+.status-header {
+  width: 200px;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 19px;
+  color: #161C70;
+}
+
+.leave-entry {
+  display: flex;
+  align-items: center;
+  padding: 15px 40px;
+  border-bottom: 1px solid #f0f0f0;
+  position: relative;
+}
+
+.date {
+  width: 200px;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 17px;
+  color: #161C70;
+}
+
+.leave-type {
+  width: 200px;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 17px;
+  color: #161C70;
+}
+
+.status {
+  width: 200px;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 17px;
+  color: #161C70;
+}
+
+.approve-btn {
+  position: absolute;
+  right: 170px;
+  width: 100px;
+  height: 28px;
+  background: #161C70;
+  border-radius: 10px;
+  border: none;
+  color: white;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 17px;
+  cursor: pointer;
+}
+
+.decline-btn {
+  position: absolute;
+  right: 40px;
+  width: 100px;
+  height: 28px;
+  background: #F40808;
+  border-radius: 10px;
+  border: none;
+  color: white;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 17px;
+  cursor: pointer;
+}
