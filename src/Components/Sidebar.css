@@ -7,7 +7,16 @@
 
 li{
     text-align: start;
-    font-size: 20px;
+    font-size: 30px;
     text-decoration: none;
+    list-style-type: none;
 
+}
+.logo{
+    color:white;
+    margin: 30px;
+}
+Link{
+    color:white;
+    text-decoration: none;
 }
