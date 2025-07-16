@@ -1,5 +1,5 @@
 import Home from './Pages/Home';
-
+import LeaveForm from './Pages/LeaveForm';
 import{Routes,Route} from 'react-router-dom';
 import LandingLayout from './Components/LandingLayout';
 import HomeLayout from './Components/HomeLayout';
@@ -22,6 +22,8 @@ function App() {
 
         <Route path="/home" element={<HomeLayout />}>
         <Route path="/home" element={<Home />}/> </Route>
+
+        <Route path="/leaveForm" element={<LeaveForm/>}/>
       </Routes>
       
        
