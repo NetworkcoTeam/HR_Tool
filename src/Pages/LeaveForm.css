@@ -4,17 +4,19 @@
     height:100%;
 }
 .sidebar{
-    flex-basis: 25%;
-    height:900px;
+    flex-basis: 10%;
+    height:980px;
     color:#ffffff;
+    width:300px;
 }
 
 form{
     flex-basis:75%;
+    padding-left:30px;
 }
 
 label{
-    font-size: 20px;
+    font-size: 25px;
     color:#161c70;
     font-weight: bold;
     margin-bottom: 20px;
@@ -38,5 +40,23 @@ input{
     font-size: 17px;
     border-bottom: 2px solid #161c70 ;
     margin-top: 40px;
-     margin-top: 20px;
+    margin-top: 20px;
+}
+
+button{
+    background-color: #161c70;
+    color:#ffff;
+    padding:20px 0 20px 0;
+}
+.heading{
+    color:#161c70;
+    text-align: center;
+}
+.upload{
+    border-style: solid;
+    border-color: #161c70;
+    border-radius: 10px;
+    font-size:20px;
+    margin-left:10px;
+    padding:9px;
 }

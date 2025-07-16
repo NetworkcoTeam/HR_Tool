@@ -5,7 +5,7 @@ import LeaveForm from '../Pages/LeaveForm';
 function Sidebar() {
     return(
 <div className="sidebar">
-            <h1>ATLASHR</h1>
+            <h1 className='logo'>ATLASHR</h1>
             <ul>
                 <li><i class="fa-solid fa-house" />Home</li><br/>
                 <li><i class="fa-regular fa-circle-user"/>Profile</li><br/>
