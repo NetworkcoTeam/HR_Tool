@@ -12,7 +12,7 @@ function App() {
   return (
     
  
-        <>
+        <Routes>
         <Route path="/" element={<LandingLayout />}>
          <Route index element={<Landing />}/> </Route>
 
@@ -20,7 +20,7 @@ function App() {
         <Route path="/home" element={<Home />}/> </Route>
 
         <Route path="/leaveForm" element={<LeaveForm/>}/>
-      </>
+      </Routes>
       
        
        
