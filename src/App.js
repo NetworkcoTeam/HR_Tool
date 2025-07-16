@@ -1,29 +1,26 @@
-import {  Route, Routes } from 'react-router-dom';
-import Navbar from './Components/Navbar'; 
-import './App.css';
+
+
 import Home from './Pages/Home';
+import LeaveForm from './Pages/LeaveForm';
+import{Routes,Route} from 'react-router-dom';
+import LandingLayout from './Components/LandingLayout';
+import HomeLayout from './Components/HomeLayout';
+import './App.css';
 import Landing from './Pages/Landing';
 
 function App() {
   return (
     
-    
+ 
+        <>
+        <Route path="/" element={<LandingLayout />}>
+         <Route index element={<Landing />}/> </Route>
 
-     
-     <>
-          <Navbar />
-      <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/home" element={<Home />} />
-          {/* Add more routes as needed */}
-      </Routes>
-         
-     </>
-  
-    
-  
-      
-      
+        <Route path="/home" element={<HomeLayout />}>
+        <Route path="/home" element={<Home />}/> </Route>
+
+        <Route path="/leaveForm" element={<LeaveForm/>}/>
+      </>
       
        
        

@@ -1,7 +1,12 @@
 import './Home.css';
+import Sidebar from '../Components/Sidebar';
 
 function home(){
     return(
+        <div className="Home-container">
+        <div className="sideBar">
+            <Sidebar />
+        </div>
         <div className="dashboard">
        
          <div className="first-grid">
@@ -47,6 +52,7 @@ function home(){
                     
          </div>
 
+        </div>
         </div>
     )
 }
