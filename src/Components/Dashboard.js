@@ -5,14 +5,14 @@ import './Dashboard.css';
 const Dashboard = () => {
   return (
     <div className="dashboard-content">
-      {/* Top Navigation */}
+      
       <div className="dashboard-header">
         <div className="header-title">ADMIN DASHBOARD</div>
       </div>
 
-      {/* Main Content Sections */}
+      
       <div className="dashboard-sections">
-        {/* Employee Records */}
+        
         <div className="section employee-records">
           <h3>Employee Records</h3>
           <div className="section-content">
@@ -25,7 +25,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Payslip */}
         <div className="section payslip">
           <h3>Payslip</h3>
           <div className="section-content">
@@ -35,7 +34,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Leave Applications */}
         <div className="section appointments">
           <h3>LEAVE APPLICATIONS</h3>
           <div className="section-content">
@@ -59,7 +57,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Terms of Employment */}
         <div className="section terms">
           <h3>APPOINTMENTS</h3>
           <div className="section-content">

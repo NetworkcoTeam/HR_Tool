@@ -85,7 +85,7 @@
   transform: translateY(-1px);
 }
 
-/* Payslip Specific Styles */
+
 .payslip .section-content {
   justify-content: center;
   align-items: center;
@@ -111,7 +111,7 @@
   transform: translateY(-1px);
 }
 
-/* Leave Applications Specific Styles */
+
 .appointments .section-content {
   display: flex;
   flex-direction: column;
@@ -147,7 +147,7 @@
   font-weight: 600;
 }
 
-/* View All Button Styles (Updated for both tiles) */
+
 .view-all-container {
   margin-top: auto;
   padding-top: 15px;
@@ -173,7 +173,7 @@
   color: white;
 }
 
-/* Appointments (Terms) Specific Styles */
+
 .terms .section-content {
   justify-content: flex-start;
   padding-top: 0;
@@ -200,7 +200,7 @@
   font-size: 0.9rem;
 }
 
-/* Responsive Adjustments */
+
 @media (max-width: 1024px) {
   .dashboard-sections {
     grid-template-columns: 1fr;
