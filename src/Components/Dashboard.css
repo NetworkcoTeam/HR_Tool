@@ -1,6 +1,3 @@
-/* Dashboard.css - Complete Styling */
-
-/* Main Container */
 .dashboard-content {
   width: 100%;
   min-height: 100vh;
@@ -10,7 +7,6 @@
   box-sizing: border-box;
 }
 
-/* Top Navigation - Centered Header */
 .dashboard-header {
   display: flex;
   justify-content: center;
@@ -30,14 +26,12 @@
   letter-spacing: 1.5px;
 }
 
-/* Main Content Grid Layout */
 .dashboard-sections {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 25px;
 }
 
-/* Section Styling (Common for all sections) */
 .section {
   background: #F5EDED;
   border: 1px solid #FFFFFF;
@@ -68,7 +62,6 @@
   flex-direction: column;
 }
 
-/* Employee Records Specific Styles */
 .employee-records .section-content {
   justify-content: flex-start;
   align-items: center;

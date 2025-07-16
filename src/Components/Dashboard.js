@@ -40,7 +40,7 @@ const Dashboard = () => {
           <h3>LEAVE APPLICATIONS</h3>
           <div className="section-content">
             <div className="appointment-items-container">
-              <Link to="/" className="appointment-item">
+              {/* <Link to="/" className="appointment-item">
                 <span>11 August 2025</span>
                 <span className="status-badge">Pending</span>
               </Link>
@@ -51,7 +51,7 @@ const Dashboard = () => {
               <Link to="/" className="appointment-item">
                 <span>15 March 2025</span>
                 <span className="status-badge">Pending</span>
-              </Link>
+              </Link> */}
             </div>
             <div className="view-all-container">
               <Link to="/" className="view-all-button">View All</Link>
@@ -63,10 +63,10 @@ const Dashboard = () => {
         <div className="section terms">
           <h3>APPOINTMENTS</h3>
           <div className="section-content">
-            <Link to="/terms" className="terms-info">
+            {/* <Link to="/terms" className="terms-info">
               <span>12:00 - 12:30</span>
               <span className="terms-date">10 JULY 2025</span>
-            </Link>
+            </Link> */}
           </div>
         </div>
       </div>
