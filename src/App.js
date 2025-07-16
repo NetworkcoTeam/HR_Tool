@@ -1,20 +1,16 @@
+
+
 import Home from './Pages/Home';
 import LeaveForm from './Pages/LeaveForm';
 import{Routes,Route} from 'react-router-dom';
 import LandingLayout from './Components/LandingLayout';
 import HomeLayout from './Components/HomeLayout';
 import './App.css';
-
 import Landing from './Pages/Landing';
 
 function App() {
   return (
-    <>
     
-    
-     
-      
- 
  
         <Routes>
         <Route path="/" element={<LandingLayout />}>
@@ -29,7 +25,7 @@ function App() {
        
        
        
-    </>
+   
   );
 }
 

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HR_Tool.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+395e0e60c87a79d929a66593cbe062d2d4ad975d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6f3275018cdc3836dca4dff2cff3c7d5888cf454")]
 [assembly: System.Reflection.AssemblyProductAttribute("HR_Tool.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HR_Tool.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
