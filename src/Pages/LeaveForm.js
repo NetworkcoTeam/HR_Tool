@@ -7,7 +7,7 @@ return(
 <div className="LeaveForm">
     
 <div className="sidebar"> <Sidebar/></div>
-   <h1>Leave application</h1> 
+   
     <form className="form-area">
         <div className='form-division'>
 
@@ -15,15 +15,15 @@ return(
 
     <div className='left-form'>
     <label>Name</label><br/>
-    <input type="text"/>
+    <input type="text"/><br/><br/>
     <label>Employee ID</label> <br/>
     <input type="text"/><br/>
     <label>Position</label><br/>
     <input type="text"/><br/>
-    <label>Leave start</label>
-    <input type="text"/>
-    <label>Leave end</label>
-    <input type="text"/>
+    <label>Leave start</label><br/>
+    <input type="text"/><br/>
+    <label>Leave end</label><br/>
+    <input type="text"/><br/>
     <label>Total days</label>
     <input type="text"/>
 
@@ -36,7 +36,7 @@ return(
     <input type="text"/><br/>
    
   
-    <label>Type of Leave</label>
+    <label>Type of Leave</label><br/>
     <input type="radio" value='Martenity' className="Martenity"/><label>Unpaid</label><br/>
     <input type="radio" value='Martenity' className="Martenity"/><label>Maternity</label><br/>
      <input type="radio" value='Paternity' className="Martenity"/><label>Paternity</label><br/>
@@ -49,16 +49,16 @@ return(
     <label>If you chose other specify</label><br/>
     <input type="text" required/>
      </div>
-
+       </div>
       <h1>Supporting documents</h1>
       <label>Doctor's letter</label>
-      <input type='file' className='' />
+      <input type='file' className='' /><br/>
       <label>Funeral letter</label>
-      <input type='file' className='' />
+      <input type='file' className='' /><br/>
       
 
     <button>Apply </button>
-    </div>
+    
     </form>
     </div>
     
