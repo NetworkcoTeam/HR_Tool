@@ -12,7 +12,15 @@ li{
     list-style-type: none;
 
 }
+li:hover{
+    color:yellow;
+}
+
 .logo{
     color:white;
     margin: 30px;
+}
+
+i{
+    color:white;
 }

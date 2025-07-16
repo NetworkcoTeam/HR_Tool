@@ -1,22 +1,27 @@
 import './Sidebar.css';
-import {Link} from 'react-router-dom';
-import LeaveForm from '../Pages/LeaveForm';
+import {useNavigate} from 'react-router-dom';
+
+
 
 function Sidebar() {
-    return(
+     const navigate =useNavigate();
+   
+    
+    return(<>
 <div className="sidebar">
-            <h1 className='logo'>ATLASHR</h1>
+            <h1 className='logo'>ATLASHR</h1> 
             <ul>
-                <li><i class="fa-solid fa-house" />Home</li><br/>
-                <li><i class="fa-regular fa-circle-user"/>Profile</li><br/>
+                <li onClick={()=>navigate('/home')}><i class="fa-solid fa-house" />Home</li><br/>
+                <li onClick={()=>navigate('/profile')}>Profile</li><br/>
                  <li>Payslip</li><br/>
                   <li>Documents</li><br/>
-                   <li><Link to="/leaveForm" onClick={<LeaveForm />} >Leave form </Link></li><br/>
-                    <li><i class="fa-solid fa-calendar-check"/>Book appointment</li><br/>
+                   <li onClick={()=>navigate('/leaveForm')}>Leave form </li><br/>
+                    <li onClick={()=>navigate('/bookAppointment')}>Book appointment</li><br/>
                      <li><i class="fa-solid fa-arrow-right-form-bracket"/>Log out</li>
                       
             </ul>
         </div>
+        </>
 
     )}
 

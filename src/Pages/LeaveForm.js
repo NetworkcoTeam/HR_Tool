@@ -1,9 +1,16 @@
 import './LeaveForm.css';
 import Sidebar from '../Components/Sidebar';
 import '../Components/Sidebar.css';
+import React,{useState} from 'react';
 
 
 function Leave(){
+    const [selectedOption, setSelectedOption] = useState('');
+    const [reason, setReason]= useState('');
+    const handleChange=(e) =>{ setSelectedOption(e.target.value);
+        if(e.target.value !=='other'){
+        setReason('');
+    }}
     
 return(
     <>
@@ -41,25 +48,29 @@ return(
    
   
     <label>Type of Leave</label><br/>
-    <input type="radio" value='Martenity' className="Martenity"/><label>Unpaid</label><br/>
-    <input type="radio" value='Martenity' className="Martenity"/><label>Maternity</label><br/>
-     <input type="radio" value='Paternity' className="Martenity"/><label>Paternity</label><br/>
-      <input type="radio" value='Sick' className="Martenity"/><label>Sick</label><br/>
-       <input type="radio" value='Vacation' className="Martenity"/><label>Annual</label><br/>
-       <input type="radio" value='Martenity' className="Martenity"/><br/><label>Family responsibility</label><br/>
-        <input type="radio" value='other' className="Martenity"/><label>Other</label><br/>
+    <input type="radio" value='Unpaid' checked={selectedOption =='Unpaid'} className='leave' onChange={handleChange}/><label>Unpaid</label><br/>
+    <input type="radio" value='Martenity' checked={selectedOption =='Martenity'} className="leave" onChange={handleChange}/><label>Maternity</label><br/>
+     <input type="radio" value='Paternity' checked={selectedOption =='Paternity'} className="leave" onChange={handleChange}/><label>Paternity</label><br/>
+      <input type="radio" value='Sick' checked={selectedOption =='Sick'} className="leave" onChange={handleChange}/><label>Sick</label><br/>
+       <input type="radio" value='Vacation' checked={selectedOption =='Annual'} className="leave" onChange={handleChange}/><label>Annual</label><br/>
+       <input type="radio" value='Martenity' checked={selectedOption =='Family responsibility'}className="leave"onChange={handleChange}/><br/><label>Family responsibility</label><br/>
+        <input type="radio" value='other' checked={selectedOption =='other'} className="leave"onChange={handleChange}/><label>Other</label><br/>
         
-
-    <label>If you chose other specify</label><br/>
-    <input type="text" required/>
+       
+       {selectedOption =='other' && (<div style={{marginTop:'10px'}}>
+        <label>If you chose other specify <input type="text" value={reason} 
+        onChange={(e)=> setReason(e.target.value)}
+        /></label>)}
      </div>
-       </div>
+     
+    </div>
+
       <h1>Supporting documents</h1>
       <label>Doctor's letter</label>
-      <div className='upload'>
-      <input type='file' className='upload' /><br/></div>
+       <label className="upload-btn">Choose file</label>
+      <input type='file' className='upload' /> <button>upload</button><br/>
       <label>Funeral letter</label>
-      <input type='file' className='upload' /><br/>
+      <input type='file' className='upload' /><button>upload</button><br/>
       
 
     <button>Apply </button>

@@ -37,18 +37,33 @@ input{
     height: 20px;
     
     border:none;
-    font-size: 17px;
+    font-size: 20px;
     border-bottom: 2px solid #161c70 ;
     margin-top: 40px;
     margin-top: 20px;
+    width: 500px;
+    
 }
 
+.upload-btn{
+display:inline-block;
+background-color: #161c70;
+color:white;
+padding:10px 20px;
+font-weight:bold;
+border:none;
+border-radius: 8px;
+cursor: pointer;
+transition: background-color 0.2s ease;
+}
+ 
 button{
     background-color: #161c70;
     color:#ffff;
-    padding:20px 0 20px 0;
+      padding: 10px 160px;
+      
 }
-.heading{
+.heading{ 
     color:#161c70;
     text-align: center;
 }
@@ -58,5 +73,8 @@ button{
     border-radius: 10px;
     font-size:20px;
     margin-left:10px;
-    padding:9px;
+    padding:5px;
+}
+.leave :checked{
+    background-color:#161c70;
 }
