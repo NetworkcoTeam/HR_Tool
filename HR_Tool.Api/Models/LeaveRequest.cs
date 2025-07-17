@@ -1,18 +1,48 @@
-namespace HR_Tool.Api.Models;
+using Supabase.Postgrest.Models;
+using Supabase.Postgrest.Attributes;
 
-public class LeaveRequest
+namespace HR_Tool.Api.Models
 {
-    public int LeaveId { get; set; }
+    [Table("leave_requests")]
+    public class LeaveRequest : BaseModel
+    {
+        [Column("name")]
+        public string Name { get; set; }
 
-    public int EmployeeId { get; set; }
-    public Employee Employee { get; set; } = null!;
+        [Column("surname")]
+        public string Surname { get; set; }
 
-    public DateOnly StartDate { get; set; }
-    public DateOnly EndDate { get; set; }
-    public string? Reason { get; set; }
-    public string Status { get; set; } = "pending";
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        [Column("employee_id")]
+        public string EmployeeId { get; set; }
 
-    public int? ApprovedBy { get; set; }
-    public User? Approver { get; set; }
+        [Column("position")]
+        public string Position { get; set; }
+
+        [Column("department")]
+        public string Department { get; set; }
+
+        [Column("leave_start")]
+        public DateTime LeaveStart { get; set; }
+
+        [Column("leave_end")]
+        public DateTime LeaveEnd { get; set; }
+
+        [Column("total_days")]
+        public int TotalDays { get; set; }
+
+        [Column("type_of_leave")]
+        public string TypeOfLeave { get; set; }
+
+        [Column("other_details")]
+        public string? OtherDetails { get; set; }
+
+        [Column("doctors_letter")]
+        public string? DoctorsLetter { get; set; }
+
+        [Column("funeral_letter")]
+        public string? FuneralLetter { get; set; }
+
+        [Column("created_at")]
+        public DateTime CreatedAt { get; set; }
+    }
 }

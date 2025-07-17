@@ -54,11 +54,70 @@ const Leave = () => {
     }
   }, [form]);
 
-  const onFinish = (values) => {
-    console.log('Form values:', values);
+const onFinish = async (values) => {
+  //setSubmitting(true);
+  try {
+    // Validate dates
+    if (!values.leaveStart || !values.leaveEnd) {
+      throw new Error('Please select both start and end dates');
+    }
+
+    // Calculate total days
+    const startDate = values.leaveStart.toDate();
+    const endDate = values.leaveEnd.toDate();
+    const timeDiff = Math.abs(endDate.getTime() - startDate.getTime());
+    const totalDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) + 1;
+
+    // Prepare the payload
+const payload = {
+  Name: values.name,
+  Surname: values.surname,
+  EmployeeId: userData?.idNumber || values.employeeId,
+  Position: values.position,
+  Department: values.department,
+  LeaveStart: values.leaveStart.toISOString(),
+  LeaveEnd: values.leaveEnd.toISOString(),
+  TotalDays: totalDays,
+  TypeOfLeave: values.leaveType,
+  OtherDetails: values.otherLeaveType || null,
+  DoctorsLetter: values.doctorsLetter?.[0]?.name || null,
+  FuneralLetter: values.funeralLetter?.[0]?.name || null
+};
+
+
+
+    // Log the payload for debugging
+    console.log('Submitting payload:', payload);
+
+    const response = await fetch('http://localhost:5143/api/LeaveRequest', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const responseData = await response.json();
+
+    if (!response.ok) {
+      // Try to get error message from response
+      const errorMsg = responseData.message || 
+                      responseData.title || 
+                      'Failed to submit leave request';
+      throw new Error(errorMsg);
+    }
+
     message.success('Leave application submitted successfully!');
     form.resetFields();
-  };
+
+  } catch (error) {
+    console.error('Error details:', error);
+    message.error(`Submission failed: ${error.message}`);
+  } finally {
+  //  setSubmitting(false);
+  }
+};
 
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
