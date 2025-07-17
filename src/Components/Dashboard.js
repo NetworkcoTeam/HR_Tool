@@ -52,7 +52,7 @@ const Dashboard = () => {
               </Link> */}
             </div>
             <div className="view-all-container">
-              <Link to="/" className="view-all-button">View All</Link>
+              <Link to="/leaveManagement" className="view-all-button">View All</Link>
             </div>
           </div>
         </div>
