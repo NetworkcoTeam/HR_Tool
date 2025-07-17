@@ -40,7 +40,14 @@ const handleLogin = async (e) => {
     console.log('Login successful:', userData);
     message.success('Login successful!');
     togglePopup();
-    navigate('/home');
+    
+    // Check user role and navigate accordingly
+    if (userData.role == 'admin') {
+      navigate('/admin'); 
+    } else {
+      navigate('/home'); 
+    };
+
   } catch (err) {
     console.error('Login error:', err);
     message.error(err.message || 'Login failed. Please try again.');
