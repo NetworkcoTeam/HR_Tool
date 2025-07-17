@@ -13,7 +13,7 @@ function Sidebar() {
     <div className="sidebar">
       <h1 className='logo'>ATLASHR</h1>
       <ul className="sidebar-menu">
-        <li onClick={() => handleNavigation('/')}>
+        <li onClick={() => handleNavigation('/home')}>
           <FaHouse className="sidebar-icon" />
           <span>Home</span>
         </li>
