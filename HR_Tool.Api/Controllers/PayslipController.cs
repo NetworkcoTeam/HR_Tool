@@ -45,10 +45,28 @@ namespace HR_Tool.Api.Controllers
 
             try
             {
-                var employees = await GetActiveEmployees();
+                List<Employee> employees;
 
-                if (employees == null || employees.Count == 0)
-                    return NotFound("No active employees found");
+                // If EmployeeId is specified, generate for that employee
+                if (request.EmployeeId.HasValue)
+                {
+                    var employeeResponse = await _supabase
+                        .From<Employee>()
+                        .Where(x => x.EmployeeId == request.EmployeeId.Value)
+                        .Single();
+
+                    if (employeeResponse == null)
+                        return NotFound($"Employee with ID {request.EmployeeId} not found");
+
+                    employees = new List<Employee> { employeeResponse };
+                }
+                else
+                {
+                    employees = await GetActiveEmployees();
+
+                    if (employees == null || employees.Count == 0)
+                        return NotFound("No active employees found");
+                }
 
                 var generatedPayslips = new List<PayslipDto>();
 
@@ -167,6 +185,7 @@ namespace HR_Tool.Api.Controllers
     {
         public int Month { get; set; }
         public int Year { get; set; }
+        public int? EmployeeId { get; set; } // Optional: for individual generation
     }
 
     public class PayslipDto
