@@ -42,7 +42,7 @@ const handleLogin = async (e) => {
     togglePopup();
     
     // Check user role and navigate accordingly
-    if (userData.role == 'admin') {
+    if (userData.role === 'admin') {
       navigate('/admin'); 
     } else {
       navigate('/home'); 

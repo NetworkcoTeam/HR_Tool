@@ -6,6 +6,9 @@ namespace HR_Tool.Api.Models
     [Table("leave_requests")]
     public class LeaveRequest : BaseModel
     {
+        [PrimaryKey("id")]  // or just [PrimaryKey] if property name matches column name
+        public Guid Id { get; set; }
+
         [Column("name")]
         public string Name { get; set; }
 
@@ -44,5 +47,8 @@ namespace HR_Tool.Api.Models
 
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }
+
+        [Column("status")]
+        public String? Status { get; set; }
     }
 }
