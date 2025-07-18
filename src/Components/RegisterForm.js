@@ -56,7 +56,6 @@ const RegisterForm = () => {
         console.log('User registered successfully!');
         alert('You have successfully registered!');
         
-        
       } else {
         console.error('Registration failed.');
         alert('Registration failed. Please try again.');
