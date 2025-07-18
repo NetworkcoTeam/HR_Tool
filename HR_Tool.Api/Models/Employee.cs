@@ -1,23 +1,37 @@
 using Supabase.Postgrest.Models;
-namespace HR_Tool.Api.Models;
+using Supabase.Postgrest.Attributes;
 
-public class Employee : BaseModel
+namespace HR_Tool.Api.Models
 {
-    public int EmployeeId { get; set; }
+    [Table("employees")]
+    public class Employee : BaseModel
+    {
+        [PrimaryKey("employee_id")]
+        public long EmployeeId { get; set; }  
 
-    public int UserId { get; set; }
-    public User User { get; set; } = null!;
+        [Column("user_id")]
+        public long? UserId { get; set; }
 
-    public string FirstName { get; set; } = null!;
-    public string LastName { get; set; } = null!;
-    public DateOnly? DateOfBirth { get; set; }
-    public DateOnly? HireDate { get; set; }
-    public string? Position { get; set; }
-    public string? Department { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        [Column("first_name")]
+        public string FirstName { get; set; } = null!;
 
-    public ICollection<PaySlip> PaySlips { get; set; } = new List<PaySlip>();
-    public ICollection<LeaveRequest> LeaveRequests { get; set; } = new List<LeaveRequest>();
-    public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
-    public ICollection<Contract> Contracts { get; set; } = new List<Contract>();
+        [Column("last_name")]
+        public string LastName { get; set; } = null!;
+
+        [Column("date_of_birth")]
+        public DateTime? DateOfBirth { get; set; }
+
+        [Column("hire_date")]
+        public DateTime? HireDate { get; set; }
+
+        [Column("position")]
+        public string Position { get; set; } = null!;
+
+        [Column("department")]
+        public string Department { get; set; } = null!;
+
+        [Column("created_at")]
+        public DateTime? CreatedAt { get; set; }
+
+    }
 }

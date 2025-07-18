@@ -44,5 +44,8 @@ namespace HR_Tool.Api.Models
 
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }
+
+        [Column("status")]
+        public string Status { get; set; } = "Pending";
     }
 }

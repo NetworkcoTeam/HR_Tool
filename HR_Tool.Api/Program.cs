@@ -1,11 +1,31 @@
 using DotNetEnv;
+using HR_Tool.Api.Services;
+using Supabase;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load environment variables from .env file
+// Note: In production, you should use actual environment variables rather than .env files
 Env.Load(@"..\Backend\.env"); // Adjust path if needed
 
 // Add services to the container.
 builder.Services.AddControllers();
+
+// PayslipCalculator
+builder.Services.AddScoped<PayslipCalculator>();
+
+// Configure Supabase client
+var supabaseUrl = Environment.GetEnvironmentVariable("SUPABASE_URL") ?? 
+                throw new Exception("SUPABASE_URL environment variable is not set.");
+var supabaseKey = Environment.GetEnvironmentVariable("SUPABASE_KEY") ?? 
+                throw new Exception("SUPABASE_KEY environment variable is not set.");
+
+builder.Services.AddScoped<Client>(_ => 
+{
+    var client = new Client(supabaseUrl, supabaseKey);
+    client.InitializeAsync().Wait(); // Initialize synchronously for DI
+    return client;
+});
 
 // Add Swagger support via Swashbuckle
 builder.Services.AddSwaggerGen();
@@ -22,18 +42,6 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 app.UseCors("AllowFrontend");
-
-
-//var supabaseUrl = Environment.GetEnvironmentVariable("SUPABASE_URL") ?? throw new Exception("SUPABASE_URL not set");
-//var supabaseKey = Environment.GetEnvironmentVariable("SUPABASE_KEY") ?? throw new Exception("SUPABASE_KEY not set");
-
-var supabaseUrl = "https://mdgmlbenfmvnfoamvwkr.supabase.co";
-var supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kZ21sYmVuZm12bmZvYW12d2tyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE5NjE5NDQsImV4cCI6MjA2NzUzNzk0NH0.92S3AWVWvVkdbJGqsuzFJW9j6nXHFOK43IvfXbkEFrE";
-
-if (string.IsNullOrEmpty(supabaseUrl) || string.IsNullOrEmpty(supabaseKey))
-{
-    Console.WriteLine("Supabase environment variables are missing!");
-}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -71,5 +79,3 @@ record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
-
-

@@ -7,8 +7,20 @@ using BCrypt.Net;
 [Route("api/[controller]")]
 public class LoginController : ControllerBase
 {
-    private readonly string _url = "https://mdgmlbenfmvnfoamvwkr.supabase.co";
-    private readonly string _key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kZ21sYmVuZm12bmZvYW12d2tyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE5NjE5NDQsImV4cCI6MjA2NzUzNzk0NH0.92S3AWVWvVkdbJGqsuzFJW9j6nXHFOK43IvfXbkEFrE";
+    private readonly Client _supabase;
+
+    public LoginController()
+    {
+        var url = Environment.GetEnvironmentVariable("SUPABASE_URL");
+        var key = Environment.GetEnvironmentVariable("SUPABASE_KEY");
+
+        if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(key))
+        {
+            throw new Exception("Supabase environment variables (SUPABASE_URL or SUPABASE_KEY) are not set.");
+        }
+
+        _supabase = new Client(url, key);
+    }
 
     public class LoginRequest
     {
@@ -24,10 +36,9 @@ public class LoginController : ControllerBase
             return BadRequest(new { message = "Email and Password are required." });
         }
 
-        var supabase = new Client(_url, _key);
-        await supabase.InitializeAsync();
+        await _supabase.InitializeAsync();
 
-        var response = await supabase.From<User>()
+        var response = await _supabase.From<User>()
             .Where(u => u.Email == request.Email)
             .Get();
 
@@ -44,6 +55,7 @@ public class LoginController : ControllerBase
         {
             return Unauthorized(new { message = "Invalid email or password." });
         }
+
         return Ok(new 
         { 
             name = user.Name,
