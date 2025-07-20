@@ -23,7 +23,7 @@ function App() {
         <Route path="/leaveForm" element={<LeaveForm/>}/>
         <Route path="/Admin" element={<Admin/>}/>
         <Route path="/LeaveManagement" element={<LeaveManagement/>}/>
-        <Route path="/PayslipPage" element={<PayslipPage/>}/>
+        <Route path="/payslip" element={<PayslipPage/>}/>
       </Routes>
       
        
