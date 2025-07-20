@@ -12,7 +12,7 @@ const Dashboard = () => {
       
       <div className="dashboard-sections">
         <div className="section leave-requests">
-          <h3>Leave Requests</h3>
+          
           <div className="section-content">
             <LeaveRequestsAdmin />
           </div>
