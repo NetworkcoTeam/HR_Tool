@@ -1,12 +1,12 @@
 import React from 'react';
 import Dashboard from '../Components/Dashboard';
-import Sidebar from '../Components/Sidebar';
+import AdminSidebar from '../Components/AdminSidebar';
 import './Admin.css';
 
 function Admin() {
   return (
     <div className="admin-container">
-      <Sidebar />
+      <AdminSidebar />
       <div className="dashboard-main">
         <Dashboard />
       </div>
