@@ -6059,19 +6059,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\HomePC\\.nuget\\packages\\": {}
+    "C:\\Users\\flash\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\HomePC\\HR_Tool\\HR_Tool.Api\\HR_Tool.Api.csproj",
+      "projectUniqueName": "C:\\Users\\flash\\Documents\\work\\HR_Tool\\HR_Tool.Api\\HR_Tool.Api.csproj",
       "projectName": "HR_Tool.Api",
-      "projectPath": "C:\\Users\\HomePC\\HR_Tool\\HR_Tool.Api\\HR_Tool.Api.csproj",
-      "packagesPath": "C:\\Users\\HomePC\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\HomePC\\HR_Tool\\HR_Tool.Api\\obj\\",
+      "projectPath": "C:\\Users\\flash\\Documents\\work\\HR_Tool\\HR_Tool.Api\\HR_Tool.Api.csproj",
+      "packagesPath": "C:\\Users\\flash\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\flash\\Documents\\work\\HR_Tool\\HR_Tool.Api\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\HomePC\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\flash\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -6096,7 +6101,8 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      }
+      },
+      "SdkAnalysisLevel": "9.0.100"
     },
     "frameworks": {
       "net8.0": {
@@ -6142,7 +6148,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.412/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
       }
     }
   },
@@ -6151,7 +6157,7 @@
       "code": "NU1603",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "HR_Tool.Api depends on Swashbuckle.AspNetCore (>= 6.6.0) but Swashbuckle.AspNetCore 6.6.0 was not found. An approximate best match of Swashbuckle.AspNetCore 6.6.1 was resolved.",
+      "message": "HR_Tool.Api depends on Swashbuckle.AspNetCore (>= 6.6.0) but Swashbuckle.AspNetCore 6.6.0 was not found. Swashbuckle.AspNetCore 6.6.1 was resolved instead.",
       "libraryId": "Swashbuckle.AspNetCore",
       "targetGraphs": [
         "net8.0"
