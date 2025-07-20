@@ -54,10 +54,11 @@ const RegisterForm = () => {
 
       if (response.ok) {
         console.log('User registered successfully!');
-        // Optional: Redirect or show success message
+        alert('You have successfully registered!');
+        
       } else {
         console.error('Registration failed.');
-        // Handle errors — maybe show a message
+        alert('Registration failed. Please try again.');
       }
     } catch (error) {
       console.error('Error:', error);
