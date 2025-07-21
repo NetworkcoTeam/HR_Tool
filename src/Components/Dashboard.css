@@ -1,237 +1,150 @@
-.dashboard-content {
+/* LeaveRequestsAdmin.css */
+.leave-requests-container {
   width: 100%;
-  min-height: 100vh;
-  background: #F5EDED;
+  min-height: calc(100vh - 40px);
+  background: white;
   font-family: 'Inter', sans-serif;
   padding: 20px;
   box-sizing: border-box;
 }
 
-.dashboard-header {
+.leave-requests-header {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   padding: 20px;
-  background: white ;
-  color: white;
+  background: white;
+  color: #161C70;
   border-radius: 10px;
   margin-bottom: 25px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.header-title {
+.leave-requests-title {
   font-weight: 700;
   font-size: 1.25rem;
   text-transform: uppercase;
   letter-spacing: 1.5px;
+  margin: 0;
 }
 
-.dashboard-sections {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 25px;
-}
-
-.section {
-  background: #F5EDED;
-  border: 1px solid #FFFFFF;
+.leave-requests-table-container {
+  background: white;
   border-radius: 12px;
   padding: 0;
-  min-height: 240px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
 }
 
-.section h3 {
-  color: #161C70;
-  margin: 0;
-  padding: 15px 20px;
-  font-size: 1rem;
+.ant-table {
+  font-family: 'Inter', sans-serif;
+}
+
+.ant-table-thead > tr > th {
+  background-color: #F5EDED !important;
+  color: #161C70 !important;
+  font-weight: 600 !important;
   text-transform: uppercase;
-  background: #F5EDED;
-  border-bottom: 1px solid #E0E0E0;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
 }
 
-.section-content {
-  background: white;
-  padding: 20px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+.ant-table-tbody > tr > td {
+  border-bottom: 1px solid #f0f0f0 !important;
 }
 
-.employee-records .section-content {
-  justify-content: flex-start;
-  align-items: center;
-  gap: 12px;
-}
-
-.records-content {
-  font-weight: 600;
-  color: #161C70;
-  font-size: 1rem;
-  text-align: center;
-  width: 100%;
-  text-decoration: none;
-  display: block;
-  padding: 8px 0;
-  transition: all 0.2s ease;
-}
-
-.records-content:hover {
-  color: #0f144d;
-  transform: translateY(-1px);
-}
-
-
-.payslip .section-content {
-  justify-content: center;
-  align-items: center;
-}
-
-.generate-button {
-  background: #161C70;
-  color: white;
-  border: none;
-  padding: 12px 28px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 0.95rem;
-  text-decoration: none;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  display: inline-block;
-}
-
-.generate-button:hover {
-  background: #0f144d;
-  transform: translateY(-1px);
-}
-
-
-.appointments .section-content {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding-bottom: 15px;
-}
-
-.appointment-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid #f0f0f0;
-  text-decoration: none;
-  color: inherit;
-}
-
-.appointment-item:last-child {
-  border-bottom: none;
-}
-
-.appointment-item span:first-child {
-  color: #333;
-  font-weight: 500;
-}
-
-.status-badge {
-  background: #161C70;
-  color: white;
-  padding: 4px 12px;
+.status-tag {
   border-radius: 12px;
+  padding: 0 12px;
   font-size: 0.75rem;
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-
-.view-all-container {
-  margin-top: auto;
-  padding-top: 15px;
-  text-align: center;
-  width: 100%;
+.status-tag.ant-tag-green {
+  background-color: #f6ffed;
+  border-color: #b7eb8f;
+  color: #52c41a;
 }
 
-.view-all-button {
-  background: transparent;
-  color: #161C70;
-  border: 1px solid #161C70;
-  padding: 8px 20px;
+.status-tag.ant-tag-red {
+  background-color: #fff2f0;
+  border-color: #ffccc7;
+  color: #ff4d4f;
+}
+
+.status-tag.ant-tag-blue {
+  background-color: #e6f7ff;
+  border-color: #91d5ff;
+  color: #1890ff;
+}
+
+.action-button {
+  transition: all 0.3s ease;
   border-radius: 6px;
-  font-weight: 600;
-  font-size: 0.85rem;
-  text-decoration: none;
-  transition: all 0.2s ease;
-  display: inline-block;
-}
-
-.view-all-button:hover {
-  background: #161C70;
-  color: white;
-}
-
-
-.terms .section-content {
-  justify-content: flex-start;
-  padding-top: 0;
-}
-
-.terms-info {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  align-items: center;
-  text-decoration: none;
-  color: inherit;
-  margin-top: 0;
-}
-
-.terms-info span {
-  color: #333;
   font-weight: 500;
+  letter-spacing: 0.5px;
+  height: 32px;
+  padding: 0 16px;
 }
 
-.terms-date {
-  font-weight: 600;
-  color: #161C70;
-  font-size: 0.9rem;
+.action-button.ant-btn-primary {
+  background: #161C70;
+  border-color: #161C70;
 }
 
+.action-button.ant-btn-primary:hover {
+  background: #0f144d;
+  border-color: #0f144d;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(22, 28, 112, 0.2);
+}
 
+.action-button.ant-btn-dangerous {
+  background: #fff;
+  border-color: #ff4d4f;
+  color: #ff4d4f;
+}
+
+.action-button.ant-btn-dangerous:hover {
+  background: #ff4d4f;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(255, 77, 79, 0.2);
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+}
+
+/* Responsive adjustments */
 @media (max-width: 1024px) {
-  .dashboard-sections {
-    grid-template-columns: 1fr;
+  .leave-requests-container {
+    padding: 15px;
   }
   
-  .section {
-    min-height: 200px;
+  .leave-requests-header {
+    padding: 15px;
   }
 }
 
 @media (max-width: 768px) {
-  .dashboard-content {
-    padding: 15px;
+  .leave-requests-title {
+    font-size: 1rem;
   }
   
-  .dashboard-header {
-    padding: 15px;
+  .action-button {
+    width: 100%;
+    margin-bottom: 8px;
+    margin-right: 0 !important;
   }
   
-  .generate-button {
-    padding: 10px 22px;
-    font-size: 0.9rem;
-  }
-  
-  .view-all-button {
-    padding: 6px 16px;
-    font-size: 0.8rem;
-  }
-  
-  .records-content {
-    padding: 6px 0;
-    font-size: 0.9rem;
+  .ant-table-thead > tr > th,
+  .ant-table-tbody > tr > td {
+    padding: 12px 8px !important;
   }
 }

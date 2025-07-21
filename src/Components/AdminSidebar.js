@@ -2,7 +2,7 @@ import './Sidebar.css';
 import { useNavigate } from 'react-router-dom';
 import { FaHouse, FaUser, FaFileInvoiceDollar, FaFolder, FaCalendarCheck, FaRightFromBracket } from 'react-icons/fa6';
 
-function Sidebar() {
+function AdminSidebar() {
   const navigate = useNavigate();
 
   const handleNavigation = (path) => {
@@ -13,7 +13,7 @@ function Sidebar() {
     <div className="sidebar">
       <h1 className='logo'>ATLASHR</h1>
       <ul className="sidebar-menu">
-        <li onClick={() => handleNavigation('/home')}>
+        <li onClick={() => handleNavigation('/Admin')}>
           <FaHouse className="sidebar-icon" />
           <span>Home</span>
         </li>
@@ -52,4 +52,4 @@ function Sidebar() {
   );
 }
 
-export default Sidebar;
+export default AdminSidebar;
