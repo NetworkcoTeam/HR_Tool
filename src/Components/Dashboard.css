@@ -1,150 +1,122 @@
-/* LeaveRequestsAdmin.css */
-.leave-requests-container {
-  width: 100%;
-  min-height: calc(100vh - 40px);
-  background: white;
-  font-family: 'Inter', sans-serif;
-  padding: 20px;
-  box-sizing: border-box;
+/* Dashboard.css */
+.site-layout {
+  margin-left: 200px;
+  background: #f0f2f5;
 }
 
-.leave-requests-header {
+.dashboard-content {
+  margin: 24px 16px;
+  padding: 24px;
+  min-height: 280px;
+}
+
+.dashboard-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
-  background: white;
-  color: #161C70;
-  border-radius: 10px;
-  margin-bottom: 25px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 16px;
 }
 
-.leave-requests-title {
-  font-weight: 700;
-  font-size: 1.25rem;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
+.dashboard-header h2 {
   margin: 0;
-}
-
-.leave-requests-table-container {
-  background: white;
-  border-radius: 12px;
-  padding: 0;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
-}
-
-.ant-table {
-  font-family: 'Inter', sans-serif;
-}
-
-.ant-table-thead > tr > th {
-  background-color: #F5EDED !important;
-  color: #161C70 !important;
-  font-weight: 600 !important;
-  text-transform: uppercase;
-  font-size: 0.8rem;
-  letter-spacing: 0.5px;
-}
-
-.ant-table-tbody > tr > td {
-  border-bottom: 1px solid #f0f0f0 !important;
-}
-
-.status-tag {
-  border-radius: 12px;
-  padding: 0 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.status-tag.ant-tag-green {
-  background-color: #f6ffed;
-  border-color: #b7eb8f;
-  color: #52c41a;
-}
-
-.status-tag.ant-tag-red {
-  background-color: #fff2f0;
-  border-color: #ffccc7;
-  color: #ff4d4f;
-}
-
-.status-tag.ant-tag-blue {
-  background-color: #e6f7ff;
-  border-color: #91d5ff;
   color: #1890ff;
 }
 
-.action-button {
-  transition: all 0.3s ease;
-  border-radius: 6px;
+.current-date {
+  color: #666;
+}
+
+.dashboard-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.dashboard-row {
+  display: flex;
+  gap: 24px;
+}
+
+.dashboard-card {
+  flex: 1;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-card .ant-card-head {
+  border-bottom: none;
+}
+
+.dashboard-card .ant-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-card .ant-card-head-title {
   font-weight: 500;
-  letter-spacing: 0.5px;
-  height: 32px;
-  padding: 0 16px;
 }
 
-.action-button.ant-btn-primary {
-  background: #161C70;
-  border-color: #161C70;
+.card-icon {
+  margin-right: 8px;
+  color: #1890ff;
 }
 
-.action-button.ant-btn-primary:hover {
-  background: #0f144d;
-  border-color: #0f144d;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(22, 28, 112, 0.2);
-}
-
-.action-button.ant-btn-dangerous {
-  background: #fff;
-  border-color: #ff4d4f;
-  color: #ff4d4f;
-}
-
-.action-button.ant-btn-dangerous:hover {
-  background: #ff4d4f;
-  color: white;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(255, 77, 79, 0.2);
-}
-
-.loading-spinner {
+.payslip-content {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 300px;
+  flex: 1;
+  padding: 20px 0;
 }
 
-/* Responsive adjustments */
-@media (max-width: 1024px) {
-  .leave-requests-container {
-    padding: 15px;
+.generate-button {
+  background: #1890ff;
+  border-color: #1890ff;
+  height: 40px;
+  padding: 0 24px;
+}
+
+.generate-button:hover {
+  background: #40a9ff;
+  border-color: #40a9ff;
+}
+
+.view-all-button {
+  color: #1890ff;
+}
+
+.appointments-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+@media (max-width: 992px) {
+  .dashboard-row {
+    flex-direction: column;
   }
   
-  .leave-requests-header {
-    padding: 15px;
+  .site-layout {
+    margin-left: 0;
   }
 }
 
-@media (max-width: 768px) {
-  .leave-requests-title {
-    font-size: 1rem;
+@media (max-width: 576px) {
+  .dashboard-content {
+    margin: 12px;
+    padding: 12px;
   }
   
-  .action-button {
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .generate-button {
     width: 100%;
-    margin-bottom: 8px;
-    margin-right: 0 !important;
-  }
-  
-  .ant-table-thead > tr > th,
-  .ant-table-tbody > tr > td {
-    padding: 12px 8px !important;
   }
 }
