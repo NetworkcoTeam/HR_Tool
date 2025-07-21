@@ -4,7 +4,6 @@ using Supabase;
 using HR_Tool.Api.Models;
 using System;
 using System.Threading.Tasks;
-using System.Linq;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -20,112 +19,202 @@ public class LeaveRequestController : ControllerBase
         _logger = logger;
     }
 
-    // -------------------------------
-    // Existing POST stays the same
-    // -------------------------------
-
-    // ✅ GET: All leave requests for HR
-    /*[HttpGet]
-    public async Task<IActionResult> GetAll()
+    
+    [HttpPost]
+    public async Task<IActionResult> Leave([FromBody] LeaveRequestDto request)
     {
-        var supabase = new Client(_url, _key);
-        await supabase.InitializeAsync();
+        try
+        {
+            _logger.LogInformation("Received leave request: {@Request}", request);
 
-        var response = await supabase.From<LeaveRequest>().Get();
-        return Ok(response.Models);
+            if (string.IsNullOrWhiteSpace(request.Name) ||
+                string.IsNullOrWhiteSpace(request.Surname) ||
+                string.IsNullOrWhiteSpace(request.EmployeeId) ||
+                string.IsNullOrWhiteSpace(request.Position) ||
+                string.IsNullOrWhiteSpace(request.Department) ||
+                request.LeaveStart == default ||
+                request.LeaveEnd == default ||
+                string.IsNullOrWhiteSpace(request.TypeOfLeave))
+            {
+                _logger.LogWarning("Validation failed for leave request: {@Request}", request);
+                return BadRequest(new { message = "Missing required fields." });
+            }
+
+            if (request.LeaveEnd < request.LeaveStart)
+            {
+                _logger.LogWarning("Invalid leave dates: LeaveEnd ({LeaveEnd}) is before LeaveStart ({LeaveStart})",
+                    request.LeaveEnd, request.LeaveStart);
+                return BadRequest(new { message = "Leave end date cannot be before start date." });
+            }
+
+            var supabase = new Client(_url, _key);
+            await supabase.InitializeAsync();
+
+            var leaveRequest = new LeaveRequest
+            {
+                Name = request.Name,
+                Surname = request.Surname,
+                EmployeeId = request.EmployeeId,
+                Position = request.Position,
+                Department = request.Department,
+                LeaveStart = request.LeaveStart,
+                LeaveEnd = request.LeaveEnd,
+                TotalDays = request.TotalDays,
+                TypeOfLeave = request.TypeOfLeave,
+                OtherDetails = request.OtherDetails,
+                DoctorsLetter = request.DoctorsLetter,
+                FuneralLetter = request.FuneralLetter,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            var response = await supabase.From<LeaveRequest>().Insert(leaveRequest);
+
+            if (response.Models == null || response.Models.Count == 0)
+            {
+                _logger.LogError("Supabase insert returned empty result. Status: {StatusCode}, Error: {Error}",
+                    response.ResponseMessage?.StatusCode,
+                    await response.ResponseMessage?.Content.ReadAsStringAsync());
+
+                return StatusCode(500, new { message = "Could not submit leave request." });
+            }
+
+            _logger.LogInformation("Leave request inserted successfully: {@Inserted}", response.Models[0]);
+            return Ok(new { message = "Leave request submitted successfully!" });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while submitting leave request.");
+            return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
+        }
     }
-
-    // ✅ GET: All leave requests for specific user
-    [HttpGet("{employeeId}")]
-    public async Task<IActionResult> GetByEmployeeId(string employeeId)
+// LeaveRequestController.cs
+[HttpGet("all")]
+public async Task<IActionResult> GetAllLeaveRequests()
+{
+    try
     {
         var supabase = new Client(_url, _key);
         await supabase.InitializeAsync();
 
-        var response = await supabase
-            .From<LeaveRequest>()
-            .Filter("employee_id", Supabase.Postgrest.Constants.Operator.Equals, employeeId)
+        var response = await supabase.From<LeaveRequest>()
+            .Select("*")
             .Get();
 
-        return Ok(response.Models);
-    }*/
-[HttpGet]
-public async Task<IActionResult> GetAll()
-{
-    var supabase = new Client(_url, _key);
-    await supabase.InitializeAsync();
+        var dtos = response.Models?.Select(r => new LeaveRequestDto
+        {
+            Id = r.Id,
+            Name = r.Name,
+            Surname = r.Surname,
+            EmployeeId = r.EmployeeId,
+            Position = r.Position,
+            Department = r.Department,
+            TypeOfLeave = r.TypeOfLeave,
+            LeaveStart = r.LeaveStart,
+            LeaveEnd = r.LeaveEnd,
+            TotalDays = r.TotalDays,
+            Status = r.Status,
+            OtherDetails = r.OtherDetails,
+            DoctorsLetter = r.DoctorsLetter,
+            FuneralLetter = r.FuneralLetter,
+            CreatedAt = r.CreatedAt
+        }).ToList() ?? new List<LeaveRequestDto>();
 
-    var response = await supabase.From<LeaveRequest>().Get();
-
-    var dtos = response.Models.Select(lr => new LeaveRequestDto
+        return Ok(dtos);
+    }
+    catch (Exception ex)
     {
-        Id = lr.Id,
-        EmployeeId = lr.EmployeeId,
-        Name = lr.Name,
-        Surname = lr.Surname,
-        Position = lr.Position,
-        Department = lr.Department,
-        TypeOfLeave = lr.TypeOfLeave,
-        Status = lr.Status,
-        StartDate = lr.LeaveStart,
-        EndDate = lr.LeaveEnd
-        // map other properties as needed
-    });
-
-    return Ok(dtos);
+        _logger.LogError(ex, "Error fetching leave requests");
+        return StatusCode(500, new { message = "Error fetching leave requests" });
+    }
 }
 
-
-    // ✅ PUT: Update leave status (Approved or Denied)
-    [HttpPut("{id}/status")]
-    public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] string newStatus)
+[HttpPut("status/{id}")]
+public async Task<IActionResult> UpdateLeaveRequestStatus(Guid id, [FromBody] UpdateStatusDto statusDto)
+{
+    try
     {
-        if (string.IsNullOrWhiteSpace(newStatus) || 
-            !(newStatus.Equals("Approved", StringComparison.OrdinalIgnoreCase) ||
-              newStatus.Equals("Denied", StringComparison.OrdinalIgnoreCase)))
+        if (statusDto == null || string.IsNullOrWhiteSpace(statusDto.Status))
         {
-            return BadRequest(new { message = "Status must be Approved or Denied." });
+            return BadRequest(new { message = "Status is required" });
+        }
+
+        var validStatuses = new[] { "Approved", "Denied", "Pending" };
+        if (!validStatuses.Contains(statusDto.Status))
+        {
+            return BadRequest(new { message = "Invalid status value" });
         }
 
         var supabase = new Client(_url, _key);
         await supabase.InitializeAsync();
 
-        // Fetch existing record
-        var response = await supabase
-            .From<LeaveRequest>()
-            .Filter("id", Supabase.Postgrest.Constants.Operator.Equals, id.ToString())
-            .Get();
+        var result = await supabase.From<LeaveRequest>()
+            .Where(x => x.Id == id)
+            .Set(x => x.Status, statusDto.Status)
+            .Update();
 
-        var leaveRequest = response.Models.FirstOrDefault();
-        if (leaveRequest == null)
+        if (result.Models?.Count > 0)
         {
-            return NotFound(new { message = "Leave request not found." });
+            return Ok(new { message = "Status updated successfully" });
         }
 
-        leaveRequest.Status = newStatus;
+        return NotFound(new { message = "Leave request not found" });
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error updating leave request status");
+        return StatusCode(500, new { message = "Error updating status" });
+    }
+}
 
-        await supabase.From<LeaveRequest>().Update(leaveRequest);
-
-        return Ok(new { message = $"Leave request status updated to {newStatus}." });
+[HttpGet("employee/{employeeId}")]
+public async Task<IActionResult> GetLeaveRequestsByEmployeeId(string employeeId)
+{
+    if (string.IsNullOrWhiteSpace(employeeId))
+    {
+        _logger.LogWarning("Missing employeeId in request.");
+        return BadRequest(new { message = "Employee ID is required." });
     }
 
-    // ✅ DELETE: User deletes their own leave request
-    /*[HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(Guid id)
+    try
     {
         var supabase = new Client(_url, _key);
         await supabase.InitializeAsync();
 
         var response = await supabase
             .From<LeaveRequest>()
-            .Filter("id", Supabase.Postgrest.Constants.Operator.Equals, id)
-            .Delete();
-
-        if (response.ResponseMessage.IsSuccessStatusCode)
+            //.Filter(x => x.EmployeeId == employeeId)
+            .Filter("employee_id", Supabase.Postgrest.Constants.Operator.Equals, employeeId)
+            .Get();
+            
+        var dtos = response.Models?.Select(r => new LeaveRequestDto
         {
-            return Ok(new { message = "Leave request deleted successfully." });
-        }
+            Id = r.Id,
+            Name = r.Name,
+            Surname = r.Surname,
+            EmployeeId = r.EmployeeId,
+            Position = r.Position,
+            Department = r.Department,
+            TypeOfLeave = r.TypeOfLeave,
+            LeaveStart = r.LeaveStart,
+            LeaveEnd = r.LeaveEnd,
+            TotalDays = r.TotalDays,
+            Status = r.Status,
+            OtherDetails = r.OtherDetails,
+            DoctorsLetter = r.DoctorsLetter,
+            FuneralLetter = r.FuneralLetter,
+            CreatedAt = r.CreatedAt
+        }).ToList() ?? new List<LeaveRequestDto>();
 
-        return StatusCode(500, new { message = "Could not delete leave request." });
-    }*/
+        return Ok(dtos);
+
+
+        //return Ok(response.Models);
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error fetching leave requests for employee {EmployeeId}", employeeId);
+        return StatusCode(500, new { message = "Error fetching leave requests" });
+    }
+}
+
 }

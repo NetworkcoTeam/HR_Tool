@@ -40,12 +40,17 @@ const handleLogin = async (e) => {
     console.log('Login successful:', userData);
     message.success('Login successful!');
     togglePopup();
+    // Example: after login success
+    localStorage.setItem('employeeId', userData.employeeId);
+    console.log(userData.employeeId);
+    localStorage.setItem('role', userData.role); // 'Admin' or 'Employee'
+
     
     // Check user role and navigate accordingly
-    if (userData.role === 'admin') {
+    if (userData.role ==='admin') {
       navigate('/admin'); 
     } else {
-      navigate('/home'); 
+      navigate('/leaveManagement'); 
     };
 
   } catch (err) {

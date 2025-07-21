@@ -1,4 +1,4 @@
-.leave-management-container {
+/*.leave-management-container {
   display: flex;
   min-height: 100vh;
   background-color: #F5EDED;
@@ -80,4 +80,18 @@
     width: 100%;
     justify-content: flex-end;
   }
+}*/
+
+.admin-container {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  background: #F5EDED;
+}
+
+.dashboard-main {
+  flex: 1;
+  padding: 20px;
+  overflow: auto;
+  margin-left: 250px; 
 }
