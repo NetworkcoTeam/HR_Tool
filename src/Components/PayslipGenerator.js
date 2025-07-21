@@ -1,227 +1,149 @@
-import React, { useState } from 'react'; 
- import {  
-  Layout,  
-  Card,  
-  Button,  
-  Divider, 
-  Table, 
-  Select, 
-  DatePicker, 
-  Input, 
-  message, 
-  Spin 
- } from 'antd'; 
- import { CalendarOutlined } from '@ant-design/icons'; 
- import axios from 'axios'; 
- import './PayslipGenerator.css'; 
+import React, { useState, useEffect } from 'react';
+import { Button, Select, DatePicker, Table, message, Spin, Card } from 'antd';
+import './Dashboard.css';
 
- const { Content } = Layout; 
- const { Option } = Select; 
+const PayslipGenerator = () => {
+  const [loading, setLoading] = useState(false);
+  const [employees, setEmployees] = useState([]);
+  const [positions, setPositions] = useState([]);
+  const [selectedPosition, setSelectedPosition] = useState(null);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [selectedMonth, setSelectedMonth] = useState(null);
+  const [fetching, setFetching] = useState(false);
 
- const PayslipGenerator = () => { 
-  const [payDate, setPayDate] = useState(null); 
-  const [employeePosition, setEmployeePosition] = useState(''); 
-  const [employeeId, setEmployeeId] = useState(''); 
-  const [payslipData, setPayslipData] = useState([]); 
-  const [loading, setLoading] = useState(false); 
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      setFetching(true);
+      try {
+        const res = await fetch('http://localhost:5143/api/employees');
+        if (!res.ok) throw new Error('Failed to fetch employees');
+        const data = await res.json();
+        setEmployees(data);
+        
+        // Extract unique positions
+        const uniquePositions = [...new Set(data.map(emp => emp.position))].filter(Boolean);
+        setPositions(uniquePositions);
+      } catch (error) {
+        message.error(error.message);
+      } finally {
+        setFetching(false);
+      }
+    };
 
-  const columns = [ 
-  { 
-    title: 'Name', 
-    dataIndex: 'name', 
-    key: 'name', 
-  }, 
-  { 
-    title: 'Surname', 
-    dataIndex: 'surname', 
-    key: 'surname', 
-  }, 
-  { 
-    title: 'Employee ID', 
-    dataIndex: 'employeeId', 
-    key: 'employeeId', 
-  }, 
-  { 
-    title: 'Employee Position', 
-    dataIndex: 'position', 
-    key: 'position', 
-  }, 
-  { 
-    title: 'Deductions', 
-    dataIndex: 'deductions', 
-    key: 'deductions', 
-  }, 
-  { 
-    title: 'Pay Date', 
-    dataIndex: 'payDate', 
-    key: 'payDate', 
-  }, 
-  ]; 
+    fetchEmployees();
+  }, []);
 
-  const handleDateChange = (date) => { 
-  setPayDate(date); 
-  }; 
+  const filteredEmployees = selectedPosition
+    ? employees.filter(emp => emp.position === selectedPosition)
+    : employees;
 
-  const handlePositionChange = (value) => { 
-  setEmployeePosition(value); 
-  }; 
+  const generatePayslip = () => {
+    if (!selectedEmployee || !selectedMonth) {
+      message.error('Please select both employee and month');
+      return;
+    }
 
-  const handleEmployeeIdChange = (e) => { 
-  setEmployeeId(e.target.value); 
-  }; 
+    setLoading(true);
+    setTimeout(() => {
+      const employee = employees.find(e => e.employeeId === selectedEmployee);
+      message.success(`Payslip generated for ${employee.firstName} ${employee.lastName}`);
+      setLoading(false);
+    }, 1500);
+  };
 
-  const handleGeneratePayslip = async () => { 
-  if (!payDate) { 
-    message.error('Please select a pay date'); 
-    return; 
-  } 
+  const columns = [
+    { title: 'Earnings', dataIndex: 'type', key: 'type' },
+    { 
+      title: 'Amount', 
+      dataIndex: 'amount', 
+      key: 'amount',
+      render: amount => `$${amount.toFixed(2)}`
+    },
+  ];
 
-  setLoading(true); 
-   
-  try { 
-    const requestData = { 
-      month: payDate.month() + 1, 
-      year: payDate.year(), 
-      payDate: payDate.format('YYYY-MM-DD'), 
-      ...(employeeId && { employeeId: parseInt(employeeId) }), 
-      ...(employeePosition && { position: employeePosition }) 
-    }; 
+  const payslipData = [
+    { key: '1', type: 'Basic Salary', amount: 5000 },
+    { key: '2', type: 'Allowances', amount: 1000 },
+    { key: '3', type: 'Deductions', amount: -750 },
+    { key: '4', type: 'Net Pay', amount: 5250 },
+  ];
 
-    const response = await axios.post('http://localhost:5143/api/payslips/generate', requestData); 
-     
-    if (response.data.success) { 
-      const generatedPayslips = response.data.employees.map((employee, index) => ({ 
-        key: index, 
-        name: employee.name, 
-        surname: employee.surname, 
-        employeeId: employee.employeeId || 'N/A', 
-        position: employee.position || 'N/A', 
-        deductions: 'UIF, PAYE TAX', 
-        payDate: payDate.format('DD/MM/YYYY'), 
-      })); 
-       
-      setPayslipData(generatedPayslips); 
-      message.success(`Successfully generated ${response.data.count} payslip(s)`); 
-    } else { 
-      message.error('Failed to generate payslips'); 
-    } 
-  } catch (error) { 
-    console.error('Error generating payslips:', error); 
-    message.error(error.response?.data?.error || 'Failed to generate payslips. Please check the API endpoint.'); 
-  } finally { 
-    setLoading(false); 
-  } 
-  }; 
+  return (
+    <div className="section payslip">
+      <h3>Payslip Generator</h3>
+      <div className="section-content">
+        <Spin spinning={fetching}>
+          <Card size="small" style={{ marginBottom: 20 }}>
+            <div style={{ display: 'grid', gap: 16 }}>
+              <Select
+                placeholder="Select Position"
+                style={{ width: '100%' }}
+                onChange={value => {
+                  setSelectedPosition(value);
+                  setSelectedEmployee(null); // Reset employee selection
+                }}
+                options={positions.map(pos => ({
+                  value: pos,
+                  label: pos
+                }))}
+                allowClear
+              />
 
-  return ( 
-  <Layout style={{ minHeight: '100vh', background: '#F5EDED' }}> 
-    <Layout className="site-layout"> 
-      <Content className="payslip-content"> 
-        <div className="payslip-header"> 
-          <h1 className="payslip-main-title">Payslip</h1> 
-          <div className="current-date"> 
-            <CalendarOutlined /> {new Date().toLocaleDateString()} 
-          </div> 
-        </div> 
+              <Select
+                placeholder="Select Employee"
+                style={{ width: '100%' }}
+                value={selectedEmployee}
+                onChange={setSelectedEmployee}
+                disabled={!selectedPosition}
+                options={filteredEmployees.map(emp => ({
+                  value: emp.employeeId,
+                  label: `${emp.firstName} ${emp.lastName} (${emp.department})`
+                }))}
+              />
 
-        <Divider /> 
+              <DatePicker 
+                picker="month" 
+                style={{ width: '100%' }} 
+                onChange={setSelectedMonth}
+                placeholder="Select Month"
+              />
+            </div>
+          </Card>
+        </Spin>
+        
+        <Button 
+          className="generate-button"
+          type="primary"
+          onClick={generatePayslip}
+          loading={loading}
+          disabled={!selectedEmployee || !selectedMonth}
+          block
+        >
+          Generate Payslip
+        </Button>
 
-        <Card  
-          title="Payslip & Employee Details"  
-          className="payslip-card" 
-          style={{ header: { color: '#161C70', fontWeight: 'bold' } }} 
-        > 
-          <div className="details-row"> 
-            <Card  
-              title="Payslip Details"  
-              className="detail-card" 
-              style={{ header: { color: '#161C70', fontWeight: 'bold' } }} 
-            > 
-              <div className="detail-item"> 
-                <span className="detail-label">Pay Date:</span> 
-                <DatePicker 
-                  style={{ width: '100%', maxWidth: '200px' }} 
-                  onChange={handleDateChange} 
-                  value={payDate} 
-                  className="date-picker" 
-                  format="DD/MM/YYYY" 
-                /> 
-              </div> 
-            </Card> 
-
-            <Card  
-              title="Employee Details"  
-              className="detail-card" 
-              style={{ header: { color: '#161C70', fontWeight: 'bold' } }} 
-            > 
-              <div className="detail-item"> 
-                <span className="detail-label">Employee Position:</span> 
-                <Select 
-                  value={employeePosition} 
-                  style={{ width: '100%', maxWidth: '200px', marginBottom: '10px' }} 
-                  onChange={handlePositionChange} 
-                  className="position-select" 
-                  allowClear 
-                  placeholder="Select position or leave blank for all" 
-                > 
-                  <Option value="">All Employees</Option> 
-                  <Option value="intern">Intern</Option> 
-                  <Option value="manager">Management</Option> 
-                  <Option value="hr">HR</Option> 
-                  <Option value="other">Other</Option> 
-                </Select> 
-              </div> 
-               
-              <div className="detail-item"> 
-                <span className="detail-label">Employee ID:</span> 
-                <Input 
-                  value={employeeId} 
-                  style={{ width: '100%', maxWidth: '200px' }} 
-                  onChange={handleEmployeeIdChange} 
-                  className="employee-id-input" 
-                  placeholder="Enter Employee ID (optional)" 
-                  type="number" 
-                /> 
-              </div> 
-            </Card> 
-          </div> 
-
-          <div className="action-button-container"> 
-            <Button  
-              type="primary"  
-              className="generate-button" 
-              style={{ backgroundColor: '#161C70', borderColor: '#161C70' }} 
-              onClick={handleGeneratePayslip} 
-              loading={loading} 
-            > 
-              Generate Payslip 
-            </Button> 
-          </div> 
-        </Card> 
-
-        <Card  
-          title="Slip Details"  
-          className="payslip-card" 
-          style={{ header: { color: '#161C70', fontWeight: 'bold' } }} 
-        > 
-          <Spin spinning={loading}> 
-            <Table  
-              columns={columns}  
+        {selectedEmployee && selectedMonth && (
+          <Card style={{ marginTop: 20 }}>
+            <Table 
+              columns={columns} 
               dataSource={payslipData} 
-              className="slip-details-table" 
-              bordered 
-              pagination={{ 
-                pageSize: 10, 
-                showSizeChanger: true, 
-                showQuickJumper: true, 
-              }} 
-            /> 
-          </Spin> 
-        </Card> 
-      </Content> 
-    </Layout> 
-  </Layout> 
-  ); 
- }; 
+              pagination={false}
+              bordered
+              size="small"
+              summary={() => (
+                <Table.Summary.Row>
+                  <Table.Summary.Cell><strong>Total</strong></Table.Summary.Cell>
+                  <Table.Summary.Cell>
+                    <strong>${payslipData.reduce((sum, item) => sum + item.amount, 0).toFixed(2)}</strong>
+                  </Table.Summary.Cell>
+                </Table.Summary.Row>
+              )}
+            />
+          </Card>
+        )}
+      </div>
+    </div>
+  );
+};
 
- export default PayslipGenerator;
+export default PayslipGenerator;

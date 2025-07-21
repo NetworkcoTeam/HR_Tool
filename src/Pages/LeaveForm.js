@@ -247,7 +247,7 @@ const payload = {
                 </Col>
               </Row>
 
-              {/* Rest of your form remains the same */} 
+              {/* Rest of your form remains the same */}
               <Divider orientation="left">Leave Details</Divider>
 
               <Form.Item
@@ -319,4 +319,3 @@ const payload = {
 };
 
 export default Leave;
-
