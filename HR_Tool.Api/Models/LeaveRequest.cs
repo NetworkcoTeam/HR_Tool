@@ -6,6 +6,11 @@ namespace HR_Tool.Api.Models
     [Table("leave_requests")]
     public class LeaveRequest : BaseModel
     {
+
+        [PrimaryKey("id")]
+        [Column("id")]
+        public Guid Id { get; set; } 
+        
         [Column("name")]
         public string Name { get; set; }
 
@@ -39,13 +44,13 @@ namespace HR_Tool.Api.Models
         [Column("doctors_letter")]
         public string? DoctorsLetter { get; set; }
 
+        [Column("status")]
+        public string Status { get; set; } = "Pending"; 
+     
         [Column("funeral_letter")]
         public string? FuneralLetter { get; set; }
 
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }
-
-        [Column("status")]
-        public string Status { get; set; } = "Pending";
     }
 }

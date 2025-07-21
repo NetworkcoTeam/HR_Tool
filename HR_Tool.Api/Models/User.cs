@@ -1,5 +1,3 @@
-// HR_Tool.Api/Models/User.cs
-
 using Supabase.Postgrest.Models;
 using Supabase.Postgrest.Attributes;
 
