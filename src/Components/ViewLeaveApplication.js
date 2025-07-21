@@ -9,7 +9,7 @@ const LeaveView = () => {
   const fetchLeaveRequests = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5143/api/LeaveRequest/all');
+      const res = await fetch('http://localhost:5143/api');
       if (!res.ok) {
         throw new Error('Failed to fetch leave requests');
       }
