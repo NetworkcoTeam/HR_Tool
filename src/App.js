@@ -9,6 +9,7 @@ import './App.css';
 import Landing from './Pages/Landing';
 import Admin from './Pages/Admin';
 import LeaveManagement from './Pages/LeaveManagement';
+import ViewLeavePage from './Components/ViewLeaveApplication';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/home" element={<Home />}/> </Route>
 
         <Route path="/leaveForm" element={<LeaveForm/>}/>
+        <Route path="/viewleave" element={<ViewLeavePage/>}/>
         <Route path="/Admin" element={<Admin/>}/>
         <Route path="/LeaveManagement" element={<LeaveManagement/>}/>
       </Routes>
