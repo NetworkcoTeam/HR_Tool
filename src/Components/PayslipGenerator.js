@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Select, DatePicker, Table, message, Spin, Card } from 'antd';
-import './Dashboard.css';
+import './PayslipGenerator.css';
 
 const PayslipGenerator = () => {
   const [loading, setLoading] = useState(false);

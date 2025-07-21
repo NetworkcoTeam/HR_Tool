@@ -24,7 +24,6 @@ const { Content } = Layout;
 const Dashboard = () => {
   const navigate = useNavigate();
 
-  const handleGeneratePayslip = () => navigate('/payslip/generate');
   const handleViewAll = (route) => navigate(route);
 
   return (
@@ -47,7 +46,6 @@ const Dashboard = () => {
           <Divider />
 
           <div className="dashboard-grid">
-            {/* First Row */}
             <div className="dashboard-row">
               <Card 
                 title={
@@ -82,7 +80,7 @@ const Dashboard = () => {
                 <div className="payslip-content">
                   <Button 
                     type="primary" 
-                    onClick={handleGeneratePayslip}
+                    onClick={() => handleViewAll('/payslipManagement')}
                     icon={<FileTextOutlined />}
                     className="generate-button"
                   >
@@ -92,7 +90,6 @@ const Dashboard = () => {
               </Card>
             </div>
 
-            {/* Second Row */}
             <div className="dashboard-row">
               <Card 
                 title={
@@ -105,7 +102,7 @@ const Dashboard = () => {
                 extra={
                   <Button 
                     type="link" 
-                    onClick={() => handleViewAll('/leave-management')}
+                    onClick={() => handleViewAll('/LeaveManagament')}
                     className="view-all-button"
                   >
                     View All
