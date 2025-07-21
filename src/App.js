@@ -10,6 +10,10 @@ import Landing from './Pages/Landing';
 import Admin from './Pages/Admin';
 import LeaveManagement from './Pages/LeaveManagement';
 
+
+
+import TestPayslipPage from './Pages/TestPayslipPage';
+
 function App() {
   return (
     
@@ -24,12 +28,12 @@ function App() {
         <Route path="/leaveForm" element={<LeaveForm/>}/>
         <Route path="/Admin" element={<Admin/>}/>
         <Route path="/LeaveManagement" element={<LeaveManagement/>}/>
+
+
+        <Route path="/test-payslip" element={<TestPayslipPage />} />
+
       </Routes>
-      
-       
-       
-       
-   
+
   );
 }
 
