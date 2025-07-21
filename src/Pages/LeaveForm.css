@@ -1,33 +1,18 @@
-.LeaveForm{
-    display:flex;
-    width:100%;
-    height:100%;
-}
-.sidebar{
-    flex-basis: 10%;
-    height:980px;
-    color:#ffffff;
-    width:300px;
+.leave-form-container {
+  background: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
 }
 
-form{
-    flex-basis:75%;
-    padding-left:30px;
+.form-title {
+  color: #1890ff;
+  margin-bottom: 0;
 }
 
-label{
-    font-size: 25px;
-    color:#161c70;
-    font-weight: bold;
-    margin-bottom: 20px;
-    
-}
-.form-division{
-    display:flex;
-    margin-top: 40px;
-}
-.left-form{
-    flex-basis: 50%;
+.site-layout {
+  margin-left: 250px;
+  background: #f0f2f5;
 }
 .right-form{
     flex-basis: 50%;
