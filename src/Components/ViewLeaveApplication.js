@@ -109,7 +109,7 @@ export default function ViewLeaveApplication(){
   ];
 
   return (
-    <div className="" style={{ padding: '10px'}}>
+    <div style={{ padding: '25px'}}>
       <h1>Leave applications</h1>
       <Spin spinning={loading}>
         <Table 
@@ -119,7 +119,7 @@ export default function ViewLeaveApplication(){
           loading={loading}
         />
       </Spin>
-      <Button onClick={fetchLeaveRequests}> view applications</Button>
+      <Button type='default' size='30px' onClick={fetchLeaveRequests}> view applications</Button>
       
     </div>
   );
