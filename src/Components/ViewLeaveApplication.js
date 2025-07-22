@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Tag, message, Spin } from 'antd';
 
-const LeaveView = () => {
+export default function ViewLeaveApplication(){
   const [leaveRequests, setLeaveRequests] = useState([]);
   const [loading, setLoading] = useState(false);
   const [updating, setUpdating] = useState(false);
@@ -11,7 +11,7 @@ const LeaveView = () => {
     try {
       const res = await fetch('http://localhost:5143/api');
       if (!res.ok) {
-        throw new Error('Failed to fetch leave requests');
+        throw new Error('Failed to fetch leave requests' );
       }
       const data = await res.json();
       setLeaveRequests(data);
@@ -109,7 +109,7 @@ const LeaveView = () => {
   ];
 
   return (
-    <div style={{ padding: '24px' }}>
+    <div className="" style={{ padding: '10px'}}>
       <h1>Leave applications</h1>
       <Spin spinning={loading}>
         <Table 
@@ -119,8 +119,9 @@ const LeaveView = () => {
           loading={loading}
         />
       </Spin>
+      <Button onClick={fetchLeaveRequests}> view applications</Button>
+      
     </div>
   );
 };
 
-export default LeaveView;
