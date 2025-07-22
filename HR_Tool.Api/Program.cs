@@ -1,6 +1,6 @@
 using DotNetEnv;
 using System.Text.Json; // Add this using directive
-
+using HR_Tool.Api.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add this configuration for JSON serialization
@@ -16,7 +16,8 @@ Env.Load(@"..\Backend\.env"); // Adjust path if needed
 
 // Add services to the container.
 builder.Services.AddControllers();
-
+builder.Services.AddControllers();
+builder.Services.AddScoped<PayslipCalculator>();
 // Add Swagger support via Swashbuckle
 builder.Services.AddSwaggerGen();
 
