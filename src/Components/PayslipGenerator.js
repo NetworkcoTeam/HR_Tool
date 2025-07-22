@@ -22,7 +22,7 @@ const PayslipGenerator = () => {
         if (!res.ok) throw new Error('Failed to fetch employees');
         const data = await res.json();
         setEmployees(data);
-        
+        console.log(data);
         // Extract unique positions
         const uniquePositions = [...new Set(data.map(emp => emp.position))].filter(Boolean);
         setPositions(uniquePositions);
@@ -321,9 +321,10 @@ const PayslipGenerator = () => {
                 }}
 
                 options={filteredEmployees.map(emp => ({
-                  value: emp.employeeId,
-                  label: `${emp.firstName} ${emp.lastName} (${emp.department})`
-                }))}
+  value: emp.employee_id,
+  label: `${emp.first_name} ${emp.last_name} (${emp.department})`
+}))}
+
 
                 allowClear
 
