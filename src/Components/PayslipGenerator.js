@@ -117,7 +117,7 @@ const PayslipGenerator = () => {
             GeneratedDate: raw.generatedDate || 'Not specified',
             BasicSalary: raw.basicSalary || 0,
             TaxAmount: raw.taxAmount || 0,
-            UIF: raw.uifAmount || 0,
+            UIF: raw.uif || 0,
             NetSalary: raw.netSalary || 0
           };
   
@@ -235,13 +235,13 @@ const PayslipGenerator = () => {
     // Convert all values to numbers to ensure proper calculation
     const basicSalary = Number(payslipDetails.BasicSalary) || 0;
     const taxAmount = Number(payslipDetails.TaxAmount) || 0;
-    const uifAmount = Number(payslipDetails.UIF) || 0;
+    const uif = Number(payslipDetails.UIF) || 0;
     const netSalary = Number(payslipDetails.NetSalary) || 0;
     
     return [
       { key: '1', type: 'Basic Salary', amount: basicSalary },
       { key: '2', type: 'PAYE Tax', amount: -taxAmount }, // Negative for deduction
-      { key: '3', type: 'UIF Contribution', amount: -uifAmount }, // Negative for deduction
+      { key: '3', type: 'UIF Contribution', amount: -uif }, // Negative for deduction
       { key: '4', type: 'Net Pay', amount: netSalary },
     ];
   };
