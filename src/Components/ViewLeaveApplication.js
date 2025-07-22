@@ -119,7 +119,7 @@ export default function ViewLeaveApplication(){
           loading={loading}
         />
       </Spin>
-      <Button type='default' size='30px' onClick={fetchLeaveRequests}> view applications</Button>
+      <Button type='primary' variant='solid' size='large' onClick={fetchLeaveRequests}> view applications</Button>
       
     </div>
   );
