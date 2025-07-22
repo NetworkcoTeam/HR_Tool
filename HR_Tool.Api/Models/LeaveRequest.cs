@@ -10,7 +10,7 @@ namespace HR_Tool.Api.Models
         [PrimaryKey("id")]
         [Column("id")]
         public Guid Id { get; set; } 
-        
+
         [Column("name")]
         public string Name { get; set; }
 

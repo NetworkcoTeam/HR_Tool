@@ -45,6 +45,9 @@ const Dashboard = () => {
 
           <Divider />
 
+
+
+
           <div className="dashboard-grid">
             <div className="dashboard-row">
               <Card 
@@ -88,6 +91,7 @@ const Dashboard = () => {
                   </Button>
                 </div>
               </Card>
+
             </div>
 
             <div className="dashboard-row">
@@ -127,6 +131,7 @@ const Dashboard = () => {
                 <Empty description="No appointments scheduled" />
               </Card>
             </div>
+
           </div>
         </Content>
       </Layout>

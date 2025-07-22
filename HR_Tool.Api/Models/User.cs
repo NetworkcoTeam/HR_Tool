@@ -27,6 +27,9 @@ namespace HR_Tool.Api.Models
 
         [Column("password_hash")]
         public string PasswordHash { get; set; }
+        
+        [Column("employeeID")]
+        public string EmployeeID { get; set; }
 
     }
 }

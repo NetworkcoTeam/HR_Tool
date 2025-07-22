@@ -18,7 +18,7 @@ public class EmployeesController : ControllerBase
     {
         _logger = logger;
 
-        
+
         var url = Environment.GetEnvironmentVariable("SUPABASE_URL");
         var key = Environment.GetEnvironmentVariable("SUPABASE_KEY");
 

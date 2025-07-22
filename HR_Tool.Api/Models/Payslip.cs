@@ -30,9 +30,12 @@ namespace HR_Tool.Api.Models
 
         [Column("uif")]  
         public decimal? UIF { get; set; }  
-
+ 
+        
         [Column("net_salary")]
         public decimal? NetSalary { get; set; }
           
     }
+
 }
+

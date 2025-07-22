@@ -13,6 +13,7 @@ const PayslipGenerator = () => {
   const [generatedPayslips, setGeneratedPayslips] = useState([]);
   const [payslipDetails, setPayslipDetails] = useState(null);
 
+
   useEffect(() => {
     const fetchEmployees = async () => {
       setFetching(true);
@@ -39,13 +40,16 @@ const PayslipGenerator = () => {
     ? employees.filter(emp => emp.position === selectedPosition)
     : employees;
 
+
   const generatePayslip = async () => {
+
     if (!selectedEmployee || !selectedMonth) {
       message.error('Please select both employee and month');
       return;
     }
 
     setLoading(true);
+
     setGeneratedPayslips([]);
     setPayslipDetails(null);
 
@@ -209,10 +213,12 @@ const PayslipGenerator = () => {
       dataIndex: 'type', 
       key: 'type' 
     },
+  
     { 
       title: 'Amount', 
       dataIndex: 'amount', 
       key: 'amount',
+
       render: (amount) => {
         // Handle both positive and negative amounts
         const numAmount = Number(amount) || 0;
@@ -276,6 +282,7 @@ const PayslipGenerator = () => {
     return payslipDetails.GeneratedDate || 'Not specified';
   };
 
+
   return (
     <div className="section payslip">
       <h3>Payslip Generator</h3>
@@ -286,12 +293,15 @@ const PayslipGenerator = () => {
               <Select
                 placeholder="Select Position"
                 style={{ width: '100%' }}
+
                 value={selectedPosition}
                 onChange={value => {
                   setSelectedPosition(value);
                   setSelectedEmployee(null);
                   setGeneratedPayslips([]);
                   setPayslipDetails(null);
+
+             
                 }}
                 options={positions.map(pos => ({
                   value: pos,
@@ -301,6 +311,7 @@ const PayslipGenerator = () => {
               />
 
               <Select
+
                 placeholder="Select Employee (Optional for bulk generation)"
                 style={{ width: '100%' }}
                 value={selectedEmployee}
@@ -308,27 +319,33 @@ const PayslipGenerator = () => {
                   setSelectedEmployee(value);
                   setPayslipDetails(null);
                 }}
+
                 options={filteredEmployees.map(emp => ({
                   value: emp.employeeId,
                   label: `${emp.firstName} ${emp.lastName} (${emp.department})`
                 }))}
+
                 allowClear
+
               />
 
               <DatePicker 
                 picker="month" 
                 style={{ width: '100%' }} 
+
                 value={selectedMonth}
                 onChange={value => {
                   setSelectedMonth(value);
                   setPayslipDetails(null);
                 }}
+
                 placeholder="Select Month"
               />
             </div>
           </Card>
         </Spin>
         
+
         <div style={{ display: 'flex', gap: 10, marginBottom: 20 }}>
           <Button 
             className="generate-button"
@@ -395,6 +412,7 @@ const PayslipGenerator = () => {
                   </Table.Summary.Row>
                 );
               }}
+
             />
           </Card>
         )}

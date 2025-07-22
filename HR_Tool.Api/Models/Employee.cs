@@ -34,4 +34,6 @@ namespace HR_Tool.Api.Models
         public DateTime? CreatedAt { get; set; }
 
     }
+
 }
+
