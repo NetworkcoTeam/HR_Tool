@@ -415,7 +415,7 @@ namespace HR_Tool.Api.Controllers
             return stream.ToArray();
         }
 
-        private async Task<List<Employee>> GetActiveEmployees(string position = null)
+        private async Task<List<Employee>> GetActiveEmployees(string ?position = null)
         {
             var contractsResponse = await _supabase
                 .From<Contract>()
