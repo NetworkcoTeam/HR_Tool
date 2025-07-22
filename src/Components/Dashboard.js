@@ -103,7 +103,7 @@ const Dashboard = () => {
                 extra={
                   <Button 
                     type="link" 
-                    onClick={() => handleViewAll('/LeaveManagament')}
+                    onClick={() => handleViewAll('/LeaveManagement')}
                     className="view-all-button"
                   >
                     View All
