@@ -1,14 +1,41 @@
-import React from 'react';
-import Sidebar from '../Components/Sidebar'; 
-import ViewLeaveApplications from '../Components/ViewLeaveApplications.js';
-import './ViewLeave.css'
 
-const ViewLeavePage = () => {
+import Sidebar from '../Components/Sidebar'; 
+import ViewLeaveApplication from '../Components/ViewLeaveApplication.js'; 
+import LeaveForm from '../Components/LeaveForm';
+import './ViewLeave.css'
+import React, {useState } from 'react';
+
+
+
+function ViewLeavePage(){
+  const [showLeaveForm, setShowLeaveForm] = useState(true);
+
+   const handleClick  = () => {
+    if (showLeaveForm == false){
+      setShowLeaveForm(true);
+    }else{
+      setShowLeaveForm(false);
+    }
+    }
+   
+ 
+
   return (
     <div className="ViewLeave-container">
           <Sidebar />
+
+          
           <div className="viewLeave-main">
-            <ViewLeaveApplications />
+            <button onClick={handleClick}>
+          
+              View application form </button>
+            {showLeaveForm && <LeaveForm /> }
+
+            <div className="view-leave">
+            <ViewLeaveApplication /> 
+            </div>
+            
+            
           </div>
         </div>
   );
