@@ -27,6 +27,7 @@ const Dashboard = () => {
   const handleViewAll = (route) => navigate(route);
 
   return (
+
     <Layout style={{ minHeight: '100vh' }}>
       <Sidebar />
       <Layout className="site-layout">
@@ -127,6 +128,7 @@ const Dashboard = () => {
                 <Empty description="No appointments scheduled" />
               </Card>
             </div>
+
           </div>
         </Content>
       </Layout>

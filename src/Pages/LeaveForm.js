@@ -54,39 +54,35 @@ const Leave = () => {
     }
   }, [form]);
 
-const onFinish = async (values) => {
-  //setSubmitting(true);
-  try {
-    // Validate dates
-    if (!values.leaveStart || !values.leaveEnd) {
-      throw new Error('Please select both start and end dates');
-    }
 
+const onFinish = async (values) => {
+  try {
     // Calculate total days
     const startDate = values.leaveStart.toDate();
     const endDate = values.leaveEnd.toDate();
     const timeDiff = Math.abs(endDate.getTime() - startDate.getTime());
     const totalDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) + 1;
 
-    // Prepare the payload
 const payload = {
-  Name: values.name,
-  Surname: values.surname,
-  EmployeeId: userData?.idNumber || values.employeeId,
-  Position: values.position,
-  Department: values.department,
-  LeaveStart: values.leaveStart.toISOString(),
-  LeaveEnd: values.leaveEnd.toISOString(),
-  TotalDays: totalDays,
-  TypeOfLeave: values.leaveType,
-  OtherDetails: values.otherLeaveType || null,
-  DoctorsLetter: values.doctorsLetter?.[0]?.name || null,
-  FuneralLetter: values.funeralLetter?.[0]?.name || null
+  id: crypto.randomUUID(),
+  name: values.name || userData?.name || "",
+  surname: values.surname || userData?.surname || "",
+  employee_id: values.employeeId || userData?.idNumber || "",
+  position: values.position || "",
+  department: values.department || "",
+  leave_start: values.leaveStart.toISOString(),
+  leave_end: values.leaveEnd.toISOString(),
+  total_days: totalDays,
+  type_of_leave: values.leaveType || "",
+  status: "Pending",
+  other_details: values.otherLeaveType || "",
+  doctors_letter: values.doctorsLetter?.[0]?.name || "",
+  funeral_letter: values.funeralLetter?.[0]?.name || "",
+  created_at: new Date().toISOString()
 };
 
 
 
-    // Log the payload for debugging
     console.log('Submitting payload:', payload);
 
     const response = await fetch('http://localhost:5143/api/LeaveRequest', {
@@ -98,24 +94,27 @@ const payload = {
       body: JSON.stringify(payload)
     });
 
-    const responseData = await response.json();
+if (!response.ok) {
+      let errorMessage = 'Failed to submit leave request';
 
-    if (!response.ok) {
-      // Try to get error message from response
-      const errorMsg = responseData.message || 
-                      responseData.title || 
-                      'Failed to submit leave request';
-      throw new Error(errorMsg);
+      // Try to parse the response as JSON
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.message || JSON.stringify(errorData);
+      } catch (parseError) {
+        // If response isn't JSON
+        const text = await response.text();
+        errorMessage = text || errorMessage;
+      }
+
+      throw new Error(errorMessage);
     }
 
     message.success('Leave application submitted successfully!');
     form.resetFields();
-
   } catch (error) {
-    console.error('Error details:', error);
+    console.error('Full error:', error);
     message.error(`Submission failed: ${error.message}`);
-  } finally {
-  //  setSubmitting(false);
   }
 };
 
