@@ -1,4 +1,6 @@
+
 /*import React, { useEffect, useState } from 'react';
+
 import { Table, Button, Tag, message, Spin } from 'antd';
 import './LeaveRequestAdmin.css';
 
@@ -54,7 +56,6 @@ const LeaveRequestsAdmin = () => {
   useEffect(() => {
     fetchLeaveRequests();
   }, []);
-
 
 
   const columns = [
@@ -149,6 +150,7 @@ const LeaveRequestsAdmin = () => {
     </div>
   );
 };
+
 
 export default LeaveRequestsAdmin;*/
 import React, { useEffect, useState } from 'react';
@@ -302,3 +304,4 @@ const LeaveRequestsAdmin = () => {
 };
 
 export default LeaveRequestsAdmin;
+

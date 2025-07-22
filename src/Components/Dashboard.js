@@ -27,7 +27,6 @@ const Dashboard = () => {
   const handleViewAll = (route) => navigate(route);
 
   return (
-
     <Layout style={{ minHeight: '100vh' }}>
       <Sidebar />
       <Layout className="site-layout">
@@ -45,6 +44,9 @@ const Dashboard = () => {
           </div>
 
           <Divider />
+
+
+
 
           <div className="dashboard-grid">
             <div className="dashboard-row">
@@ -89,6 +91,7 @@ const Dashboard = () => {
                   </Button>
                 </div>
               </Card>
+
             </div>
 
             <div className="dashboard-row">

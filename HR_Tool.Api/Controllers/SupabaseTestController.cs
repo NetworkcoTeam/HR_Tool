@@ -8,8 +8,20 @@ using BCrypt.Net;
 [Route("api/[controller]")]
 public class RegisterController : ControllerBase
 {
-    private readonly string _url = "https://mdgmlbenfmvnfoamvwkr.supabase.co";
-    private readonly string _key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kZ21sYmVuZm12bmZvYW12d2tyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE5NjE5NDQsImV4cCI6MjA2NzUzNzk0NH0.92S3AWVWvVkdbJGqsuzFJW9j6nXHFOK43IvfXbkEFrE"; // don’t commit secrets!
+    private readonly Client _supabase;
+
+    public RegisterController()
+    {
+        var url = Environment.GetEnvironmentVariable("SUPABASE_URL");
+        var key = Environment.GetEnvironmentVariable("SUPABASE_KEY");
+
+        if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(key))
+        {
+            throw new Exception("Supabase environment variables (SUPABASE_URL or SUPABASE_KEY) are not set.");
+        }
+
+        _supabase = new Client(url, key);
+    }
 
     public class RegisterRequest
     {
@@ -34,11 +46,10 @@ public class RegisterController : ControllerBase
             return BadRequest(new { message = "All fields are required: Name, Surname, Email, Role, IdNumber, Password." });
         }
 
-        var supabase = new Client(_url, _key);
-        await supabase.InitializeAsync();
+        await _supabase.InitializeAsync();
 
         // Check if email exists
-        var existingUsers = await supabase.From<User>()
+        var existingUsers = await _supabase.From<User>()
             .Where(u => u.Email == request.Email)
             .Get();
 
@@ -60,7 +71,7 @@ public class RegisterController : ControllerBase
             PasswordHash = hashedPassword
         };
 
-        var insertResponse = await supabase.From<User>().Insert(newUser);
+        var insertResponse = await _supabase.From<User>().Insert(newUser);
 
         if (insertResponse.Models.Count == 0)
         {
