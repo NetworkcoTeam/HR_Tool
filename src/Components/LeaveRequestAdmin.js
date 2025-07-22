@@ -1,5 +1,6 @@
 /*import React, { useEffect, useState } from 'react';
 import { Table, Button, Tag, message, Spin } from 'antd';
+import './LeaveRequestAdmin.css';
 
 const LeaveRequestsAdmin = () => {
   const [leaveRequests, setLeaveRequests] = useState([]);
