@@ -4,6 +4,7 @@ import ViewLeaveApplication from '../Components/ViewLeaveApplication.js';
 import LeaveForm from '../Components/LeaveForm';
 import './ViewLeave.css'
 import React, {useState } from 'react';
+import {  Button } from 'antd';
 
 
 
@@ -26,9 +27,9 @@ function ViewLeavePage(){
 
           
           <div className="viewLeave-main">
-            <button onClick={handleClick}>
+            <Button  onClick={handleClick}>
           
-              View application form </button>
+              View application form </Button>
             {showLeaveForm && <LeaveForm /> }
 
             <div className="view-leave">
