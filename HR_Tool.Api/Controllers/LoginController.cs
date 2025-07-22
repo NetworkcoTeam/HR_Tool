@@ -50,7 +50,8 @@ public class LoginController : ControllerBase
             surname = user.Surname,
             email = user.Email,
             role = user.Role,
-            idNumber = user.IdNumber            
+            idNumber = user.IdNumber,
+            employeeId = user.EmployeeID            
         });
     }
 }

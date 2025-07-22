@@ -1,5 +1,6 @@
 import React from 'react';
 import Sidebar from '../Components/Sidebar'; 
+import Dashboard from '../Components/Dashboard';
 import LeaveApplications from '../Components/LeaveApplications.js';
 
 const LeaveManagementPage = () => {
@@ -7,7 +8,7 @@ const LeaveManagementPage = () => {
     <div className="admin-container">
           <Sidebar />
           <div className="dashboard-main">
-            <LeaveApplications />
+            <Dashboard />
           </div>
         </div>
   );

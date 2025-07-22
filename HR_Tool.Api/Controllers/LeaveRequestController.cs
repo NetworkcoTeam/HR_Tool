@@ -161,4 +161,56 @@ public async Task<IActionResult> UpdateLeaveRequestStatus(Guid id, [FromBody] Up
         return StatusCode(500, new { message = "Error updating status" });
     }
 }
+
+[HttpGet("employee/{employeeId}")]
+public async Task<IActionResult> GetLeaveRequestsByEmployeeId(string employeeId)
+{
+    if (string.IsNullOrWhiteSpace(employeeId))
+    {
+        _logger.LogWarning("Missing employeeId in request.");
+        return BadRequest(new { message = "Employee ID is required." });
+    }
+
+    try
+    {
+        var supabase = new Client(_url, _key);
+        await supabase.InitializeAsync();
+
+        var response = await supabase
+            .From<LeaveRequest>()
+            //.Filter(x => x.EmployeeId == employeeId)
+            .Filter("employee_id", Supabase.Postgrest.Constants.Operator.Equals, employeeId)
+            .Get();
+            
+        var dtos = response.Models?.Select(r => new LeaveRequestDto
+        {
+            Id = r.Id,
+            Name = r.Name,
+            Surname = r.Surname,
+            EmployeeId = r.EmployeeId,
+            Position = r.Position,
+            Department = r.Department,
+            TypeOfLeave = r.TypeOfLeave,
+            LeaveStart = r.LeaveStart,
+            LeaveEnd = r.LeaveEnd,
+            TotalDays = r.TotalDays,
+            Status = r.Status,
+            OtherDetails = r.OtherDetails,
+            DoctorsLetter = r.DoctorsLetter,
+            FuneralLetter = r.FuneralLetter,
+            CreatedAt = r.CreatedAt
+        }).ToList() ?? new List<LeaveRequestDto>();
+
+        return Ok(dtos);
+
+
+        //return Ok(response.Models);
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error fetching leave requests for employee {EmployeeId}", employeeId);
+        return StatusCode(500, new { message = "Error fetching leave requests" });
+    }
+}
+
 }
