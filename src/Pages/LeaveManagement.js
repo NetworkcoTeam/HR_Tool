@@ -1,17 +1,21 @@
 import React from 'react';
-import Sidebar from '../Components/Sidebar'; 
-import Dashboard from '../Components/Dashboard';
-import LeaveApplications from '../Components/LeaveApplications.js';
 
-const LeaveManagementPage = () => {
+import './LeaveManagement.css';
+import AdminSidebar from '../Components/AdminSidebar.js'; 
+import LeaveRequestAdmin from '../Components/LeaveRequestAdmin.js';
+
+
+const LeaveManagement = () => {
   return (
     <div className="admin-container">
-          <Sidebar />
+          <AdminSidebar />
           <div className="dashboard-main">
-            <Dashboard />
+
+            <LeaveRequestAdmin />
+
           </div>
         </div>
   );
 };
 
-export default LeaveManagementPage;
+export default LeaveManagement;
