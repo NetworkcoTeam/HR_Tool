@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+
 import { 
   Form, 
   Input, 
@@ -21,7 +22,7 @@ import {
   FileTextOutlined 
 } from '@ant-design/icons';
 import Sidebar from '../Components/Sidebar';
-import './LeaveForm.css';
+import '../Pages/LeaveForm.css';
 
 const { Content } = Layout;
 
@@ -139,6 +140,8 @@ if (!response.ok) {
     { label: 'Family Responsibility', value: 'family' },
     { label: 'Other', value: 'other' },
   ];
+
+  
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -310,7 +313,13 @@ if (!response.ok) {
                 </Button>
               </Form.Item>
             </Form>
+            
+ 
+            
+            
+            
           </div>
+          
         </Content>
       </Layout>
     </Layout>

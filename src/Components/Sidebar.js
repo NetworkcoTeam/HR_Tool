@@ -37,6 +37,11 @@ function Sidebar() {
           <FaCalendarCheck className="sidebar-icon" />
           <span>Leave Form</span>
         </li>
+         
+        <li onClick={() => handleNavigation('/viewleave')}>
+          <FaCalendarCheck className="sidebar-icon" />
+          <span>View Leave application</span>
+        </li>
         
         <li onClick={() => handleNavigation('/appointments')}>
           <FaCalendarCheck className="sidebar-icon" />
