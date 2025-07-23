@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Layout, 
-  Card, 
-  Button, 
-  List, 
-  Tag, 
-  Divider, 
+import {
+  Layout,
+  Card,
+  Button,
+  List,
+  Tag,
+  Divider,
   Avatar,
   Spin,
   message,
-  Empty
+  Empty,
+  Modal
 } from 'antd';
-import { 
-  CheckCircleOutlined, 
-  FilePdfOutlined, 
+import {
+  CheckCircleOutlined,
+  FilePdfOutlined,
+  EyeOutlined,
   ClockCircleOutlined,
   CalendarOutlined,
   PlusOutlined,
@@ -22,6 +24,8 @@ import {
 } from '@ant-design/icons';
 import Sidebar from '../Components/Sidebar';
 import './Home.css';
+
+const API_BASE = 'http://localhost:5143';
 
 const { Content } = Layout;
 
@@ -32,55 +36,186 @@ const Home = () => {
   const [leaveData, setLeaveData] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [error, setError] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [currentPayslipDetails, setCurrentPayslipDetails] = useState(null);
+
+  const employeeId = 2223655;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
+    
+        // Fetch payslips from backend API
+        const payslipsResponse = await fetch(`${API_BASE}/api/Payslips/employee/${employeeId}/payslips`);
+    
+        if (!payslipsResponse.ok) {
+          throw new Error(`HTTP error! status: ${payslipsResponse.status}`);
+        }
+    
+        const payslipsJson = await payslipsResponse.json();
         
-        // Fetch from localStorage (replace with actual API calls if needed)
-        const storedTodo = localStorage.getItem('employee_todos');
-        const storedPayslips = localStorage.getItem('employee_payslips');
-        const storedLeaves = localStorage.getItem('employee_leaves');
-        const storedAppointments = localStorage.getItem('employee_appointments');
-
-        // Parse data with fallback to empty array
-        setTodoData(storedTodo ? JSON.parse(storedTodo) : []);
-        setPayslipData(storedPayslips ? JSON.parse(storedPayslips) : []);
-        setLeaveData(storedLeaves ? JSON.parse(storedLeaves) : []);
-        setAppointments(storedAppointments ? JSON.parse(storedAppointments) : []);
-
+        console.log("Raw payslips response:", payslipsJson); // Debugging
+        
+        if (payslipsJson.success) {
+          const parseDate = (dateStr) => {
+            if (!dateStr) return new Date();
+            
+            if (dateStr instanceof Date) {
+              return dateStr;
+            }
+            
+            if (typeof dateStr === 'string') {
+              // Try parsing as ISO string
+              const isoDate = new Date(dateStr);
+              if (!isNaN(isoDate.getTime())) {
+                return isoDate;
+              }
+              
+              // Try parsing as date part only (YYYY-MM-DD)
+              const dateParts = dateStr.split('T')[0].split('-');
+              if (dateParts.length === 3) {
+                return new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+              }
+            }
+            
+            return new Date();
+          };
+  
+          const processedPayslips = payslipsJson.payslips.map(payslip => {
+            const periodEndDate = parseDate(payslip.periodEnd);
+            const periodStartDate = parseDate(payslip.periodStart);
+  
+            return {
+              ...payslip,
+              MonthName: periodEndDate.toLocaleString('default', { month: 'long' }),
+              MonthNumber: periodEndDate.getMonth() + 1,
+              Year: periodEndDate.getFullYear(),
+              FormattedPeriodEnd: periodEndDate.toLocaleDateString('en-US', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric'
+              }),
+              FormattedPeriodStart: periodStartDate.toLocaleDateString('en-US', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric'
+              }),
+              RawPeriodEnd: periodEndDate,
+              RawPeriodStart: periodStartDate
+            };
+          });
+    
+          // Sort by date descending
+          const sortedPayslips = processedPayslips.sort((a, b) => 
+            b.RawPeriodEnd - a.RawPeriodEnd
+          );
+    
+          setPayslipData(sortedPayslips);
+        } else {
+          message.error(payslipsJson.error || 'Failed to fetch payslips');
+          setPayslipData([]);
+        }
+    
+        // Mock data for other sections
+        setTodoData([]);
+        setLeaveData([]);
+        setAppointments([]);
+    
       } catch (err) {
         console.error('Failed to load data:', err);
         setError('Failed to load dashboard data');
-        message.error('Failed to load dashboard data');
+        message.error('Failed to load dashboard data: ' + err.message);
+        setPayslipData([]);
+        setTodoData([]);
+        setLeaveData([]);
+        setAppointments([]);
       } finally {
         setLoading(false);
       }
     };
-
     fetchData();
-  }, []);
+  }, [employeeId]);
 
   const handleAddTodo = () => {
-    // Implement your todo addition logic here
-    // This would typically open a modal or navigate to a todo form
     message.info('Add todo functionality would be implemented here');
   };
 
-  const handleDownloadPayslip = (payslipId) => {
+  const handleViewPayslip = async (year, month) => {
     try {
-      // Implement payslip download logic
-      message.success(`Downloading payslip ${payslipId}`);
+      message.loading('Fetching payslip details...', 0);
+      const response = await fetch(`${API_BASE}/api/Payslips/view/${employeeId}/${year}/${month}`);
+  
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        throw new Error(errorResponse.error || 'Failed to fetch payslip');
+      }
+  
+      const result = await response.json();
+      console.log("View Payslip API result:", result);
+
+      message.destroy();
+
+      if (result.success && result.payslip) {
+        setCurrentPayslipDetails({
+          employeeName: result.payslip.employeeName,
+          position: result.payslip.position,
+          period: `${result.payslip.periodStart} - ${result.payslip.periodEnd}`,
+          basicSalary: result.payslip.basicSalary,
+          taxAmount: result.payslip.taxAmount,
+          uif: result.payslip.uif,
+          netSalary: result.payslip.netSalary,
+          generatedDate: result.payslip.generatedDate
+        });
+        setIsModalVisible(true);
+      } else {
+        message.error(result.error || 'No payslip data available');
+      }
     } catch (err) {
-      message.error('Failed to download payslip');
+      message.destroy();
+      console.error('Payslip view error:', err);
+      message.error(err.message || 'Failed to fetch payslip details');
+    }
+  };
+
+  const handleDownloadPayslip = async (year, month) => {
+    try {
+      const loadingMessage = message.loading('Downloading payslip...', 0);
+      const response = await fetch(`${API_BASE}/api/Payslips/download/${employeeId}/${year}/${month}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error ${response.status}`);
+      }
+  
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `Payslip_${month}_${year}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      
+      setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        loadingMessage();
+        message.success('Payslip downloaded successfully!');
+      }, 100);
+      
+    } catch (err) {
+      message.destroy();
+      message.error(`Download failed: ${err.message}`);
       console.error('Payslip download error:', err);
     }
   };
 
   const handleApplyLeave = () => {
-    // Implement leave application navigation
     message.info('Navigate to leave application form');
+  };
+
+  const handleModalCancel = () => {
+    setIsModalVisible(false);
+    setCurrentPayslipDetails(null);
   };
 
   if (error) {
@@ -111,11 +246,11 @@ const Home = () => {
           <div className="dashboard-header">
             <h1>Employee Dashboard</h1>
             <div className="current-date">
-              <CalendarOutlined /> {new Date().toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
+              <CalendarOutlined /> {new Date().toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
               })}
             </div>
           </div>
@@ -131,13 +266,13 @@ const Home = () => {
             <div className="dashboard-grid">
               {/* First Row */}
               <div className="dashboard-row">
-                <Card 
-                  title="TO DO LIST" 
+                <Card
+                  title="TO DO LIST"
                   className="dashboard-card"
                   extra={
-                    <Button 
-                      type="primary" 
-                      icon={<PlusOutlined />} 
+                    <Button
+                      type="primary"
+                      icon={<PlusOutlined />}
                       size="small"
                       onClick={handleAddTodo}
                     >
@@ -152,8 +287,8 @@ const Home = () => {
                         <List.Item>
                           <List.Item.Meta
                             avatar={
-                              <Button 
-                                shape="circle" 
+                              <Button
+                                shape="circle"
                                 icon={item.completed ? <CheckCircleOutlined style={{ color: '#52c41a' }} /> : <ClockCircleOutlined />}
                                 type="text"
                               />
@@ -169,29 +304,32 @@ const Home = () => {
                   )}
                 </Card>
 
-                <Card 
-                  title="PAYSLIPS" 
-                  className="dashboard-card"
-                >
+                <Card title="PAYSLIPS" className="dashboard-card">
                   {payslipData.length > 0 ? (
                     <List
                       dataSource={payslipData}
                       renderItem={(item) => (
                         <List.Item
                           actions={[
-                            <Button 
-                              type="link" 
-                              icon={<FilePdfOutlined />}
-                              onClick={() => handleDownloadPayslip(item.id)}
-                              disabled={item.downloaded}
+                            <Button
+                              icon={<EyeOutlined />}
+                              type="link"
+                              onClick={() => handleViewPayslip(item.Year, item.MonthNumber)} 
                             >
-                              {item.downloaded ? 'Downloaded' : 'Download'}
+                              View
+                            </Button>,
+                            <Button
+                              type="primary"
+                              icon={<FilePdfOutlined />}
+                              onClick={() => handleDownloadPayslip(item.Year, item.MonthNumber)}
+                            >
+                              Download
                             </Button>
                           ]}
                         >
                           <List.Item.Meta
-                            title={item.month}
-                            description={item.year || ''}
+                            title={`${item.MonthName} ${item.Year}`}
+                            description={`Pay Date: ${item.FormattedPeriodEnd}`}
                           />
                         </List.Item>
                       )}
@@ -204,8 +342,8 @@ const Home = () => {
 
               {/* Second Row */}
               <div className="dashboard-row">
-                <Card 
-                  title="LEAVE STATUS" 
+                <Card
+                  title="LEAVE STATUS"
                   className="dashboard-card"
                 >
                   {leaveData.length > 0 ? (
@@ -216,7 +354,7 @@ const Home = () => {
                           <List.Item>
                             <List.Item.Meta
                               avatar={
-                                <Tag color={item.status === 'approved' ? 'success' : 
+                                <Tag color={item.status === 'approved' ? 'success' :
                                     item.status === 'pending' ? 'processing' : 'error'}>
                                   {item.status.toUpperCase()}
                                 </Tag>
@@ -227,9 +365,9 @@ const Home = () => {
                           </List.Item>
                         )}
                       />
-                      <Button 
-                        type="dashed" 
-                        block 
+                      <Button
+                        type="dashed"
+                        block
                         icon={<PlusOutlined />}
                         onClick={handleApplyLeave}
                       >
@@ -245,13 +383,13 @@ const Home = () => {
                   )}
                 </Card>
 
-                <Card 
+                <Card
                   title={
                     <div className="appointments-header">
                       <span>APPOINTMENTS</span>
                       <Tag color="blue">Today</Tag>
                     </div>
-                  } 
+                  }
                   className="dashboard-card"
                 >
                   {appointments.length > 0 ? (
@@ -261,8 +399,8 @@ const Home = () => {
                         <List.Item>
                           <List.Item.Meta
                             avatar={
-                              <Avatar 
-                                icon={<UserOutlined />} 
+                              <Avatar
+                                icon={<UserOutlined />}
                                 style={{ backgroundColor: item.type === 'internal' ? '#1890ff' : '#722ed1' }}
                               />
                             }
@@ -284,6 +422,33 @@ const Home = () => {
               </div>
             </div>
           )}
+
+          {/* Payslip Details Modal */}
+          <Modal
+            title="Payslip Details"
+            visible={isModalVisible}
+            onCancel={handleModalCancel}
+            footer={[
+              <Button key="back" onClick={handleModalCancel}>
+                Close
+              </Button>
+            ]}
+          >
+            {currentPayslipDetails ? (
+              <div>
+                <p><strong>Employee Name:</strong> {currentPayslipDetails.employeeName || 'N/A'}</p>
+                <p><strong>Position:</strong> {currentPayslipDetails.position || 'N/A'}</p>
+                <p><strong>Period:</strong> {currentPayslipDetails.period || 'N/A'}</p>
+                <p><strong>Basic Salary:</strong> R{(currentPayslipDetails.basicSalary || 0).toFixed(2)}</p>
+                <p><strong>Tax Amount:</strong> R{(currentPayslipDetails.taxAmount || 0).toFixed(2)}</p>
+                <p><strong>UIF:</strong> R{(currentPayslipDetails.uif || 0).toFixed(2)}</p>
+                <p><strong>Net Salary:</strong> R{(currentPayslipDetails.netSalary || 0).toFixed(2)}</p>
+                <p><strong>Generated Date:</strong> {currentPayslipDetails.generatedDate || 'N/A'}</p>
+              </div>
+            ) : (
+              <Empty description="No payslip details available" />
+            )}
+          </Modal>
         </Content>
       </Layout>
     </Layout>
