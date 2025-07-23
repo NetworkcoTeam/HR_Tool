@@ -132,7 +132,6 @@ public class AppointmentController : ControllerBase
         }
     }
 
-    // Get appointments by employee ID (for Employee dashboard)
     [HttpGet("employee/{employeeId}")]
     public async Task<IActionResult> GetAppointmentsByEmployee(int employeeId)
     {
@@ -164,42 +163,6 @@ public class AppointmentController : ControllerBase
         {
             _logger.LogError(ex, "Error fetching appointments for employee {EmployeeId}", employeeId);
             return StatusCode(500, new { message = "Error fetching employee appointments" });
-        }
-    }
-
-    // Get today's appointments (for dashboard widgets)
-    [HttpGet("today")]
-    public async Task<IActionResult> GetTodaysAppointments()
-    {
-        try
-        {
-            var today = DateTime.Today;
-            var response = await _supabase.From<Appointment>()
-                .Select("*")
-                .Where(x => x.AppointmentDate.Date == today)
-                .Order("start_time", Supabase.Postgrest.Constants.Ordering.Ascending)
-                .Get();
-
-            var dtos = response.Models?.Select(a => new AppointmentDto
-            {
-                AppointmentId = a.AppointmentId,
-                EmployeeId = a.EmployeeId,
-                Subject = a.Subject,
-                Description = a.Description,
-                AppointmentDate = a.AppointmentDate,
-                StartTime = a.StartTime,
-                EndTime = a.EndTime,
-                ContactNumber = a.ContactNumber,
-                Status = a.Status,
-                CreatedAt = a.CreatedAt
-            }).ToList() ?? new List<AppointmentDto>();
-
-            return Ok(dtos);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error fetching today's appointments");
-            return StatusCode(500, new { message = "Error fetching today's appointments" });
         }
     }
 
