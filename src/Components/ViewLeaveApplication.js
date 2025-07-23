@@ -9,7 +9,7 @@ export default function ViewLeaveApplication(){
   const fetchLeaveRequests = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5143/api');
+      const res = await fetch('http://localhost:5143/api/LeaveRequest/all');
       if (!res.ok) {
         throw new Error('Failed to fetch leave requests' );
       }
@@ -119,7 +119,7 @@ export default function ViewLeaveApplication(){
           loading={loading}
         />
       </Spin>
-      <Button type='primary' variant='solid' size='large' onClick={fetchLeaveRequests}> view applications</Button>
+      <Button type='primary' variant='solid' size='large' onClick={leaveRequests}> view applications</Button>
       
     </div>
   );
