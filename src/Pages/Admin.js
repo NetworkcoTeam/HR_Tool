@@ -1,4 +1,5 @@
 import React from 'react';
+import { Layout } from 'antd';
 import Dashboard from '../Components/Dashboard';
 import AdminSidebar from '../Components/AdminSidebar';
 import './Admin.css';
@@ -7,9 +8,9 @@ function Admin() {
   return (
     <div className="admin-container">
       <AdminSidebar />
-      <div className="dashboard-main">
+      <Layout className="site-layout">
         <Dashboard />
-      </div>
+      </Layout>
     </div>
   );
 }
