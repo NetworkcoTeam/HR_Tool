@@ -2,12 +2,20 @@
   display: flex;
   min-height: 100vh;
   width: 100%;
-  background: white;
+  background: #f0f2f5;
+  overflow-x: hidden;
 }
 
-.dashboard-main {
+.site-layout {
   flex: 1;
-  padding: 20px;
-  overflow: auto;
-  margin-left: 250px; 
+  background: #f0f2f5;
+  margin-left: 250px;
+  transition: margin 0.2s;
+  min-height: 100vh;
+}
+
+@media (max-width: 992px) {
+  .site-layout {
+    margin-left: 0;
+  }
 }

@@ -1,90 +1,132 @@
-.site-layout {
-  margin-left: 200px;
-  background: #f0f2f5;
-}
-
-.dashboard-content {
-  margin: 24px 16px;
+.home-content {
   padding: 24px;
-  min-height: 280px;
+  min-height: calc(100vh - 48px);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .dashboard-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  background: white;
+  padding: 16px 24px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.dashboard-header h2 {
+.dashboard-header h1 {
   margin: 0;
   color: #1890ff;
 }
 
 .current-date {
   color: #666;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .dashboard-grid {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 24px;
-}
-
-.dashboard-row {
-  display: flex;
-  gap: 24px;
+  width: 100%;
 }
 
 .dashboard-card {
-  flex: 1;
+  background: white;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+  min-height: 250px;
   display: flex;
   flex-direction: column;
+  border: none;
 }
 
+/* Card Header Styles */
 .dashboard-card .ant-card-head {
-  border-bottom: none;
+  border-bottom: 1px solid #f0f0f0;
+  padding: 0 16px;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+}
+
+.dashboard-card .ant-card-head-title {
+  padding: 12px 0;
+  font-weight: 500;
+  white-space: normal;
+}
+
+.dashboard-card .ant-card-extra {
+  padding: 12px 0;
+  align-self: center;
 }
 
 .dashboard-card .ant-card-body {
   flex: 1;
   display: flex;
   flex-direction: column;
+  padding: 16px;
 }
 
-.dashboard-card .ant-card-head-title {
-  font-weight: 500;
-}
-
-.card-icon {
-  margin-right: 8px;
-  color: #1890ff;
-}
-
-.payslip-content {
+.card-content {
+  flex: 1;
   display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+/* Empty State Styles */
+.dashboard-card .ant-empty {
+  display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   flex: 1;
-  padding: 20px 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
+.dashboard-card .ant-empty-image {
+  height: 60px;
+  margin-bottom: 8px;
+}
+
+.dashboard-card .ant-empty-description {
+  margin: 8px 0 16px;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+/* Button Styles */
 .generate-button {
-  background: #1890ff;
-  border-color: #1890ff;
-  height: 40px;
+  width: auto;
+  min-width: 200px;
+  margin: 16px auto 0;
   padding: 0 24px;
-}
-
-.generate-button:hover {
-  background: #40a9ff;
-  border-color: #40a9ff;
+  height: 40px;
 }
 
 .view-all-button {
   color: #1890ff;
+  font-weight: 500;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-icon {
+  color: #1890ff;
+  font-size: 16px;
 }
 
 .appointments-header {
@@ -93,19 +135,52 @@
   gap: 12px;
 }
 
+/* Loading and Error States */
+.loading-state, .error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 50vh;
+  text-align: center;
+}
+
+.error-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+/* Responsive Styles */
 @media (max-width: 992px) {
-  .dashboard-row {
-    flex-direction: column;
+  .home-content {
+    padding: 16px;
   }
   
-  .site-layout {
-    margin-left: 0;
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .dashboard-header {
+    padding: 16px;
+  }
+
+  .dashboard-card .ant-card-head {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-bottom: 8px;
+  }
+
+  .dashboard-card .ant-card-extra {
+    width: 100%;
+    margin-top: 8px;
+    padding: 0;
   }
 }
 
 @media (max-width: 576px) {
-  .dashboard-content {
-    margin: 12px;
+  .home-content {
     padding: 12px;
   }
   
@@ -113,9 +188,15 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
+    padding: 12px;
   }
   
+  .dashboard-card {
+    min-height: 220px;
+  }
+
   .generate-button {
     width: 100%;
+    max-width: 200px;
   }
 }
