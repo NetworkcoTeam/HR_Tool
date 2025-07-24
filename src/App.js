@@ -1,5 +1,5 @@
 
-import LeaveRequestsAdmin from './Components/LeaveRequestAdmin';
+import LeaveRequestsAdmin   from './Components/LeaveRequestAdmin';
 import Home from './Pages/Home';
 import LeaveForm from './Components/LeaveForm';
 import{Routes,Route} from 'react-router-dom';
@@ -32,6 +32,7 @@ function App() {
         <Route path="/PayslipManagement" element={<PayslipPage/>}/>
         <Route path="/Profile" element={<Profile/>}/>
         <Route path="/AppointmentBooking" element={<AppointmentBooking/>}/>
+         <Route path="/leaveRequestAdmin" element={<LeaveRequestsAdmin/>}/>
 
       </Routes>
       
