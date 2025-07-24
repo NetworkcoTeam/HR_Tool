@@ -9,7 +9,7 @@ import {  Button } from 'antd';
 
 
 function ViewLeavePage(){
-  const [showLeaveForm, setShowLeaveForm] = useState(true);
+  const [showLeaveForm, setShowLeaveForm] = useState(false);
 
    const handleClick  = () => {
     if (showLeaveForm == false){
