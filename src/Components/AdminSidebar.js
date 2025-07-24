@@ -23,22 +23,22 @@ function AdminSidebar() {
           <span>Profile</span>
         </li>
         
-        <li onClick={() => handleNavigation('/payslip')}>
+        <li onClick={() => handleNavigation('/PayslipManagement')}>
           <FaFileInvoiceDollar className="sidebar-icon" />
           <span>Payslip</span>
         </li>
         
-        <li onClick={() => handleNavigation('/documents')}>
+        {/* <li onClick={() => handleNavigation('/documents')}>
           <FaFolder className="sidebar-icon" />
           <span>Documents</span>
-        </li>
+        </li> */}
         
-        <li onClick={() => handleNavigation('/leaveRequestAdmin')}>
+        <li onClick={() => handleNavigation('/leaveManagement')}>
           <FaCalendarCheck className="sidebar-icon" />
           <span>Leave Form</span>
         </li>
         
-        <li onClick={() => handleNavigation('/appointments')}>
+        <li onClick={() => handleNavigation('/appointmentBooking')}>
           <FaCalendarCheck className="sidebar-icon" />
           <span>Book Appointment</span>
         </li>
