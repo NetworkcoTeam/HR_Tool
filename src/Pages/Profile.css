@@ -1,0 +1,60 @@
+body{
+    background-color: #F6F6F6F6;
+}
+.employeeid{
+flex-basis: 50%;
+}
+.position, .status, .employeeid, .department , .surname, .Name , .email, .dob {
+    flex-basis: 50%;
+}
+.Personal-details-second{
+    margin-top: 20px;
+    margin-bottom: 100px;
+    
+}
+.job-details-second{
+    margin-top: 20px;
+}
+
+
+.Profile{
+    color: #161c70;
+    background-color: white;
+    width:800px;
+    height:700px;
+    font-size: 23px;
+    padding: 100px;
+    border-radius: 10px;
+    margin-left: 400px;
+    margin-top: 30px;
+    
+}
+.avatar{
+    width: 60px;
+}
+
+
+label{
+    color:grey;
+}
+
+
+.job-details{
+    margin-top: 10px;
+    background-color: white;
+    border-radius:10px;
+    height: 50px;
+}
+
+.personal-details{
+    height:70px;
+}
+
+
+
+
+
+
+
+
+
