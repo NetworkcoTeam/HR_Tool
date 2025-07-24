@@ -12,9 +12,9 @@ return(
         
         <Divider></Divider>
         
-        <>
-        <Avatar style={{fontSize:'30px'}}size={64} icon={<UserOutlined/> } className='avatar'/>
-        </>
+        <Space gap='small'>
+        <Avatar size={90} icon={<UserOutlined/> } className='avatar'/>
+        </Space>
         <div className='personal-details'>
         <Flex horizontal gap='middle' >
         <label className='Name'> Name:</label>
