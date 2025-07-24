@@ -1,6 +1,7 @@
 using DotNetEnv;
-using System.Text.Json; // Add this using directive
 
+using System.Text.Json; // Add this using directive
+using HR_Tool.Api.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add this configuration for JSON serialization
@@ -12,10 +13,14 @@ builder.Services.AddControllers()
     });
 
 // Rest of your existing services...
+
 Env.Load(@"..\Backend\.env"); // Adjust path if needed
 
 // Add services to the container.
 builder.Services.AddControllers();
+
+builder.Services.AddControllers();
+builder.Services.AddScoped<PayslipCalculator>();
 
 // Add Swagger support via Swashbuckle
 builder.Services.AddSwaggerGen();
@@ -33,6 +38,7 @@ var app = builder.Build();
 
 app.UseCors("AllowFrontend");
 
+
 var supabaseUrl = "https://mdgmlbenfmvnfoamvwkr.supabase.co";
 var supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kZ21sYmVuZm12bmZvYW12d2tyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE5NjE5NDQsImV4cCI6MjA2NzUzNzk0NH0.92S3AWVWvVkdbJGqsuzFJW9j6nXHFOK43IvfXbkEFrE";
 
@@ -40,6 +46,7 @@ if (string.IsNullOrEmpty(supabaseUrl) || string.IsNullOrEmpty(supabaseKey))
 {
     Console.WriteLine("Supabase environment variables are missing!");
 }
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

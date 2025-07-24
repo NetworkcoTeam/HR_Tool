@@ -33,7 +33,7 @@ function AdminSidebar() {
           <span>Documents</span>
         </li>
         
-        <li onClick={() => handleNavigation('/leaveForm')}>
+        <li onClick={() => handleNavigation('/leaveRequestAdmin')}>
           <FaCalendarCheck className="sidebar-icon" />
           <span>Leave Form</span>
         </li>
