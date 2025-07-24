@@ -1,0 +1,159 @@
+/* Appointment.css */
+.appointments-container {
+  margin: 24px 16px;
+  padding: 24px;
+  background: #fff;
+  min-height: 280px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+}
+
+.appointments-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.appointments-header h1 {
+  margin: 0;
+  color: #1890ff;
+}
+
+/* Form Styles */
+.appointment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: #333;
+}
+
+.form-input {
+  padding: 8px 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  width: 100%;
+  background: #fff;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+.required-field-note {
+  color: #666;
+  font-size: 0.9em;
+  margin-top: 16px;
+  font-style: italic;
+}
+
+/* Table Styles */
+.ant-table {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+}
+
+.ant-table-thead > tr > th {
+  background-color: #f0f2f5;
+  font-weight: 500;
+  color: #333;
+}
+
+.ant-table-tbody > tr > td {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* Modal Styles */
+.ant-modal-header {
+  background: #f0f2f5;
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+}
+
+.ant-modal-title {
+  color: #1890ff;
+  font-weight: 500;
+}
+
+.ant-modal-body {
+  padding: 24px;
+  background: #fff;
+}
+
+/* Button Styles */
+.ant-btn-primary {
+  background: #1890ff;
+  border-color: #1890ff;
+}
+
+.ant-btn-primary:hover {
+  background: #40a9ff;
+  border-color: #40a9ff;
+}
+
+/* Status Tags */
+.ant-tag {
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.ant-tag-green {
+  background: #f6ffed;
+  border-color: #b7eb8f;
+  color: #52c41a;
+}
+
+.ant-tag-orange {
+  background: #fff7e6;
+  border-color: #ffd591;
+  color: #fa8c16;
+}
+
+.ant-tag-red {
+  background: #fff1f0;
+  border-color: #ffa39e;
+  color: #f5222d;
+}
+
+/* Empty State */
+.ant-empty {
+  color: #999;
+}
+
+/* Responsive Styles */
+@media (max-width: 992px) {
+  .appointments-container {
+    margin: 16px;
+    padding: 16px;
+  }
+}
+
+@media (max-width: 576px) {
+  .appointments-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .appointment-form {
+    gap: 16px;
+  }
+  
+  .home-content {
+    margin: 12px;
+    padding: 12px;
+  }
+}

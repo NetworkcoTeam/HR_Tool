@@ -12,6 +12,7 @@ import LeaveManagement from './Pages/LeaveManagement';
 import ViewLeavePage from './Pages/ViewLeave';
 import PayslipPage from './Pages/PayslipManagement';
 import Profile from './Pages/Profile';
+import AppointmentBooking from './Pages/AppointmentBooking';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
         <Route path="/LeaveManagement" element={<LeaveManagement/>}/>
         <Route path="/PayslipManagement" element={<PayslipPage/>}/>
         <Route path="/Profile" element={<Profile/>}/>
+        <Route path="/AppointmentBooking" element={<AppointmentBooking/>}/>
 
       </Routes>
       

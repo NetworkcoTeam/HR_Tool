@@ -127,6 +127,15 @@ const Dashboard = () => {
                   </div>
                 }
                 className="dashboard-card"
+                extra={
+                  <Button 
+                    type="link" 
+                    onClick={() => handleViewAll('/LeaveManagement')}
+                    className="view-all-button"
+                  >
+                    View All
+                  </Button>
+                }
               >
                 <Empty description="No appointments scheduled" />
               </Card>
