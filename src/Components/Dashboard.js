@@ -83,7 +83,7 @@ const Dashboard = () => {
                 <Button
                   ghost
                   type="primary" 
-                  onClick={() => handleViewAll('/payslipManagement')}
+                  onClick={() => handleViewAll('/registrationRequest')}
                   className="generate-button"
                 >
                   View All
