@@ -42,6 +42,11 @@ function Sidebar() {
           <FaCalendarCheck className="sidebar-icon" />
           <span>Book Appointment</span>
         </li>
+
+        <li onClick={() => handleNavigation('/HRAdminForm')}>
+          <FaCalendarCheck className="sidebar-icon" />
+          <span>HR Admission</span>
+        </li>
         
         <li className="logout" onClick={() => handleNavigation('/logout')}>
           <FaRightFromBracket className="sidebar-icon" />

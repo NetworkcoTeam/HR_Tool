@@ -15,6 +15,7 @@ import LeaveManagement from './Pages/LeaveManagement';
 import PayslipManagement from './Pages/PayslipManagement';
 
 import AppointmentBooking from './Pages/AppointmentBooking';
+import Profile from './Pages/Profile';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
 
         <Route path="/home" element={<HomeLayout />}>
         <Route path="/home" element={<Home />}/> </Route>
+        <Route path="/Profile" element={<Profile/>}/>
 
         <Route path="/leaveForm" element={<LeaveForm/>}/>
         <Route path="/Admin" element={<Admin/>}/>

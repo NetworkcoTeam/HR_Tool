@@ -11,7 +11,8 @@ import {
   Col,
   message,
   Card,
-  Spin
+  Spin,
+  Alert
 } from 'antd';
 import { 
   UserOutlined, 
@@ -33,9 +34,27 @@ const HrAdminForm = () => {
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState(null);
   const [searchIdNumber, setSearchIdNumber] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
-  // Fetch user data when ID number is searched
-  // In HRAdminForm.js
+  // Check if user is admin on component mount
+  useEffect(() => {
+    const checkAdminStatus = () => {
+      try {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (user && user.role === 'admin') {
+          setIsAdmin(true);
+        }
+      } catch (error) {
+        console.error('Error checking admin status:', error);
+      } finally {
+        setIsCheckingAuth(false);
+      }
+    };
+
+    checkAdminStatus();
+  }, []);
+
   const fetchUserData = async () => {
     try {
       setLoading(true);
@@ -43,13 +62,12 @@ const HrAdminForm = () => {
       const data = await response.json();
       
       if (response.ok) {
-        // Debug: Check what data actually contains
         console.log("API Response:", data);
         
         setUserData(data);
         form.setFieldsValue({
-          employeeFirstName: data.name,      // Now matches the response
-          employeeLastName: data.surname,   // Now matches the response
+          employeeFirstName: data.name,
+          employeeLastName: data.surname,
           userIdNumber: searchIdNumber
         });
         message.success('User found! Please complete the form');
@@ -64,12 +82,10 @@ const HrAdminForm = () => {
     }
   };
 
-  // Handle form submission
   const handleSubmit = async (values) => {
     try {
       setLoading(true);
       
-      // Prepare the request data
       const requestData = {
         userIdNumber: values.userIdNumber,
         employeeFirstName: values.employeeFirstName,
@@ -106,6 +122,35 @@ const HrAdminForm = () => {
       setLoading(false);
     }
   };
+
+  if (isCheckingAuth) {
+    return (
+      <Layout style={{ minHeight: '100vh' }}>
+        <Sidebar />
+        <Content style={{ margin: '0 16px' }}>
+          <Spin size="large" />
+        </Content>
+      </Layout>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <Layout style={{ minHeight: '100vh' }}>
+        <Sidebar />
+        <Content style={{ margin: '0 16px' }}>
+          <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
+            <Alert
+              message="Access Denied"
+              description="You don't have permission to access this page. Only HR administrators can perform employee admissions."
+              type="error"
+              showIcon
+            />
+          </div>
+        </Content>
+      </Layout>
+    );
+  }
 
   return (
     <Layout style={{ minHeight: '100vh' }}>

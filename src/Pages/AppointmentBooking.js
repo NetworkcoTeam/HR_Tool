@@ -1,16 +1,37 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Layout } from 'antd';
 import Sidebar from '../Components/Sidebar';
 import AdminSidebar from '../Components/AdminSidebar';
 import Appointment from '../Components/Appointment';
 import './AppointmentBooking.css';
 
-const { Header, Content, Sider } = Layout;
+const { Content, Sider } = Layout;
 
 const AppointmentBooking = () => {
-  // In a real app, you would get this from authentication context or localStorage
-  const [userRole, setUserRole] = useState('admin'); // Change to 'user' to test regular sidebar
+  const [userRole, setUserRole] = useState(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('role');
+    console.log("Raw stored role from localStorage:", stored);
   
+    try {
+      if (stored.startsWith('{')) {
+        
+        const parsed = JSON.parse(stored);
+        setUserRole(parsed.role);
+        console.log("Parsed role from JSON:", parsed.role);
+      } else {
+        
+        setUserRole(stored);
+        console.log("Set role directly:", stored);
+      }
+    } catch (err) {
+      console.error("Error parsing role from localStorage", err);
+    }
+  }, []);
+  
+  if (!userRole) return null; 
+
   return (
     <Layout className="appointment-booking-layout">
       <Sider width={250} className="sidebar">

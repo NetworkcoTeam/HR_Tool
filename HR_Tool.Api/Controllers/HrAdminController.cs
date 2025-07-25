@@ -21,10 +21,6 @@ namespace HR_Tool.Api.Controllers
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        /// <summary>
-        /// Get user details by ID Number for pre-filling the HR form
-        /// </summary>
-        // In HrAdminController.cs
 [HttpGet("user/{idNumber}")]
 public async Task<ActionResult<UserDetailsDto>> GetUserByIdNumber(string idNumber)
 {
@@ -67,16 +63,11 @@ public async Task<ActionResult<UserDetailsDto>> GetUserByIdNumber(string idNumbe
     }
 }
 
-// Optional: For consistent error responses
 public class ErrorResponse
 {
     public string Status { get; set; }
 }
 
-        /// <summary>
-        /// HR Admin endpoint to admit a user, create an employee record,
-        /// create a contract, and update the user's status and link employee ID.
-        /// </summary>
         [HttpPost("admit-user")]
         public async Task<IActionResult> AdmitUser([FromBody] AdmitUserRequestDto request)
         {
@@ -185,7 +176,6 @@ public class ErrorResponse
                         errorMessage += $" Details: {responseContent}";
                     }
                     
-                    // Cleanup: Try to delete the created employee
                     try
                     {
                         await _supabase.From<Employee>()
@@ -224,8 +214,6 @@ public class ErrorResponse
                             request.UserIdNumber, responseContent);
                         errorMessage += $" Details: {responseContent}";
                     }
-
-                    // Cleanup: Try to delete created records
                     try
                     {
                         await _supabase.From<Contract>()

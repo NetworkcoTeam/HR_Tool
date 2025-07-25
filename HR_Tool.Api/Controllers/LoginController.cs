@@ -29,41 +29,49 @@ public class LoginController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Login([FromBody] LoginRequest request)
+public async Task<IActionResult> Login([FromBody] LoginRequest request)
+{
+    if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
     {
-        if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
-        {
-            return BadRequest(new { message = "Email and Password are required." });
-        }
-
-        await _supabase.InitializeAsync();
-
-        var response = await _supabase.From<User>()
-            .Where(u => u.Email == request.Email)
-            .Get();
-
-        var user = response.Models.FirstOrDefault();
-
-        if (user == null)
-        {
-            return Unauthorized(new { message = "Invalid email or password." });
-        }
-
-        var valid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
-
-        if (!valid)
-        {
-            return Unauthorized(new { message = "Invalid email or password." });
-        }
-
-        return Ok(new 
-        { 
-            name = user.Name,
-            surname = user.Surname,
-            email = user.Email,
-            role = user.Role,
-            idNumber = user.IdNumber,
-            employee_id = user.EmployeeId            
-        });
+        return BadRequest(new { message = "Email and Password are required." });
     }
+
+    await _supabase.InitializeAsync();
+
+    var response = await _supabase.From<User>()
+        .Where(u => u.Email == request.Email)
+        .Get();
+
+    var user = response.Models.FirstOrDefault();
+
+    if (user == null)
+    {
+        return Unauthorized(new { message = "Invalid email or password." });
+    }
+
+    // Verify password
+    var valid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
+
+    if (!valid)
+    {
+        return Unauthorized(new { message = "Invalid email or password." });
+    }
+
+    // ❗ Check if employee_id is null
+    if (user.EmployeeId == null)
+    {
+        return Unauthorized(new { message = "Employee ID not assigned. Please contact HR." });
+    }
+
+    // ✅ Login success
+    return Ok(new
+    {
+        name = user.Name,
+        surname = user.Surname,
+        email = user.Email,
+        role = user.Role,
+        idNumber = user.IdNumber,
+        employee_id = user.EmployeeId
+    });
+}
 }
