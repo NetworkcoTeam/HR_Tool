@@ -39,10 +39,28 @@ const Home = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentPayslipDetails, setCurrentPayslipDetails] = useState(null);
 
-  const employeeId = 2223655;
+  const [employeeId, setEmployeeId] = useState(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("user");
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        if (parsed.employee_id) {
+          setEmployeeId(parsed.employee_id);
+        }
+      } catch (err) {
+        console.error("Failed to parse localStorage user:", err);
+      }
+    }
+  }, []);
+  
+
+
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!employeeId) return;
       try {
         setLoading(true);
     
@@ -152,7 +170,6 @@ const Home = () => {
       }
   
       const result = await response.json();
-      console.log("View Payslip API result:", result);
 
       message.destroy();
 
@@ -160,7 +177,7 @@ const Home = () => {
         setCurrentPayslipDetails({
           employeeName: result.payslip.employeeName,
           position: result.payslip.position,
-          period: `${result.payslip.periodStart} - ${result.payslip.periodEnd}`,
+          period: result.payslip.period || 'N/A',
           basicSalary: result.payslip.basicSalary,
           taxAmount: result.payslip.taxAmount,
           uif: result.payslip.uif,

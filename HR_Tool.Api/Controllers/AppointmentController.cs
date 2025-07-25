@@ -98,39 +98,23 @@ public class AppointmentController : ControllerBase
         }
     }
 
-    // Get all appointments (for HR Admin dashboard)
     [HttpGet("all")]
-    public async Task<IActionResult> GetAllAppointments()
+public async Task<IActionResult> GetAllAppointments()
+{
+    try
     {
-        try
-        {
-            var response = await _supabase.From<Appointment>()
-                .Select("*")
-                .Order("created_at", Supabase.Postgrest.Constants.Ordering.Descending)
-                .Get();
+        var response = await _supabase.From<Appointment>()
+            .Select("*")
+            .Get();
 
-            var dtos = response.Models?.Select(a => new AppointmentDto
-            {
-                AppointmentId = a.AppointmentId,
-                EmployeeId = a.EmployeeId,
-                Subject = a.Subject,
-                Description = a.Description,
-                AppointmentDate = a.AppointmentDate,
-                StartTime = a.StartTime,
-                EndTime = a.EndTime,
-                ContactNumber = a.ContactNumber,
-                Status = a.Status,
-                CreatedAt = a.CreatedAt
-            }).ToList() ?? new List<AppointmentDto>();
-
-            return Ok(dtos);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error fetching all appointments");
-            return StatusCode(500, new { message = "Error fetching appointments" });
-        }
+        return Ok(response.Models);
     }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error fetching all appointments");
+        return StatusCode(500, new { message = "Internal server error" });
+    }
+}
 
     [HttpGet("employee/{employeeId}")]
     public async Task<IActionResult> GetAppointmentsByEmployee(int employeeId)

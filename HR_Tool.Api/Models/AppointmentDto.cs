@@ -3,7 +3,7 @@ namespace HR_Tool.Api.Models{
     public class AppointmentDto
     {
         public int AppointmentId { get; set; }
-        public int EmployeeId { get; set; }
+        public long EmployeeId { get; set; }
         public string Subject { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public DateTime AppointmentDate { get; set; }

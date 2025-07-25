@@ -125,6 +125,8 @@ namespace HR_Tool.Api.Controllers
             }
         }
 
+        
+
         [HttpGet("employee/{employeeId}/payslips")]
         public async Task<IActionResult> GetEmployeePayslips(int employeeId)
         {

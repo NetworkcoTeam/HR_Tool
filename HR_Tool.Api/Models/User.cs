@@ -28,6 +28,12 @@ namespace HR_Tool.Api.Models
         [Column("password_hash")]
         public string PasswordHash { get; set; }
 
+        [Column("user_status")]
+        public string Status { get; set; } = "Pending"; 
+
+                [PrimaryKey("employee_id")]
+        public long? EmployeeId { get; set; }  
+
     }
 }
 

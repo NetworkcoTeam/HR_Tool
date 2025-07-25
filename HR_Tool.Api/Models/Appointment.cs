@@ -12,7 +12,7 @@ namespace HR_Tool.Api.Models
         public int AppointmentId { get; set; }
 
         [Column("employee_id")]
-        public int EmployeeId { get; set; }
+        public long EmployeeId { get; set; }
 
         [Column("subject")]
         public string Subject { get; set; } = string.Empty;
