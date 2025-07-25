@@ -102,9 +102,7 @@ p{
     
 }
 
-.registerButton{
-    display:flex;
-}
+
 
 @media (max-width : 1300px){
     .HeroImg{
