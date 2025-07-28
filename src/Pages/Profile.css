@@ -1,0 +1,81 @@
+body{
+    background-color: #F6F6F6F6;
+    height: 400px;
+
+}
+.employeeid{
+flex-basis: 50%;
+}
+.position, .status, .employeeid, .department , .surname, .Name , .email, .dob {
+    flex-basis: 50%;
+}
+.Personal-details-second{
+    margin-top: 20px;
+    margin-bottom: 100px;
+    
+}
+.job-details-second{
+    margin-top: 20px;
+}
+
+
+.Profile{
+    color: #161c70;
+    background-color: white;
+    width:1050px;
+    height:400px;
+    font-size: 23px;
+    padding: 100px;
+    border-radius: 10px;
+    margin-left: 400px;
+    margin-top: 30px;
+    display:flex;
+    
+}
+.Avatar{
+    width: 100px;
+    height:300px;
+    background-color: aqua;
+    
+    flex-basis:50%;
+}
+
+
+label{
+    color:grey;
+}
+
+
+.job-details{
+    margin-top: 10px;
+    background-color: white;
+    border-radius:10px;
+    height: 50px;
+}
+
+.personal-details{
+    flex-basis: 50%;
+    height:300px;
+    display: flex;
+    
+    margin-left: 20px;
+}
+.left{
+    flex-basis: 50%;
+    background-color: red;
+    
+
+}
+.right{
+    flex-basis:50%;
+    background-color: #161c70;
+}
+
+
+
+
+
+
+
+
+
