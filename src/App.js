@@ -1,4 +1,4 @@
-
+import AppointmentBooking from './Pages/AppointmentBooking';
 import Documents from './Pages/Documents';
 import Home from './Pages/Home';
 import LeaveForm from './Components/LeaveForm';
@@ -29,6 +29,7 @@ function App() {
         <Route path="/LeaveManagement" element={<LeaveManagement/>}/>
          <Route path="/profile" element={<Profile/>}/>
           <Route path="/Documents" element={<Documents/>}/>
+           <Route path="/appointments" element={<AppointmentBooking/>}/>
 
       </Routes>
       
