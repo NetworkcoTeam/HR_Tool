@@ -1,4 +1,6 @@
+
 /*import React, { useEffect, useState } from 'react';
+
 import { Table, Button, Tag, message, Spin } from 'antd';
 import './LeaveRequestAdmin.css';
 
@@ -54,7 +56,6 @@ const LeaveRequestsAdmin = () => {
   useEffect(() => {
     fetchLeaveRequests();
   }, []);
-
 
 
   const columns = [
@@ -150,15 +151,18 @@ const LeaveRequestsAdmin = () => {
   );
 };
 
+
 export default LeaveRequestsAdmin;*/
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Table, Button, Tag, Spin, message } from 'antd';
+import { Table, Button, Tag, Spin, message, Radio } from 'antd';
 
 const LeaveRequestsAdmin = () => {
   const [leaveRequests, setLeaveRequests] = useState([]);
+  const [filteredRequests, setFilteredRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
+  const [statusFilter, setStatusFilter] = useState('Pending');
 
   // ✅ Automatically get user info from local storage
   const role = localStorage.getItem('role');
@@ -173,9 +177,10 @@ const LeaveRequestsAdmin = () => {
             : `http://localhost:5143/api/LeaveRequest/employee/${employeeId}`;
             
 
-
       const response = await axios.get(url);
       setLeaveRequests(response.data);
+      // Filter by pending status initially
+      setFilteredRequests(response.data.filter(request => request.status === 'Pending'));
     } catch (error) {
       console.error(error);
       message.error('Failed to fetch leave requests.');
@@ -203,6 +208,14 @@ const LeaveRequestsAdmin = () => {
   useEffect(() => {
     fetchLeaveRequests();
   }, []);
+
+  useEffect(() => {
+    if (statusFilter === 'All') {
+      setFilteredRequests(leaveRequests);
+    } else {
+      setFilteredRequests(leaveRequests.filter(request => request.status === statusFilter));
+    }
+  }, [statusFilter, leaveRequests]);
 
   const columns = [
     // your table columns...
@@ -290,10 +303,22 @@ const LeaveRequestsAdmin = () => {
   return (
     <div style={{ padding: '24px' }}>
       <h1>Leave Requests</h1>
+      <div style={{ marginBottom: 16 }}>
+        <Radio.Group 
+          value={statusFilter} 
+          onChange={(e) => setStatusFilter(e.target.value)}
+          buttonStyle="solid"
+        >
+          <Radio.Button value="Pending">Pending</Radio.Button>
+          <Radio.Button value="Approved">Approved</Radio.Button>
+          <Radio.Button value="Denied">Denied</Radio.Button>
+          <Radio.Button value="All">All</Radio.Button>
+        </Radio.Group>
+      </div>
       <Spin spinning={loading}>
         <Table 
           columns={columns} 
-          dataSource={leaveRequests} 
+          dataSource={filteredRequests} 
           rowKey="id"
         />
       </Spin>

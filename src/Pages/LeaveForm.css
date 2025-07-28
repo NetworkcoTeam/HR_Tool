@@ -14,31 +14,52 @@
   margin-left: 250px;
   background: #f0f2f5;
 }
-
-.ant-form-item-label label {
-  font-weight: 500;
+.right-form{
+    flex-basis: 50%;
 }
 
-.ant-upload.ant-upload-select {
-  display: block;
+input{
+    height: 20px;
+    
+    border:none;
+    font-size: 20px;
+    border-bottom: 2px solid #161c70 ;
+    margin-top: 40px;
+    margin-top: 20px;
+    width: 500px;
+    
 }
 
-.ant-radio-group {
-  width: 100%;
+.upload-btn{
+display:inline-block;
+background-color: #161c70;
+color:white;
+padding:10px 20px;
+font-weight:bold;
+border:none;
+border-radius: 8px;
+cursor: pointer;
+transition: background-color 0.2s ease;
 }
-
-.ant-radio-button-wrapper {
-  text-align: center;
-  margin: 4px;
+ 
+button{
+    background-color: #161c70;
+    color:#ffff;
+      padding: 10px 160px;
+      
 }
-
-@media (max-width: 768px) {
-  .site-layout {
-    margin-left: 0;
-  }
-  
-  .ant-radio-button-wrapper {
-    display: block;
-    margin: 4px 0;
-  }
+.heading{ 
+    color:#161c70;
+    text-align: center;
+}
+.upload{
+    border-style: solid;
+    border-color: #161c70;
+    border-radius: 10px;
+    font-size:20px;
+    margin-left:10px;
+    padding:5px;
+}
+.leave :checked{
+    background-color:#161c70;
 }

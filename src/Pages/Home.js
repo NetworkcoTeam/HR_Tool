@@ -82,6 +82,9 @@ const Home = () => {
     // Implement leave application navigation
     message.info('Navigate to leave application form');
   };
+  
+  
+
 
   if (error) {
     return (
@@ -102,7 +105,8 @@ const Home = () => {
       </Layout>
     );
   }
-
+    
+  
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sidebar />
@@ -241,6 +245,8 @@ const Home = () => {
                       <Button type="primary" icon={<PlusOutlined />} onClick={handleApplyLeave}>
                         Apply for Leave
                       </Button>
+                     
+                      
                     </Empty>
                   )}
                 </Card>

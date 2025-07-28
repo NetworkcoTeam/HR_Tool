@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Layout, 
@@ -7,15 +7,18 @@ import {
   Divider, 
   Typography,
   Empty,
-  Tag
+  Tag,
+  Spin,
+  message
 } from 'antd';
 import { 
   TeamOutlined, 
   FileTextOutlined, 
   CalendarOutlined,
-  DollarOutlined
+  DollarOutlined,
+  PlusOutlined,
+  ExclamationCircleOutlined
 } from '@ant-design/icons';
-import Sidebar from './Sidebar';
 import './Dashboard.css';
 
 const { Title } = Typography;
@@ -23,116 +26,143 @@ const { Content } = Layout;
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleViewAll = (route) => navigate(route);
 
+  if (error) {
+    return (
+      <Content className="error-content">
+        <div className="error-state">
+          <ExclamationCircleOutlined style={{ fontSize: '48px', color: '#ff4d4f' }} />
+          <h2>Unable to load dashboard</h2>
+          <p>{error}</p>
+          <Button type="primary" onClick={() => window.location.reload()}>
+            Retry
+          </Button>
+        </div>
+      </Content>
+    );
+  }
+
   return (
+    <Content className="home-content">
+      <div className="dashboard-header">
+        <Title level={1}>ADMIN DASHBOARD</Title>
+        <div className="current-date">
+          <CalendarOutlined /> {new Date().toLocaleDateString('en-US', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          })}
+        </div>
+      </div>
 
-    <Layout style={{ minHeight: '100vh' }}>
-      <Sidebar />
-      <Layout className="site-layout">
-        <Content className="dashboard-content">
-          <div className="dashboard-header">
-            <Title level={2}>ADMIN DASHBOARD</Title>
-            <div className="current-date">
-              <CalendarOutlined /> {new Date().toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-              })}
+      <Divider />
+
+      {loading ? (
+        <div className="loading-state">
+          <Spin size="large" />
+          <p>Loading dashboard...</p>
+        </div>
+      ) : (
+        <div className="dashboard-grid">
+          <Card 
+            title={
+              <span className="card-title">
+                <TeamOutlined className="card-icon" />
+                EMPLOYEE RECORDS
+              </span>
+            }
+            className="dashboard-card"
+          >
+            <div className="card-content">
+              <Empty description="No employees available" imageStyle={{ height: 40 }}>
+                <Button
+                  ghost
+                  type="primary" 
+                  onClick={() => handleViewAll('/registrationRequest')}
+                  className="generate-button"
+                >
+                  View All
+                </Button>
+              </Empty>
             </div>
-          </div>
+          </Card>
 
-          <Divider />
+          <Card 
+            title={
+              <span className="card-title">
+                <DollarOutlined className="card-icon" />
+                PAYSLIP MANAGEMENT
+              </span>
+            }
+            className="dashboard-card"
+          >
+            <div className="card-content">
+              <Empty description="No payslips available" imageStyle={{ height: 40 }}>
+                <Button 
+                  type="primary" 
+                  onClick={() => handleViewAll('/payslipManagement')}
+                  icon={<FileTextOutlined />}
+                  className="generate-button"
+                >
+                  Generate Payslip
+                </Button>
+              </Empty>
+            </div>
+          </Card>
 
-          <div className="dashboard-grid">
-            <div className="dashboard-row">
-              <Card 
-                title={
-                  <span>
-                    <TeamOutlined className="card-icon" />
-                    EMPLOYEE RECORDS
-                  </span>
-                }
-                className="dashboard-card"
-                extra={
+          <Card 
+            title={
+              <span className="card-title">
+                <CalendarOutlined className="card-icon" />
+                LEAVE APPLICATIONS
+              </span>
+            }
+            className="dashboard-card"
+          >
+            <div className="card-content">
+              <Empty description="No employees available" imageStyle={{ height: 40 }}>
+                <Button 
+                  ghost
+                  type="primary" 
+                  onClick={() => handleViewAll('/leaveManagement')}
+                  className="generate-button"
+                >
+                  View All
+                </Button>
+              </Empty>
+            </div>
+          </Card>
+
+          <Card 
+            title={
+              <span className="card-title">
+                <CalendarOutlined className="card-icon" />
+                UPCOMING APPOINTMENTS
+              </span>
+            }
+            className="dashboard-card"
+          >
+            <div className="card-content">
+              <Empty description="No  available" imageStyle={{ height: 40 }}>
                   <Button 
-                    type="link" 
-                    onClick={() => handleViewAll('/employees')}
-                    className="view-all-button"
-                  >
-                    View All
-                  </Button>
-                }
-              >
-                <Empty description="No employee records found" />
-              </Card>
-
-              <Card 
-                title={
-                  <span>
-                    <DollarOutlined className="card-icon" />
-                    PAYSLIP MANAGEMENT
-                  </span>
-                }
-                className="dashboard-card"
-              >
-                <div className="payslip-content">
-                  <Button 
+                    ghost 
                     type="primary" 
-                    onClick={() => handleViewAll('/payslipManagement')}
-                    icon={<FileTextOutlined />}
+                    onClick={() => handleViewAll('/AppointmentBooking')}
                     className="generate-button"
                   >
-                    Generate Payslip
-                  </Button>
-                </div>
-              </Card>
-            </div>
-
-            <div className="dashboard-row">
-              <Card 
-                title={
-                  <span>
-                    <CalendarOutlined className="card-icon" />
-                    LEAVE APPLICATIONS
-                  </span>
-                }
-                className="dashboard-card"
-                extra={
-                  <Button 
-                    type="link" 
-                    onClick={() => handleViewAll('/LeaveManagement')}
-                    className="view-all-button"
-                  >
                     View All
-                  </Button>
-                }
-              >
-                <Empty description="No pending leave applications" />
-              </Card>
-
-              <Card 
-                title={
-                  <div className="appointments-header">
-                    <span>
-                      <CalendarOutlined className="card-icon" />
-                      UPCOMING APPOINTMENTS
-                    </span>
-                    <Tag color="blue">Today</Tag>
-                  </div>
-                }
-                className="dashboard-card"
-              >
-                <Empty description="No appointments scheduled" />
-              </Card>
+                </Button>
+              </Empty>
             </div>
-
-          </div>
-        </Content>
-      </Layout>
-    </Layout>
+          </Card>
+        </div>
+      )}
+    </Content>
   );
 };
 

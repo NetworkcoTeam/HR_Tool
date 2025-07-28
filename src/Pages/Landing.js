@@ -10,7 +10,7 @@ function Landing() {
           
             
 
-            < div className="Hero-grid">
+            < div className="Hero-grid"  >
        
         <div className="Hero-image">
          <img src="/images/hero-image.png" alt=" " className="HeroImg" />
@@ -27,15 +27,22 @@ function Landing() {
           <li><i class="fa-regular fa-circle-check"/>Appointment</li>
           </ul>
           <p>New here?</p>
+          
           <div className="registerButton">
-             <RegisterForm />  <LoginForm/>
+             <RegisterForm />  
+             </div>   
+
+             <div className="loginbutton">
+               <LoginForm />
              </div>
+            
              </div>
  
-
+         
         </div>
-            
-            
+        <>
+           
+            </>
             
         </>
     );
