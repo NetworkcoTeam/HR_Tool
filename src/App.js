@@ -1,5 +1,5 @@
 
-
+import Documents from './Pages/Documents';
 import Home from './Pages/Home';
 import LeaveForm from './Components/LeaveForm';
 import{Routes,Route} from 'react-router-dom';
@@ -28,6 +28,7 @@ function App() {
         <Route path="/Admin" element={<Admin/>}/>
         <Route path="/LeaveManagement" element={<LeaveManagement/>}/>
          <Route path="/profile" element={<Profile/>}/>
+          <Route path="/Documents" element={<Documents/>}/>
 
       </Routes>
       
