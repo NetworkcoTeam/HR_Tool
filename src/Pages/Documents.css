@@ -1,0 +1,24 @@
+label {
+    color: black;
+    margin-left: 500px;
+}
+
+.file-container{
+    width:fit-content;
+    border-color: black;
+    border-style: 5px solid;
+    
+}
+.btns{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.Documents-container{
+ display: flex;
+ gap:5px;
+}
+ 
+
+
+
