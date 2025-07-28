@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layout } from 'antd';
-import AdminSidebar from '../Components/AdminSidebar';
+import Sidebar from '../Components/Sidebar';
 import Appointment from '../Components/Appointment';
 import './AppointmentBooking.css';
 
@@ -10,7 +10,7 @@ const AppointmentBooking = () => {
   return (
     <Layout className="appointment-booking-layout">
       <Sider width={250} className="sidebar">
-        <AdminSidebar />
+        <Sidebar />
       </Sider>
       <Layout className="site-layout">
         <Content className="site-layout-content">

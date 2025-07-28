@@ -45,6 +45,11 @@ const Appointment = ({ isAdmin = false }) => {
     { value: 'Other', label: 'Other' }
   ];
 
+  const appointmentTypes = [
+    { value: 'In-person', label: 'In-person' },
+    { value: 'Virtual', label: 'Virtual' }
+  ];
+
   const columns = [
     {
       title: 'Date',
@@ -66,6 +71,11 @@ const Appointment = ({ isAdmin = false }) => {
       title: 'Reason',
       dataIndex: 'reason',
       key: 'reason',
+    },
+    {
+      title: 'Appointment Type',
+      dataIndex: 'appointmentType',
+      key: 'appointmentType',
     },
     {
       title: 'Status',
@@ -244,6 +254,21 @@ const Appointment = ({ isAdmin = false }) => {
                 <Select
                   placeholder="Select appointment reason"
                   options={appointmentReasons}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col span={24}>
+              <Form.Item
+                name="appointmentType"
+                label="Meeting Type"
+                rules={[{ required: true, message: 'Please select reason' }]}
+              >
+                <Select
+                  placeholder="Select appointment type"
+                  options={appointmentTypes}
                 />
               </Form.Item>
             </Col>
