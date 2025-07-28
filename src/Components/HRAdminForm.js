@@ -29,6 +29,8 @@ import './HRAdminForm.css';
 const { Content } = Layout;
 const { Option } = Select;
 
+
+
 const HrAdminForm = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -36,6 +38,7 @@ const HrAdminForm = () => {
   const [searchIdNumber, setSearchIdNumber] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   // Check if user is admin on component mount
   useEffect(() => {
@@ -63,7 +66,7 @@ const HrAdminForm = () => {
       
       if (response.ok) {
         console.log("API Response:", data);
-        
+        setErrorMessage(null);
         setUserData(data);
         form.setFieldsValue({
           employeeFirstName: data.name,
@@ -71,9 +74,13 @@ const HrAdminForm = () => {
           userIdNumber: searchIdNumber
         });
         message.success('User found! Please complete the form');
+        
+
       } else {
-        message.error(data.status || 'User not found');
-      }
+        setErrorMessage(data.status || 'User not found');
+        setUserData(null);
+        form.resetFields();
+       }
     } catch (error) {
       message.error('Error fetching user data');
       console.error("Fetch error:", error);
@@ -145,6 +152,7 @@ const HrAdminForm = () => {
               description="You don't have permission to access this page. Only HR administrators can perform employee admissions."
               type="error"
               showIcon
+              banner
             />
           </div>
         </Content>
@@ -161,17 +169,32 @@ const HrAdminForm = () => {
             <Card title="HR Admin - Employee Admission" bordered={false}>
               <Row gutter={16}>
                 <Col span={24}>
-                  <div style={{ marginBottom: 16 }}>
-                    <Input.Search
-                      placeholder="Enter ID Number to search"
-                      enterButton={<><SearchOutlined /> Search</>}
-                      size="large"
-                      value={searchIdNumber}
-                      onChange={(e) => setSearchIdNumber(e.target.value)}
-                      onSearch={fetchUserData}
-                      disabled={loading}
-                    />
-                  </div>
+                <div style={{ marginBottom: 16 }}>
+  <Input.Search
+    placeholder="Enter ID Number to search"
+    enterButton={<><SearchOutlined /> Search</>}
+    size="large"
+    value={searchIdNumber}
+    onChange={(e) => {
+      setSearchIdNumber(e.target.value);
+      setErrorMessage(null); // Clear error if user types again
+    }}
+    onSearch={fetchUserData}
+    disabled={loading}
+  />
+
+  {/* Show error message below the search input */}
+  {errorMessage && (
+    <Alert
+      message="Error"
+      description={errorMessage}
+      type="error"
+      showIcon
+      style={{ marginTop: '12px' }}
+    />
+  )}
+</div>
+
                 </Col>
               </Row>
 

@@ -66,23 +66,24 @@ const Appointment = () => {
 
   // Fetch appointments with proper admin detection
   const fetchAppointments = useCallback(async () => {
-    if (!userData || !userData.idNumber) return;
+    if (!userData || !userData.employee_id) return;
   
     try {
       setLoading(true);
       const endpoint = isAdmin 
         ? `${API_BASE_URL}/all` 
-        : `${API_BASE_URL}/employee/${userData.idNumber}`;
+        : `${API_BASE_URL}/employee/${userData.employee_id}`;
 
-      console.log("Raw appointment data:", response.data);
+      
       const response = await axios.get(endpoint);
+      console.log("Raw appointment data:", response.data);
 
       
       const formattedData = response.data.map(item => ({
         ...item,
         appointmentId: item.appointmentId || item.appointment_id,
         employeeId: item.employeeId || item.employee_id,
-        employeeName: `${userData.name} ${userData.surname}`,
+        employeeName: isAdmin ? `Employee ${item.employeeId}` : `${userData.name} ${userData.surname}`,
         appointmentDate: item.appointmentDate || item.appointment_date,
         startTime: item.startTime || item.start_time,
         endTime: item.endTime || item.end_time,
@@ -101,14 +102,16 @@ const Appointment = () => {
   
 
   useEffect(() => {
-    fetchAppointments();
-  }, [fetchAppointments]);
+    if (userData) {
+      fetchAppointments();
+    }
+  }, [userData, isAdmin]);
 
   // Pre-fill form with user data when modal opens
   useEffect(() => {
     if (isModalVisible && userData) {
       form.setFieldsValue({
-        employeeId: userData.idNumber,
+        employeeId: userData.employee_id,
         empName: `${userData.name} ${userData.surname}`,
         subject: 'HR Meeting'
       });
@@ -138,7 +141,7 @@ const Appointment = () => {
   const cancelAppointment = async (appointmentId) => {
     try {
       await axios.put(`${API_BASE_URL}/cancel/${appointmentId}`, {
-        employeeId: userData?.idNumber
+        employeeId: userData?.employee_id
       });
       message.success('Appointment cancelled');
       fetchAppointments();
@@ -151,13 +154,13 @@ const Appointment = () => {
   const onFinish = async (values) => {
     try {
       const request = {
-        employeeId: parseInt(userData.idNumber),
+        employeeId: parseInt(userData.employee_id),
         subject: values.subject,
         description: values.description,
         appointmentDate: values.date.format('YYYY-MM-DD'),
         startTime: values.time[0].format('HH:mm:ss'),
         endTime: values.time[1].format('HH:mm:ss'),
-        contactNumber: values.contactNumber,
+        contactNumber: values.contactNumber.toString(),
         status: 'Pending'
       };
 
@@ -357,7 +360,10 @@ const Appointment = () => {
                   }
                 ]}
               >
-                <Input prefix={<PhoneOutlined />} placeholder="0810123987" />
+                <Input 
+                prefix={<PhoneOutlined />} 
+                placeholder="0810123987" 
+                inputMode="numeric"/>
               </Form.Item>
             </Col>
           </Row>

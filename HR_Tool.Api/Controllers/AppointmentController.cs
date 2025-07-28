@@ -107,7 +107,21 @@ public async Task<IActionResult> GetAllAppointments()
             .Select("*")
             .Get();
 
-        return Ok(response.Models);
+        var dtos = response.Models?.Select(a => new AppointmentDto
+        {
+            AppointmentId = a.AppointmentId,
+            EmployeeId = a.EmployeeId,
+            Subject = a.Subject,
+            Description = a.Description,
+            AppointmentDate = a.AppointmentDate,
+            StartTime = a.StartTime,
+            EndTime = a.EndTime,
+            ContactNumber = a.ContactNumber,
+            Status = a.Status,
+            CreatedAt = a.CreatedAt
+        }).ToList();
+
+        return Ok(dtos);
     }
     catch (Exception ex)
     {
@@ -115,6 +129,7 @@ public async Task<IActionResult> GetAllAppointments()
         return StatusCode(500, new { message = "Internal server error" });
     }
 }
+
 
     [HttpGet("employee/{employeeId}")]
     public async Task<IActionResult> GetAppointmentsByEmployee(int employeeId)
