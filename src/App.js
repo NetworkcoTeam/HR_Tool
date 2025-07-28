@@ -14,6 +14,7 @@ import PayslipPage from './Pages/PayslipManagement';
 import Profile from './Pages/Profile';
 import AppointmentBooking from './Pages/AppointmentBooking';
 import RegistrationRequest from './Pages/RegistrationRequest';
+import ForgotPasswordPage from './Pages/ForgotPasswordPage';
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
         <Route path="/AppointmentBooking" element={<AppointmentBooking/>}/>
         <Route path="/RegistrationRequest" element={<RegistrationRequest/>}/>
          <Route path="/leaveRequestAdmin" element={<LeaveRequestsAdmin/>}/>
+        <Route path="/forgotPassword" element={<ForgotPasswordPage/>}/>
 
       </Routes>
       

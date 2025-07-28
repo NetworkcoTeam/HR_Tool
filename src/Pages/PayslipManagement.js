@@ -6,7 +6,7 @@ import './PayslipManagement.css';
 
 const { Content } = Layout;
 
-const PayslipPage = () => {
+const PayslipManagement = () => {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <AdminSidebar />
@@ -19,4 +19,4 @@ const PayslipPage = () => {
   );
 };
 
-export default PayslipPage;
+export default PayslipManagement;
