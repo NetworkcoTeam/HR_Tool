@@ -18,6 +18,7 @@ import {
 import Sidebar from './Sidebar';
 import './Dashboard.css';
 
+
 const { Title } = Typography;
 const { Content } = Layout;
 
@@ -124,6 +125,7 @@ const Dashboard = () => {
                 }
                 className="dashboard-card"
               >
+
                 <Empty description="No appointments scheduled" />
               </Card>
             </div>

@@ -24,6 +24,7 @@ import {
 } from '@ant-design/icons';
 import Sidebar from '../Components/Sidebar';
 import './Home.css';
+import AppointmentsTile from '../Components/AppointmentTile';
 
 const API_BASE = 'http://localhost:5143';
 
@@ -433,7 +434,7 @@ const Home = () => {
                       )}
                     />
                   ) : (
-                    <Empty description="No appointments scheduled" />
+                    <AppointmentsTile />
                   )}
                 </Card>
               </div>

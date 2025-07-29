@@ -49,7 +49,7 @@ public async Task<IActionResult> Login([FromBody] LoginRequest request)
         return Unauthorized(new { message = "Invalid email or password." });
     }
 
-    // Verify password
+    
     var valid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
 
     if (!valid)
@@ -57,13 +57,12 @@ public async Task<IActionResult> Login([FromBody] LoginRequest request)
         return Unauthorized(new { message = "Invalid email or password." });
     }
 
-    // ❗ Check if employee_id is null
+    
     if (user.EmployeeId == null)
     {
         return Unauthorized(new { message = "Employee ID not assigned. Please contact HR." });
     }
 
-    // ✅ Login success
     return Ok(new
     {
         name = user.Name,

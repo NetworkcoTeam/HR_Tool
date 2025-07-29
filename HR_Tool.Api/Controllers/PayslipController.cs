@@ -12,6 +12,7 @@ using PdfSharp.Pdf;
 using PdfSharp.Drawing;
 using System.IO;
 using PdfSharp.Fonts;
+using Microsoft.AspNetCore.Hosting;
 
 namespace HR_Tool.Api.Controllers
 {
@@ -21,10 +22,12 @@ namespace HR_Tool.Api.Controllers
     {
         private readonly PayslipCalculator _payslipCalculator;
         private readonly Client _supabase;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public PayslipsController(PayslipCalculator payslipCalculator)
+         public PayslipsController(PayslipCalculator payslipCalculator, IWebHostEnvironment webHostEnvironment)
         {
             _payslipCalculator = payslipCalculator ?? throw new ArgumentNullException(nameof(payslipCalculator));
+            _webHostEnvironment = webHostEnvironment ?? throw new ArgumentNullException(nameof(webHostEnvironment));
 
             var url = Environment.GetEnvironmentVariable("SUPABASE_URL");
             var key = Environment.GetEnvironmentVariable("SUPABASE_KEY");
@@ -338,31 +341,66 @@ namespace HR_Tool.Api.Controllers
         }
 
         //PDF PAYSLIP
-        private byte[] GeneratePayslipPdf(PayslipDto payslip)
+         private byte[] GeneratePayslipPdf(PayslipDto payslip)
         {
             var document = new PdfDocument();
             var page = document.AddPage();
             var graphics = XGraphics.FromPdfPage(page);
 
             // Define fonts
-            var normalFont = new XFont("Roboto", 12);
+            var normalFont = new XFont("Roboto", 10);
             var boldFont = new XFont("Roboto", 12, XFontStyleEx.Bold);
             var headerFont = new XFont("Roboto", 18, XFontStyleEx.Bold);
             var italicFont = new XFont("Roboto", 8, XFontStyleEx.Italic);
 
             var yPosition = 50;
+            var xPosition = 50; 
 
-            // Company Header
-            graphics.DrawString("THE NETWORKCO", headerFont, XBrushes.Black, new XPoint(50, yPosition));
-            yPosition += 25;
-            graphics.DrawString("1 Asparagus Rd, Office Park, Midrand, 1686", normalFont, XBrushes.Black, new XPoint(50, yPosition));
+            string logoPath = Path.Combine(_webHostEnvironment.ContentRootPath, "Images", "the_network_company_sa_logo.jpeg");
+
+            try
+            {
+                if (System.IO.File.Exists(logoPath))
+                {
+                    XImage logo = XImage.FromFile(logoPath);
+
+                    // Define logo position and size
+                    double logoWidth = 100; // Adjust as needed
+                    double logoHeight = logo.PixelHeight * logoWidth / logo.PixelWidth; // Maintain aspect ratio
+
+                    graphics.DrawImage(logo, xPosition, yPosition, logoWidth, logoHeight);
+
+                    // Adjust yPosition for text after logo
+                    yPosition += (int)logoHeight / 2; // Move down to align text with middle of logo
+                    xPosition += (int)logoWidth + 10; // Move X position to the right of the logo, with some padding
+                }
+                else
+                {
+                    // If logo not found, just start text from original xPosition
+                    Console.WriteLine($"Logo file not found: {logoPath}"); // For debugging
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading logo: {ex.Message}");
+                xPosition = 50;
+            }
+            // Company Header (now next to the logo)
+            // If logo was drawn, xPosition is already adjusted
+            graphics.DrawString("THE NETWORKCO", headerFont, XBrushes.Black, new XPoint(xPosition, yPosition));
+            yPosition += 25; // Move down for the next line
+            graphics.DrawString("1 Asparagus Rd, Office Park, Midrand, 1686", normalFont, XBrushes.Black, new XPoint(xPosition, yPosition));
             yPosition += 20;
-            graphics.DrawString("Contact: info@networkco.com | 087 711 0008 ", normalFont, XBrushes.Black, new XPoint(50, yPosition));
-            yPosition += 40;
+            graphics.DrawString("Contact: info@networkco.com | 087 711 0008 ", normalFont, XBrushes.Black, new XPoint(xPosition, yPosition));
+            yPosition += 40; // Add more space after company details
 
-            // Title
+            // Title (centered as before)
             graphics.DrawString("PAYSLIP", headerFont, XBrushes.Black, 
                 new XPoint(page.Width / 2 - graphics.MeasureString("PAYSLIP", headerFont).Width / 2, yPosition));
+            yPosition += 10;
+
+            graphics.DrawString($"  No.: {payslip.PaySlipId}", italicFont, XBrushes.Black,
+            new XPoint(page.Width / 2, yPosition), XStringFormats.Center);
             yPosition += 30;
 
             // Employee Details
@@ -417,6 +455,7 @@ namespace HR_Tool.Api.Controllers
             document.Save(stream);
             return stream.ToArray();
         }
+
 
         private async Task<List<Employee>> GetActiveEmployees(string position = null)
         {
