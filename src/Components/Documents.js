@@ -1,10 +1,37 @@
 import Sidebar from '../Components/Sidebar';
-import './Documents.css';
-import {Table, Divider, Flex} from 'antd';
+import '../Pages/Documents.css';
+import {Table , Spin} from 'antd';
+import React ,{useState, useEffect} from 'react';
 
- 
+  
 
 function Documents(){ 
+
+     const [documents, setDocuments] = useState([]);
+     const [loading, setLoading] = useState(false);
+       
+
+     const fetchDocuments = async ()=>{
+     setLoading(true);
+      try {
+      const res = await fetch('http://localhost:5143/api');
+      if (!res.ok) {
+        throw new Error('Failed to fetch documents' );
+      }
+      const data = await res.json();
+      setDocuments(data);
+    } catch (error) {
+      console.error(error);
+      message.error(error.message);
+    } finally {
+      setLoading(false);
+    };
+      fetchDocuments(documents);
+        };
+
+
+
+
     const columns = [
     {
       title: 'File name',
@@ -21,33 +48,9 @@ function Documents(){
       title: 'Download',
       dataIndex: 'Download',
       key: 'download',
-    }]
+    }];
     
-    const datasource =[{
-      key:'1',
-      file: 'Contract',
-      view: 'view',
-      Download: 'download',
-    },
-    {
-    key:2,
-      file: 'CV',
-      view: 'view',
-      Download:' download',
-    },
-    {
-    key:3,
-      file: 'Identity document',
-      view: 'view',
-      Download: 'download',
-    },
-
-   {
-    key:'4',
-      file: 'Qualifications',
-      view: 'view',
-      Download: 'download',
-    }]
+ 
               
     return(
     <>
@@ -55,15 +58,20 @@ function Documents(){
        <Sidebar />
        <div className='head'>
        <h1> Documents</h1> </div>
+
         <div className="table">
-           <Table 
-              columns={columns} 
-               dataSource={datasource
-               }
+       <Spin spinning={loading}>
+        <Table 
+          columns={columns} 
+          dataSource={documents} 
+          rowKey="id"
+          loading={loading}
+        />
+      </Spin>
               
               
               
-            />
+            
             </div>
       </>
     )
