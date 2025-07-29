@@ -13,7 +13,7 @@ import Landing from './Pages/Landing';
 import Admin from './Pages/Admin';
 import LeaveManagement from './Pages/LeaveManagement';
 import PayslipManagement from './Pages/PayslipManagement';
-
+import DocumentsPage from './Pages/DocumentsPage';
 import AppointmentBooking from './Pages/AppointmentBooking';
 import Profile from './Pages/Profile';
 
@@ -37,6 +37,7 @@ function App() {
         <Route path="/AppointmentBooking" element={<AppointmentBooking/>}/>
 
         <Route path="/HRAdminForm" element={<HRAdminForm/>}/>
+         <Route path="/Documents" element={<DocumentsPage/>}/>
       </Routes>
       
        
