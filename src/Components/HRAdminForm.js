@@ -23,7 +23,7 @@ import {
   SearchOutlined,
   SaveOutlined
 } from '@ant-design/icons';
-import Sidebar from './Sidebar';
+import AdminSidebar from './AdminSidebar';
 import './HRAdminForm.css';
 
 const { Content } = Layout;
@@ -133,7 +133,7 @@ const HrAdminForm = () => {
   if (isCheckingAuth) {
     return (
       <Layout style={{ minHeight: '100vh' }}>
-        <Sidebar />
+        <AdminSidebar />
         <Content style={{ margin: '0 16px' }}>
           <Spin size="large" />
         </Content>
@@ -144,7 +144,7 @@ const HrAdminForm = () => {
   if (!isAdmin) {
     return (
       <Layout style={{ minHeight: '100vh' }}>
-        <Sidebar />
+        <AdminSidebar />
         <Content style={{ margin: '0 16px' }}>
           <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
             <Alert
@@ -162,7 +162,7 @@ const HrAdminForm = () => {
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sidebar />
+      <AdminSidebar />
       <Layout className="site-layout">
         <Content style={{ margin: '0 16px' }}>
           <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>

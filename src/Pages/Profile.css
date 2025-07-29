@@ -1,60 +1,33 @@
-body{
-    background-color: #F6F6F6F6;
-}
-.employeeid{
-flex-basis: 50%;
-}
-.position, .status, .employeeid, .department , .surname, .Name , .email, .dob {
-    flex-basis: 50%;
-}
-.Personal-details-second{
-    margin-top: 20px;
-    margin-bottom: 100px;
-    
-}
-.job-details-second{
-    margin-top: 20px;
+.profile-container {
+    padding: 24px;
+    margin-left: 270px; /* Adjust based on your sidebar width */
 }
 
-
-.Profile{
-    color: #161c70;
-    background-color: white;
-    width:800px;
-    height:700px;
-    font-size: 23px;
-    padding: 100px;
-    border-radius: 10px;
-    margin-left: 400px;
-    margin-top: 30px;
-    
-}
-.avatar{
-    width: 60px;
+.profile-card {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-
-label{
-    color:grey;
+.profile-avatar {
+    background-color: #1890ff;
+    font-size: 48px;
 }
 
-
-.job-details{
-    margin-top: 10px;
-    background-color: white;
-    border-radius:10px;
-    height: 50px;
+.info-card {
+    background: #f9f9f9;
+    border-radius: 8px;
+    height: 100%;
+    transition: all 0.3s;
 }
 
-.personal-details{
-    height:70px;
+.info-card:hover {
+    background: #f0f0f0;
+    transform: translateY(-2px);
 }
 
-
-
-
-
-
-
-
-
+@media (max-width: 768px) {
+    .profile-container {
+        margin-left: 0;
+        padding: 16px;
+    }
+}

@@ -15,7 +15,7 @@ import {
   CalendarOutlined,
   DollarOutlined
 } from '@ant-design/icons';
-import Sidebar from './Sidebar';
+//import Sidebar from './Sidebar';
 import './Dashboard.css';
 
 
@@ -29,7 +29,7 @@ const Dashboard = () => {
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sidebar />
+      
       <Layout className="site-layout">
         <Content className="dashboard-content">
           <div className="dashboard-header">
