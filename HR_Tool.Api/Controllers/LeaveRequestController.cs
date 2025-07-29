@@ -178,10 +178,11 @@ public async Task<IActionResult> GetLeaveRequestsByEmployeeId(string employeeId)
 
         var response = await supabase
             .From<LeaveRequest>()
-            //.Filter(x => x.EmployeeId == employeeId)
-            .Filter("employee_id", Supabase.Postgrest.Constants.Operator.Equals, employeeId)
+            .Where(x => x.EmployeeId == employeeId) 
             .Get();
-            
+
+        _logger.LogInformation("Found {Count} leave requests for employee {EmployeeId}", response.Models?.Count ?? 0, employeeId);
+
         var dtos = response.Models?.Select(r => new LeaveRequestDto
         {
             Id = r.Id,
@@ -202,9 +203,6 @@ public async Task<IActionResult> GetLeaveRequestsByEmployeeId(string employeeId)
         }).ToList() ?? new List<LeaveRequestDto>();
 
         return Ok(dtos);
-
-
-        //return Ok(response.Models);
     }
     catch (Exception ex)
     {
@@ -212,5 +210,6 @@ public async Task<IActionResult> GetLeaveRequestsByEmployeeId(string employeeId)
         return StatusCode(500, new { message = "Error fetching leave requests" });
     }
 }
+
 
 }

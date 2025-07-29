@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Layout,
   Card,
@@ -31,6 +32,8 @@ const API_BASE = 'http://localhost:5143';
 const { Content } = Layout;
 
 const Home = () => {
+  const navigate = useNavigate();
+
   const [loading, setLoading] = useState(true);
   const [todoData, setTodoData] = useState([]);
   const [payslipData, setPayslipData] = useState([]);
@@ -227,15 +230,70 @@ const Home = () => {
     }
   };
 
-  const handleApplyLeave = () => {
-    message.info('Navigate to leave application form');
+ 
+const fetchLeaveRequests = async (empId) => {
+    if (!empId) return;
+    
+    setLoading(true);
+    try {
+      const response = await fetch(`http://localhost:5143/api/LeaveRequest/employee/${empId}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      console.log(response);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch leave requests: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      // Transform API data to match frontend format
+      const formattedData = data.map(request => ({
+        id: request.id,
+        type: request.typeOfLeave || 'Leave',
+        status: request.status?.toLowerCase() || 'pending',
+        days: request.totalDays || Math.ceil(
+          (new Date(request.leaveEnd) - new Date(request.leaveStart)) / (1000 * 60 * 60 * 24) + 1
+        ),
+        startDate: new Date(request.leaveStart).toLocaleDateString(),
+        endDate: new Date(request.leaveEnd).toLocaleDateString(),
+        details: request.otherDetails || ''
+      }));
+      
+      setLeaveData(formattedData);
+    } catch (err) {
+      console.error("Error fetching leave requests:", err);
+      setError(err.message);
+      message.error("Failed to load leave requests");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    fetchLeaveRequests(employeeId);
+  }, [employeeId]);
+
+  useEffect(() => {
+  console.log('useEffect triggered with employeeId:', employeeId); // ✅ Add this too
+  fetchLeaveRequests(employeeId);
+}, [employeeId]);
+  const handleApplyLeave = () => {
+    message.info('Redirecting to leave application...');
+    navigate("/leaveForm");
+  };
+
+  const handleRefresh = () => {
+    fetchLeaveRequests(employeeId);
+  };
+
 
   const handleModalCancel = () => {
     setIsModalVisible(false);
     setCurrentPayslipDetails(null);
   };
-
+console.log(leaveData);
   if (error) {
     return (
       <Layout style={{ minHeight: '100vh' }}>
@@ -383,14 +441,15 @@ const Home = () => {
                           </List.Item>
                         )}
                       />
-                      <Button
-                        type="dashed"
-                        block
-                        icon={<PlusOutlined />}
-                        onClick={handleApplyLeave}
-                      >
-                        Apply for Leave
-                      </Button>
+                    <Button
+  type="dashed"
+  icon={<PlusOutlined />}
+  style={{ width: '100%', maxWidth: 300 }}
+  onClick={handleApplyLeave}
+>
+  Apply for Leave
+</Button>
+
                     </>
                   ) : (
                     <Empty description="No leave records">
