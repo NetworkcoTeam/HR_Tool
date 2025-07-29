@@ -63,25 +63,30 @@ const onFinish = async (values) => {
     const timeDiff = Math.abs(endDate.getTime() - startDate.getTime());
     const totalDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) + 1;
 
-const payload = {
-  id: crypto.randomUUID(),
-  name: values.name || userData?.name || "",
-  surname: values.surname || userData?.surname || "",
-  employee_id: values.employeeId || userData?.idNumber || "",
-  position: values.position || "",
-  department: values.department || "",
-  leave_start: values.leaveStart.toISOString(),
-  leave_end: values.leaveEnd.toISOString(),
-  total_days: totalDays,
-  type_of_leave: values.leaveType || "",
-  status: "Pending",
-  other_details: values.otherLeaveType || "",
-  doctors_letter: values.doctorsLetter?.[0]?.name || "",
-  funeral_letter: values.funeralLetter?.[0]?.name || "",
-  created_at: new Date().toISOString()
-};
+    // Prepare file names (handle cases where files might not be uploaded)
+    const doctorsLetterName = values.doctorsLetter?.[0]?.originFileObj?.name || 
+                            values.doctorsLetter?.[0]?.name || 
+                            "";
+    const funeralLetterName = values.funeralLetter?.[0]?.originFileObj?.name || 
+                           values.funeralLetter?.[0]?.name || 
+                           "";
 
-
+    const payload = {
+      Name: values.name || userData?.name || "",
+      Surname: values.surname || userData?.surname || "",
+      EmployeeId: values.employeeId || userData?.employee_id || "",
+      Position: values.position || userData?.position || "",
+      Department: values.department || userData?.department || "",
+      LeaveStart: values.leaveStart.toISOString(),
+      LeaveEnd: values.leaveEnd.toISOString(),
+      TotalDays: totalDays,
+      TypeOfLeave: values.leaveType || "",
+      Status: "Pending",
+      OtherDetails: values.otherLeaveType || "N/A",
+      DoctorsLetter: doctorsLetterName,
+      FuneralLetter: funeralLetterName,
+      CreatedAt: new Date().toISOString()
+    };
 
     console.log('Submitting payload:', payload);
 
@@ -94,27 +99,20 @@ const payload = {
       body: JSON.stringify(payload)
     });
 
-if (!response.ok) {
-      let errorMessage = 'Failed to submit leave request';
-
-      // Try to parse the response as JSON
-      try {
-        const errorData = await response.json();
-        errorMessage = errorData.message || JSON.stringify(errorData);
-      } catch (parseError) {
-        // If response isn't JSON
-        const text = await response.text();
-        errorMessage = text || errorMessage;
-      }
-
-      throw new Error(errorMessage);
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('API Error:', errorData);
+      throw new Error(errorData.message || 'Failed to submit leave request');
     }
 
-    message.success('Leave application submitted successfully!');
+    const result = await response.json();
+    console.log('Success:', result);
+    message.success(result.message || 'Leave request submitted successfully!');
     form.resetFields();
+    
   } catch (error) {
-    console.error('Full error:', error);
-    message.error(`Submission failed: ${error.message}`);
+    console.error('Error submitting form:', error);
+    message.error(error.message || 'Failed to submit leave request');
   }
 };
 
