@@ -14,7 +14,7 @@ function Documents(){
      const fetchDocuments = async ()=>{
      setLoading(true);
       try {
-      const res = await fetch('http://localhost:5143/api');
+      const res = await fetch('http://localhost:5143/api/');
       if (!res.ok) {
         throw new Error('Failed to fetch documents' );
       }
@@ -37,8 +37,9 @@ function Documents(){
       title: 'File name',
       dataIndex: 'file',
       Key: 'file',
-      
+      render: (_, record) => `${record.id} `,
     },
+    
     {
       title: 'view',
       dataIndex: 'view',
