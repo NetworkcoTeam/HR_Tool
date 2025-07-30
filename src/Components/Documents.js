@@ -387,7 +387,7 @@ function Documents() {
                 <Option value="ID Document">ID Document</Option>
                 <Option value="Certificate">Certificate</Option>
                 <Option value="Bank Confirmation">Bank Confirmation</Option>
-                <Option value="Performance Review">SARS Letter</Option>
+                <Option value="SARS Letter">SARS Letter</Option>
                 <Option value="Other">Other</Option>
               </Select>
             </Form.Item>
