@@ -43,7 +43,7 @@ const Leave = () => {
         form.setFieldsValue({
           name: user.name,
           surname: user.surname,
-          employeeId: user.idNumber,
+          employeeId: user.employee_id ,
           // Add other fields if available in your user object
           // department: user.department,
           // position: user.position
@@ -74,7 +74,8 @@ const onFinish = async (values) => {
     const payload = {
       Name: values.name || userData?.name || "",
       Surname: values.surname || userData?.surname || "",
-      EmployeeId: values.employeeId || userData?.employee_id || "",
+      EmployeeId: String(values.employeeId || userData?.employee_id || ""),
+
       Position: values.position || userData?.position || "",
       Department: values.department || userData?.department || "",
       LeaveStart: values.leaveStart.toISOString(),

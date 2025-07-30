@@ -1,6 +1,7 @@
 using DotNetEnv;
 using HR_Tool.Api.Services;
 using Supabase;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +10,14 @@ var builder = WebApplication.CreateBuilder(args);
 Env.Load(@"..\Backend\.env"); // Adjust path if needed
 
 // Add services to the container.
-builder.Services.AddControllers();
+ // Add this at the top if missing
+
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+
 
 // PayslipCalculator
 builder.Services.AddScoped<PayslipCalculator>();

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Layout } from 'antd';
+import { Layout, Spin } from 'antd';
 import Sidebar from '../Components/Sidebar';
 import AdminSidebar from '../Components/AdminSidebar';
 import Appointment from '../Components/Appointment';
@@ -9,28 +9,53 @@ const { Content, Sider } = Layout;
 
 const AppointmentBooking = () => {
   const [userRole, setUserRole] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const stored = localStorage.getItem('role');
-    console.log("Raw stored role from localStorage:", stored);
-  
-    try {
-      if (stored.startsWith('{')) {
-        
-        const parsed = JSON.parse(stored);
-        setUserRole(parsed.role);
-        console.log("Parsed role from JSON:", parsed.role);
-      } else {
-        
-        setUserRole(stored);
-        console.log("Set role directly:", stored);
+    const getUserRole = () => {
+      try {
+        // First try to get from userDetails if available
+        const userDetails = localStorage.getItem('user');
+        if (userDetails) {
+          const parsedUser = JSON.parse(userDetails);
+          if (parsedUser?.role) {
+            setUserRole(parsedUser.role);
+            setLoading(false);
+            return;
+          }
+        }
+
+        // Fallback to direct role check
+        const storedRole = localStorage.getItem('role');
+        if (!storedRole) {
+          setLoading(false);
+          return;
+        }
+
+        // Handle both JSON and direct string cases
+        if (storedRole.startsWith('{')) {
+          const parsed = JSON.parse(storedRole);
+          setUserRole(parsed.role);
+        } else {
+          setUserRole(storedRole);
+        }
+      } catch (err) {
+        console.error("Error parsing user role:", err);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error("Error parsing role from localStorage", err);
-    }
+    };
+
+    getUserRole();
   }, []);
-  
-  if (!userRole) return null; 
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <Spin size="large" />
+      </div>
+    );
+  }
 
   return (
     <Layout className="appointment-booking-layout">

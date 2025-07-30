@@ -3,10 +3,10 @@ namespace HR_Tool.Api.Models
 {
     public class LeaveRequestDto
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         public string Name { get; set; }
         public string Surname { get; set; }
-        public string EmployeeId { get; set; }
+        public string EmployeeId { get; set; } 
         public string Position { get; set; }
         public string Department { get; set; }
         public DateTime LeaveStart { get; set; }
