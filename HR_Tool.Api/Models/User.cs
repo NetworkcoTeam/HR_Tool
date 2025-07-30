@@ -1,12 +1,12 @@
 using Supabase.Postgrest.Models;
 using Supabase.Postgrest.Attributes;
+using System;
 
 namespace HR_Tool.Api.Models
 {
     [Table("users")]
     public class User : BaseModel
     {
-
         [Column("name")]
         public string Name { get; set; }
 
@@ -29,11 +29,19 @@ namespace HR_Tool.Api.Models
         public string PasswordHash { get; set; }
 
         [Column("user_status")]
-        public string Status { get; set; } = "Pending"; 
+        public string Status { get; set; } = "Pending";
 
-                [PrimaryKey("employee_id")]
-        public long? EmployeeId { get; set; }  
+        [PrimaryKey("employee_id")]
+        public long? EmployeeId { get; set; }
 
+        // new fields for password reset functionality
+        [Column("reset_token")]
+        public string ResetToken { get; set; }
+
+        [Column("reset_token_expiry")]
+        public DateTime? ResetTokenExpiry { get; set; }
+
+        [Column("last_password_reset")]
+        public DateTime? LastPasswordReset { get; set; }
     }
 }
-

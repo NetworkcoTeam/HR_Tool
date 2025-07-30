@@ -16,6 +16,8 @@ import PayslipManagement from './Pages/PayslipManagement';
 import DocumentsPage from './Pages/DocumentsPage';
 import AppointmentBooking from './Pages/AppointmentBooking';
 import Profile from './Pages/Profile';
+import ForgotPasswordPage from './Pages/ForgotPasswordPage';
+import PasswordResetPage from './Pages/PasswordResetPage';
 
 function App() {
   return (
@@ -38,6 +40,8 @@ function App() {
 
         <Route path="/HRAdminForm" element={<HRAdminForm/>}/>
          <Route path="/Documents" element={<DocumentsPage/>}/>
+        <Route path="/ForgotPassword" element={<ForgotPasswordPage/>}/>
+        <Route path="/reset-password/:token" element={<PasswordResetPage/>}/>
       </Routes>
       
        
