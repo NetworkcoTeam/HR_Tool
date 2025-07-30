@@ -23,10 +23,10 @@ function Sidebar() {
           <span>Profile</span>
         </li>
         
-        <li onClick={() => handleNavigation('/payslip')}>
+       {/* <li onClick={() => handleNavigation('/payslip')}>
           <FaFileInvoiceDollar className="sidebar-icon" />
           <span>Payslip</span>
-        </li>
+        </li>*/}
         
         <li onClick={() => handleNavigation('/documents')}>
           <FaFolder className="sidebar-icon" />

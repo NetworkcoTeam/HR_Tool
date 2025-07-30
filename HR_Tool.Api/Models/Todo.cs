@@ -1,34 +1,34 @@
+using Supabase.Postgrest.Models;
+using Supabase.Postgrest.Attributes;
 using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace HR_Tool.Api.Models
 {
-    public class Todo
+    [Table("todos")]
+    public class Todo : BaseModel
     {
-        public int Id { get; set; }  // Added for identification
-        
-        [Required]
-        [StringLength(50, ErrorMessage = "Title cannot be longer than 50 characters.")]
+        [PrimaryKey("id")]
+        public int Id { get; set; }
+
+        [Column("employee_id")]
+        public long EmployeeId { get; set; }
+
+        [Column("title")]
         public string Title { get; set; }
 
-        [Required]
-        public DateTime DueDate { get; set; }
-
-        [Required]
+        [Column("status")]
         public string Status { get; set; }
 
-        [Required]
-        [EnumDataType(typeof(Priority))]
-        public Priority PriorityLevel { get; set; }  // Note: This was Priority in controller
-        
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }  // Nullable for when not yet updated
+        [Column("due_date")]
+        public DateTime? DueDate { get; set; }
 
-        public enum Priority
-        {
-            Low,
-            Medium,
-            High
-        }
+        [Column("priority")]
+        public string Priority { get; set; }
+
+        [Column("created_at")]
+        public DateTime CreatedAt { get; set; }
+
+        [Column("updated_at")]
+        public DateTime UpdatedAt { get; set; }
     }
 }

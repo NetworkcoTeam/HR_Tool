@@ -1,13 +1,15 @@
-.leave-management-container {
+.dashboard-main {
   display: flex;
   min-height: 100vh;
-  background-color: #F5EDED;
+  background-color: #ffffff;
+  margin-left: 270px;
 }
 
 .main-content {
   flex: 1;
-  padding: 2rem;
-  overflow-x: hidden;
+  padding: 20px;
+  overflow: auto;
+  margin-left: 250px; 
 }
 
 
