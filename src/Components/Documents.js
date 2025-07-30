@@ -382,11 +382,12 @@ function Documents() {
               rules={[{ required: true, message: 'Please enter document type' }]}
             >
               <Select placeholder="Select document type">
-                <Option value="Resume">Resume</Option>
+                <Option value="Resume">CV</Option>
                 <Option value="Contract">Contract</Option>
                 <Option value="ID Document">ID Document</Option>
                 <Option value="Certificate">Certificate</Option>
-                <Option value="Performance Review">Performance Review</Option>
+                <Option value="Bank Confirmation">Bank Confirmation</Option>
+                <Option value="Performance Review">SARS Letter</Option>
                 <Option value="Other">Other</Option>
               </Select>
             </Form.Item>
