@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Layout,
@@ -11,7 +11,11 @@ import {
   Spin,
   message,
   Empty,
-  Modal
+  Modal,
+  Form,
+  Input,
+  DatePicker,
+  Select
 } from 'antd';
 import {
   CheckCircleOutlined,
@@ -21,18 +25,20 @@ import {
   CalendarOutlined,
   PlusOutlined,
   UserOutlined,
-  ExclamationCircleOutlined
+  ExclamationCircleOutlined,
+  DeleteOutlined
 } from '@ant-design/icons';
 import Sidebar from '../Components/Sidebar';
 import './Home.css';
 import AppointmentsTile from '../Components/AppointmentTile';
 
 const API_BASE = 'http://localhost:5143';
-
 const { Content } = Layout;
 
 const Home = () => {
   const navigate = useNavigate();
+  const todoCache = useRef(null);
+  const leaveCache = useRef(null);
 
   const [loading, setLoading] = useState(true);
   const [todoData, setTodoData] = useState([]);
@@ -42,7 +48,7 @@ const Home = () => {
   const [error, setError] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentPayslipDetails, setCurrentPayslipDetails] = useState(null);
-
+  const [isAddTodoModalVisible, setIsAddTodoModalVisible] = useState(false);
   const [employeeId, setEmployeeId] = useState(null);
 
   useEffect(() => {
@@ -58,109 +64,233 @@ const Home = () => {
       }
     }
   }, []);
-  
 
-
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!employeeId) return;
-      try {
-        setLoading(true);
+  const parseDate = (dateStr) => {
+    if (!dateStr) return new Date();
     
-        // Fetch payslips from backend API
-        const payslipsResponse = await fetch(`${API_BASE}/api/Payslips/employee/${employeeId}/payslips`);
+    if (dateStr instanceof Date) {
+      return dateStr;
+    }
     
-        if (!payslipsResponse.ok) {
-          throw new Error(`HTTP error! status: ${payslipsResponse.status}`);
-        }
-    
-        const payslipsJson = await payslipsResponse.json();
-        
-        console.log("Raw payslips response:", payslipsJson); // Debugging
-        
-        if (payslipsJson.success) {
-          const parseDate = (dateStr) => {
-            if (!dateStr) return new Date();
-            
-            if (dateStr instanceof Date) {
-              return dateStr;
-            }
-            
-            if (typeof dateStr === 'string') {
-              // Try parsing as ISO string
-              const isoDate = new Date(dateStr);
-              if (!isNaN(isoDate.getTime())) {
-                return isoDate;
-              }
-              
-              // Try parsing as date part only (YYYY-MM-DD)
-              const dateParts = dateStr.split('T')[0].split('-');
-              if (dateParts.length === 3) {
-                return new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
-              }
-            }
-            
-            return new Date();
-          };
-  
-          const processedPayslips = payslipsJson.payslips.map(payslip => {
-            const periodEndDate = parseDate(payslip.periodEnd);
-            const periodStartDate = parseDate(payslip.periodStart);
-  
-            return {
-              ...payslip,
-              MonthName: periodEndDate.toLocaleString('default', { month: 'long' }),
-              MonthNumber: periodEndDate.getMonth() + 1,
-              Year: periodEndDate.getFullYear(),
-              FormattedPeriodEnd: periodEndDate.toLocaleDateString('en-US', {
-                day: 'numeric',
-                month: 'short',
-                year: 'numeric'
-              }),
-              FormattedPeriodStart: periodStartDate.toLocaleDateString('en-US', {
-                day: 'numeric',
-                month: 'short',
-                year: 'numeric'
-              }),
-              RawPeriodEnd: periodEndDate,
-              RawPeriodStart: periodStartDate
-            };
-          });
-    
-          // Sort by date descending
-          const sortedPayslips = processedPayslips.sort((a, b) => 
-            b.RawPeriodEnd - a.RawPeriodEnd
-          );
-    
-          setPayslipData(sortedPayslips);
-        } else {
-          message.error(payslipsJson.error || 'Failed to fetch payslips');
-          setPayslipData([]);
-        }
-    
-        // Mock data for other sections
-        setTodoData([]);
-        setLeaveData([]);
-        setAppointments([]);
-    
-      } catch (err) {
-        console.error('Failed to load data:', err);
-        setError('Failed to load dashboard data');
-        message.error('Failed to load dashboard data: ' + err.message);
-        setPayslipData([]);
-        setTodoData([]);
-        setLeaveData([]);
-        setAppointments([]);
-      } finally {
-        setLoading(false);
+    if (typeof dateStr === 'string') {
+      // Try parsing as ISO string
+      const isoDate = new Date(dateStr);
+      if (!isNaN(isoDate.getTime())) {
+        return isoDate;
       }
-    };
-    fetchData();
-  }, [employeeId]);
+      
+      // Try parsing as date part only (YYYY-MM-DD)
+      const dateParts = dateStr.split('T')[0].split('-');
+      if (dateParts.length === 3) {
+        return new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+      }
+    }
+    
+    return new Date();
+  };
 
-  const handleAddTodo = () => {
-    message.info('Add todo functionality would be implemented here');
+  const fetchPayslips = async (empId) => {
+    if (!empId) return;
+    
+    try {
+      const payslipsResponse = await fetch(`${API_BASE}/api/Payslips/employee/${empId}/payslips`);
+      if (!payslipsResponse.ok) {
+        throw new Error(`HTTP error! status: ${payslipsResponse.status}`);
+      }
+      
+      const payslipsJson = await payslipsResponse.json();
+      
+      if (payslipsJson.success) {
+        const processedPayslips = payslipsJson.payslips.map(payslip => {
+          const periodEndDate = parseDate(payslip.periodEnd);
+          const periodStartDate = parseDate(payslip.periodStart);
+
+          return {
+            ...payslip,
+            MonthName: periodEndDate.toLocaleString('default', { month: 'long' }),
+            MonthNumber: periodEndDate.getMonth() + 1,
+            Year: periodEndDate.getFullYear(),
+            FormattedPeriodEnd: periodEndDate.toLocaleDateString('en-US', {
+              day: 'numeric',
+              month: 'short',
+              year: 'numeric'
+            }),
+            FormattedPeriodStart: periodStartDate.toLocaleDateString('en-US', {
+              day: 'numeric',
+              month: 'short',
+              year: 'numeric'
+            }),
+            RawPeriodEnd: periodEndDate,
+            RawPeriodStart: periodStartDate
+          };
+        });
+
+        const sortedPayslips = processedPayslips.sort((a, b) => 
+          b.RawPeriodEnd - a.RawPeriodEnd
+        );
+        setPayslipData(sortedPayslips);
+      } else {
+        message.error(payslipsJson.error || 'Failed to fetch payslips');
+        setPayslipData([]);
+      }
+    } catch (err) {
+      console.error('Failed to load payslips:', err);
+      setError('Failed to load payslips');
+      message.error('Failed to load payslips: ' + err.message);
+      setPayslipData([]);
+    }
+  };
+
+  const fetchLeaveRequests = async (empId) => {
+    if (!empId) return;
+
+    if (leaveCache.current) {
+      setLeaveData(leaveCache.current);
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE}/api/LeaveRequest/employee/${empId}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch leave requests: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const formattedData = data.map(request => ({
+  id: request.id,
+  type: request.typeOfLeave || 'Leave',
+  status: request.status?.toLowerCase() || 'pending',
+  days: request.totalDays || Math.ceil(
+    (new Date(request.leaveEnd) - new Date(request.leaveStart)) / (1000 * 60 * 60 * 24)
+  ) + 1,
+  startDate: new Date(request.leaveStart).toLocaleDateString(),
+  endDate: new Date(request.leaveEnd).toLocaleDateString(),
+  details: request.otherDetails || ''
+}));
+
+      leaveCache.current = formattedData;
+      setLeaveData(formattedData);
+    } catch (err) {
+      console.error("Error fetching leave requests:", err);
+      setError(err.message);
+      message.error("Failed to load leave requests");
+    }
+  };
+
+  const fetchTodos = async (empId) => {
+    if (!empId) return;
+
+    if (todoCache.current) {
+      setTodoData(todoCache.current);
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE}/api/ToDo`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch todos: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const formattedData = data.map(todo => ({
+        id: todo.id,
+        task: todo.title,
+        dueDate: todo.dueDate,
+        status: todo.status,
+        priority: todo.priorityLevel,
+        completed: todo.status === 'Completed'
+      }));
+
+      todoCache.current = formattedData;
+      setTodoData(formattedData);
+    } catch (err) {
+      console.error("Error fetching todos:", err);
+      setError(err.message);
+      message.error("Failed to load todos");
+    }
+  };
+
+  const addTodo = async (newTodo) => {
+    try {
+      const response = await fetch(`${API_BASE}/api/ToDo`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(newTodo)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to add todo');
+      }
+
+      todoCache.current = null; // Invalidate cache
+      await fetchTodos(employeeId);
+      return await response.json();
+    } catch (err) {
+      console.error("Error adding todo:", err);
+      throw err;
+    }
+  };
+
+  const updateTodoStatus = async (id, completed) => {
+    try {
+      const response = await fetch(`${API_BASE}/api/ToDo/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          status: completed ? 'Completed' : 'Pending'
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to update todo: ${response.status}`);
+      }
+      
+      todoCache.current = null; // Invalidate cache
+      await fetchTodos(employeeId);
+      return await response.json();
+    } catch (err) {
+      console.error("Error updating todo:", err);
+      throw err;
+    }
+  };
+
+  const deleteTodo = async (id) => {
+    try {
+      const response = await fetch(`${API_BASE}/api/ToDo/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to delete todo: ${response.status}`);
+      }
+      
+      todoCache.current = null; // Invalidate cache
+      await fetchTodos(employeeId);
+      return true;
+    } catch (err) {
+      console.error("Error deleting todo:", err);
+      throw err;
+    }
   };
 
   const handleViewPayslip = async (year, month) => {
@@ -174,7 +304,6 @@ const Home = () => {
       }
   
       const result = await response.json();
-
       message.destroy();
 
       if (result.success && result.payslip) {
@@ -222,7 +351,6 @@ const Home = () => {
         loadingMessage();
         message.success('Payslip downloaded successfully!');
       }, 100);
-      
     } catch (err) {
       message.destroy();
       message.error(`Download failed: ${err.message}`);
@@ -230,70 +358,55 @@ const Home = () => {
     }
   };
 
- 
-const fetchLeaveRequests = async (empId) => {
-    if (!empId) return;
-    
-    setLoading(true);
-    try {
-      const response = await fetch(`http://localhost:5143/api/LeaveRequest/employee/${empId}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      console.log(response);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch leave requests: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      
-      // Transform API data to match frontend format
-      const formattedData = data.map(request => ({
-        id: request.id,
-        type: request.typeOfLeave || 'Leave',
-        status: request.status?.toLowerCase() || 'pending',
-        days: request.totalDays || Math.ceil(
-          (new Date(request.leaveEnd) - new Date(request.leaveStart)) / (1000 * 60 * 60 * 24) + 1
-        ),
-        startDate: new Date(request.leaveStart).toLocaleDateString(),
-        endDate: new Date(request.leaveEnd).toLocaleDateString(),
-        details: request.otherDetails || ''
-      }));
-      
-      setLeaveData(formattedData);
-    } catch (err) {
-      console.error("Error fetching leave requests:", err);
-      setError(err.message);
-      message.error("Failed to load leave requests");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchLeaveRequests(employeeId);
-  }, [employeeId]);
-
-  useEffect(() => {
-  console.log('useEffect triggered with employeeId:', employeeId); // ✅ Add this too
-  fetchLeaveRequests(employeeId);
-}, [employeeId]);
   const handleApplyLeave = () => {
-    message.info('Redirecting to leave application...');
     navigate("/leaveForm");
   };
 
-  const handleRefresh = () => {
-    fetchLeaveRequests(employeeId);
+  const handleAddTodoSubmit = async (values) => {
+    try {
+      const todoPayload = {
+        title: values.task,
+        dueDate: values.dueDate.format('YYYY-MM-DDTHH:mm:ss'),
+        status: "Pending",
+        priorityLevel: values.priority
+      };
+      
+      await addTodo(todoPayload);
+      message.success('Todo added successfully!');
+      setIsAddTodoModalVisible(false);
+    } catch (err) {
+      message.error(`Failed to add todo: ${err.message}`);
+    }
   };
-
 
   const handleModalCancel = () => {
     setIsModalVisible(false);
     setCurrentPayslipDetails(null);
   };
-console.log(leaveData);
+
+  useEffect(() => {
+    const loadData = async () => {
+      if (!employeeId) return;
+      
+      setLoading(true);
+      try {
+        await Promise.all([
+          fetchPayslips(employeeId),
+          fetchTodos(employeeId),
+          fetchLeaveRequests(employeeId)
+        ]);
+      } catch (err) {
+        console.error('Failed to load data:', err);
+        setError('Failed to load dashboard data');
+        message.error('Failed to load dashboard data: ' + err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, [employeeId]);
+
   if (error) {
     return (
       <Layout style={{ minHeight: '100vh' }}>
@@ -350,7 +463,7 @@ console.log(leaveData);
                       type="primary"
                       icon={<PlusOutlined />}
                       size="small"
-                      onClick={handleAddTodo}
+                      onClick={() => setIsAddTodoModalVisible(true)}
                     >
                       Add Task
                     </Button>
@@ -360,23 +473,49 @@ console.log(leaveData);
                     <List
                       dataSource={todoData}
                       renderItem={(item) => (
-                        <List.Item>
+                        <List.Item
+                          actions={[
+                            <Button
+                              type="text"
+                              icon={item.completed ? <CheckCircleOutlined style={{ color: '#52c41a' }} /> : <ClockCircleOutlined />}
+                              onClick={() => updateTodoStatus(item.id, !item.completed)}
+                            />,
+                            <Button
+                              type="text"
+                              danger
+                              icon={<DeleteOutlined />}
+                              onClick={() => deleteTodo(item.id)}
+                            />
+                          ]}
+                        >
                           <List.Item.Meta
                             avatar={
-                              <Button
-                                shape="circle"
-                                icon={item.completed ? <CheckCircleOutlined style={{ color: '#52c41a' }} /> : <ClockCircleOutlined />}
-                                type="text"
-                              />
+                              <Tag color={
+                                item.priority === 'High' ? 'red' : 
+                                item.priority === 'Medium' ? 'orange' : 'blue'
+                              }>
+                                {item.priority}
+                              </Tag>
                             }
                             title={<span className={item.completed ? 'completed-task' : ''}>{item.task}</span>}
-                            description={item.time}
+                            description={
+                              <>
+                                <div>Due: {new Date(item.dueDate).toLocaleDateString()}</div>
+                                <div>Status: <Tag color={item.completed ? 'success' : 'processing'}>
+                                  {item.completed ? 'Completed' : 'Pending'}
+                                </Tag></div>
+                              </>
+                            }
                           />
                         </List.Item>
                       )}
                     />
                   ) : (
-                    <Empty description="No tasks found" />
+                    <Empty description="No tasks found">
+                      <Button type="primary" icon={<PlusOutlined />} onClick={() => setIsAddTodoModalVisible(true)}>
+                        Add Your First Task
+                      </Button>
+                    </Empty>
                   )}
                 </Card>
 
@@ -441,15 +580,14 @@ console.log(leaveData);
                           </List.Item>
                         )}
                       />
-                    <Button
-  type="dashed"
-  icon={<PlusOutlined />}
-  style={{ width: '100%', maxWidth: 300 }}
-  onClick={handleApplyLeave}
->
-  Apply for Leave
-</Button>
-
+                      <Button
+                        type="dashed"
+                        icon={<PlusOutlined />}
+                        style={{ width: '100%', maxWidth: 300 }}
+                        onClick={handleApplyLeave}
+                      >
+                        Apply for Leave
+                      </Button>
                     </>
                   ) : (
                     <Empty description="No leave records">
@@ -525,6 +663,52 @@ console.log(leaveData);
             ) : (
               <Empty description="No payslip details available" />
             )}
+          </Modal>
+
+          <Modal
+            title="Add New Todo"
+            visible={isAddTodoModalVisible}
+            onCancel={() => setIsAddTodoModalVisible(false)}
+            footer={null}
+          >
+            <Form
+              layout="vertical"
+              onFinish={handleAddTodoSubmit}
+            >
+              <Form.Item
+                label="Task"
+                name="task"
+                rules={[{ required: true, message: 'Please enter a task' }]}
+              >
+                <Input placeholder="Enter task description" />
+              </Form.Item>
+              
+              <Form.Item
+                label="Due Date"
+                name="dueDate"
+                rules={[{ required: true, message: 'Please select a due date' }]}
+              >
+                <DatePicker style={{ width: '100%' }} />
+              </Form.Item>
+              
+              <Form.Item
+                label="Priority"
+                name="priority"
+                rules={[{ required: true, message: 'Please select a priority' }]}
+              >
+                <Select>
+                  <Select.Option value="Low">Low</Select.Option>
+                  <Select.Option value="Medium">Medium</Select.Option>
+                  <Select.Option value="High">High</Select.Option>
+                </Select>
+              </Form.Item>
+              
+              <Form.Item>
+                <Button type="primary" htmlType="submit">
+                  Add Task
+                </Button>
+              </Form.Item>
+            </Form>
           </Modal>
         </Content>
       </Layout>
