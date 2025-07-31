@@ -17,6 +17,8 @@ import DocumentsPage from './Pages/DocumentsPage';
 import AppointmentBooking from './Pages/AppointmentBooking';
 import Profile from './Pages/Profile';
 
+import Logout from './Components/Logout';
+
 function App() {
   return (
     
@@ -38,6 +40,8 @@ function App() {
 
         <Route path="/HRAdminForm" element={<HRAdminForm/>}/>
          <Route path="/Documents" element={<DocumentsPage/>}/>
+
+         <Route path="/logout" element={<Logout />} />
       </Routes>
       
        

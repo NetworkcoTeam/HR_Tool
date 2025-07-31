@@ -251,3 +251,25 @@
     height: 300px;
   }
 }
+
+
+
+
+.status-message {
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.status-message.success {
+  background-color: #d4edda;
+  color: green;
+  border: 1px solid #c3e6cb;
+}
+
+.status-message.error {
+  background-color: #f8d7da;
+  color: red;
+  border: 1px solid #f5c6cb;
+}

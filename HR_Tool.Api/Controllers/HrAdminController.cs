@@ -122,9 +122,11 @@ public class ErrorResponse
                 // 2. Create Employee Record using request data
                 var newEmployee = new Employee
                 {
+                    UserId = request.UserIdNumber,
                     FirstName = request.EmployeeFirstName,
                     LastName = request.EmployeeLastName,
                     Position = request.EmployeePosition,
+                    Department = request.Department,
                     CreatedAt = DateTime.UtcNow
                 };
 

@@ -73,13 +73,11 @@ const Home = () => {
     }
     
     if (typeof dateStr === 'string') {
-      // Try parsing as ISO string
       const isoDate = new Date(dateStr);
       if (!isNaN(isoDate.getTime())) {
         return isoDate;
       }
       
-      // Try parsing as date part only (YYYY-MM-DD)
       const dateParts = dateStr.split('T')[0].split('-');
       if (dateParts.length === 3) {
         return new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
@@ -198,10 +196,14 @@ const Home = () => {
       });
 
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Response error:', errorText);
         throw new Error(`Failed to fetch todos: ${response.status}`);
       }
 
       const data = await response.json();
+      console.log('Fetched todos:', data);
+      
       const formattedData = data.map(todo => ({
         id: todo.id,
         task: todo.title,
@@ -216,12 +218,14 @@ const Home = () => {
     } catch (err) {
       console.error("Error fetching todos:", err);
       setError(err.message);
-      message.error("Failed to load todos");
+      message.error("Failed to load todos: " + err.message);
     }
   };
 
   const addTodo = async (newTodo) => {
     try {
+      console.log('Adding todo:', newTodo);
+      
       const response = await fetch(`${API_BASE}/api/ToDo`, {
         method: 'POST',
         headers: {
@@ -231,14 +235,31 @@ const Home = () => {
         body: JSON.stringify(newTodo)
       });
 
+      const responseText = await response.text();
+      console.log('Response status:', response.status);
+      console.log('Response text:', responseText);
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to add todo');
+        let errorMessage = 'Failed to add todo';
+        try {
+          const errorData = JSON.parse(responseText);
+          errorMessage = errorData.error || errorData.message || errorMessage;
+        } catch {
+          errorMessage = responseText || errorMessage;
+        }
+        throw new Error(errorMessage);
+      }
+
+      let result;
+      try {
+        result = JSON.parse(responseText);
+      } catch {
+        result = { success: true };
       }
 
       todoCache.current = null; // Invalidate cache
       await fetchTodos(employeeId);
-      return await response.json();
+      return result;
     } catch (err) {
       console.error("Error adding todo:", err);
       throw err;
@@ -246,33 +267,75 @@ const Home = () => {
   };
 
   const updateTodoStatus = async (id, completed) => {
+    const todo = todoData.find(t => t.id === id);
+    if (!todo) {
+      console.error("Todo not found in state.");
+      message.error("Todo not found");
+      return;
+    }
+
     try {
+      console.log('Updating todo:', { id, completed, todo });
+      
+      const updateData = {
+        title: todo.task,
+        dueDate: todo.dueDate,
+        status: completed ? 'Completed' : 'Pending',
+        priorityLevel: todo.priority
+      };
+
+      console.log('Update payload:', updateData);
+
       const response = await fetch(`${API_BASE}/api/ToDo/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        body: JSON.stringify({
-          status: completed ? 'Completed' : 'Pending'
-        })
+        body: JSON.stringify(updateData)
       });
-      
+
+      const responseText = await response.text();
+      console.log('Update response status:', response.status);
+      console.log('Update response text:', responseText);
+
       if (!response.ok) {
-        throw new Error(`Failed to update todo: ${response.status}`);
+        let errorMessage = 'Failed to update todo';
+        try {
+          const errorData = JSON.parse(responseText);
+          errorMessage = errorData.error || errorData.message || errorMessage;
+        } catch {
+          errorMessage = responseText || errorMessage;
+        }
+        throw new Error(errorMessage);
       }
+
       
-      todoCache.current = null; // Invalidate cache
+      let result;
+      try {
+        result = JSON.parse(responseText);
+        console.log('Parsed update result:', result);
+      } catch {
+        console.log('Response was not JSON, but request was successful');
+        result = { success: true };
+      }
+
+      todoCache.current = null;
       await fetchTodos(employeeId);
-      return await response.json();
+      
+      message.success(`Todo marked as ${completed ? 'completed' : 'pending'}`);
+      return result;
     } catch (err) {
       console.error("Error updating todo:", err);
+      message.error("Failed to update todo: " + err.message);
       throw err;
     }
   };
 
   const deleteTodo = async (id) => {
     try {
+      console.log('Deleting todo:', id);
+      
       const response = await fetch(`${API_BASE}/api/ToDo/${id}`, {
         method: 'DELETE',
         headers: {
@@ -281,15 +344,68 @@ const Home = () => {
       });
       
       if (!response.ok) {
-        throw new Error(`Failed to delete todo: ${response.status}`);
+        const responseText = await response.text();
+        let errorMessage = 'Failed to delete todo';
+        try {
+          const errorData = JSON.parse(responseText);
+          errorMessage = errorData.error || errorData.message || errorMessage;
+        } catch {
+          errorMessage = responseText || errorMessage;
+        }
+        throw new Error(errorMessage);
       }
       
-      todoCache.current = null; // Invalidate cache
+      todoCache.current = null; 
       await fetchTodos(employeeId);
+      message.success('Todo deleted successfully');
       return true;
     } catch (err) {
       console.error("Error deleting todo:", err);
+      message.error("Failed to delete todo: " + err.message);
       throw err;
+    }
+  };
+
+  const handleAddTodoSubmit = async (values) => {
+    try {
+      console.log('Form values:', values);
+      
+      const todoPayload = {
+        title: values.task,
+        dueDate: values.dueDate.format('YYYY-MM-DDTHH:mm:ss.SSS') + 'Z',
+        status: "Pending",
+        priorityLevel: values.priority
+      };
+      
+      console.log('Todo payload:', todoPayload);
+      
+      await addTodo(todoPayload);
+      message.success('Todo added successfully!');
+      setIsAddTodoModalVisible(false);
+    } catch (err) {
+      console.error('Add todo error:', err);
+      message.error(`Failed to add todo: ${err.message}`);
+    }
+  };
+
+  const handleToggleComplete = async (todoId, currentCompleted) => {
+    try {
+      const loadingMessage = message.loading(`${currentCompleted ? 'Marking as pending' : 'Marking as completed'}...`, 0);
+      
+      await updateTodoStatus(todoId, !currentCompleted);
+      
+      loadingMessage();
+    } catch (error) {
+      console.error('Failed to toggle todo status:', error);
+      
+    }
+  };
+
+  const handleDeleteTodo = async (todoId) => {
+    try {
+      await deleteTodo(todoId);
+    } catch (error) {
+      console.error('Failed to delete todo:', error);
     }
   };
 
@@ -360,23 +476,6 @@ const Home = () => {
 
   const handleApplyLeave = () => {
     navigate("/leaveForm");
-  };
-
-  const handleAddTodoSubmit = async (values) => {
-    try {
-      const todoPayload = {
-        title: values.task,
-        dueDate: values.dueDate.format('YYYY-MM-DDTHH:mm:ss'),
-        status: "Pending",
-        priorityLevel: values.priority
-      };
-      
-      await addTodo(todoPayload);
-      message.success('Todo added successfully!');
-      setIsAddTodoModalVisible(false);
-    } catch (err) {
-      message.error(`Failed to add todo: ${err.message}`);
-    }
   };
 
   const handleModalCancel = () => {
@@ -474,20 +573,21 @@ const Home = () => {
                       dataSource={todoData}
                       renderItem={(item) => (
                         <List.Item
-                          actions={[
-                            <Button
-                              type="text"
-                              icon={item.completed ? <CheckCircleOutlined style={{ color: '#52c41a' }} /> : <ClockCircleOutlined />}
-                              onClick={() => updateTodoStatus(item.id, !item.completed)}
-                            />,
-                            <Button
+                        actions={[
+                          <Button
+                            type="text"
+                            icon={item.completed ? <CheckCircleOutlined style={{ color: '#52c41a' }} /> : <ClockCircleOutlined />}
+                            onClick={() => handleToggleComplete(item.id, item.completed)}
+                            loading={false} 
+                          />,
+                          <Button
                               type="text"
                               danger
                               icon={<DeleteOutlined />}
-                              onClick={() => deleteTodo(item.id)}
+                              onClick={() => handleDeleteTodo(item.id)}
                             />
                           ]}
-                        >
+                          >
                           <List.Item.Meta
                             avatar={
                               <Tag color={
