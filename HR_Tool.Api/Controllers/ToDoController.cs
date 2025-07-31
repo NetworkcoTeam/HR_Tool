@@ -124,10 +124,28 @@ public async Task<IActionResult> GetTodosByEmployee(long employeeId)
 
         // DELETE: api/todo/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTodo(int id)
+public async Task<IActionResult> DeleteTodo(int id)
+{
+    var existing = await _supabase.From<Todo>().Where(t => t.Id == id).Single();
+    
+    if (existing == null)
+        return NotFound(new { message = $"Todo with ID {id} not found." });
+
+    var deleteResponse = await _supabase.From<Todo>().Delete(existing);
+
+    if (deleteResponse.ResponseMessage.IsSuccessStatusCode)
+    {
+        return Ok(new { message = "Todo deleted successfully." });
+    }
+    else
+    {
+        return StatusCode((int)deleteResponse.ResponseMessage.StatusCode, new
         {
-            await _supabase.From<Todo>().Where(t => t.Id == id).Delete();
-            return Ok(new { message = "Todo deleted successfully." });
-        }
+            message = "Failed to delete todo.",
+            detail = await deleteResponse.ResponseMessage.Content.ReadAsStringAsync()
+        });
+    }
+}
+
     }
 }

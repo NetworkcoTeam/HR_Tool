@@ -30,6 +30,8 @@ const Todo = forwardRef(({ employeeId }, ref) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
   const [submitting, setSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
+
 
   useImperativeHandle(ref, () => ({
     openModal: () => {
@@ -155,30 +157,32 @@ const Todo = forwardRef(({ employeeId }, ref) => {
   }
 };
 
-  const deleteTodo = async (id) => {
-    try {
-      setSubmitting(true);
-      const response = await fetch(`${API_BASE}/api/ToDo/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Failed to delete todo: ${response.status}`);
+const deleteTodo = async (id) => {
+  console.log("Sending DELETE request for:", id);
+  setDeletingId(id);
+  try {
+    const response = await fetch(`${API_BASE}/api/ToDo/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
-      
-      setTodos(prev => prev.filter(todo => todo.id !== id));
-      message.success('Task deleted successfully!');
-      return true;
-    } catch (err) {
-      console.error("Error deleting todo:", err);
-      throw err;
-    } finally {
-      setSubmitting(false);
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to delete todo: ${response.status}`);
     }
-  };
+
+    setTodos(prev => prev.filter(todo => todo.id !== id));
+    message.success('Task deleted successfully!');
+    return true;
+  } catch (err) {
+    console.error("Error deleting todo:", err);
+    throw err;
+  } finally {
+    setDeletingId(null);
+  }
+};
+
 
   useEffect(() => {
     fetchTodos();
@@ -211,27 +215,19 @@ const Todo = forwardRef(({ employeeId }, ref) => {
       });
     }
   };
-
-  const handleDelete = async (id) => {
-    Modal.confirm({
-      title: 'Delete Task',
-      icon: <ExclamationCircleOutlined />,
-      content: 'Are you sure you want to delete this task?',
-      okText: 'Delete',
-      okType: 'danger',
-      cancelText: 'Cancel',
-      onOk: async () => {
-        try {
-          await deleteTodo(id);
-        } catch (err) {
-          notification.error({
-            message: 'Failed to delete task',
-            description: err.message
-          });
-        }
-      }
+const handleDelete = async (id) => {
+  console.log("Deleting task ID:", id);
+  try {
+    await deleteTodo(id);
+  } catch (err) {
+    notification.error({
+      message: 'Failed to delete task',
+      description: err.message,
     });
-  };
+  }
+};
+
+
 
   if (error) {
     return (
@@ -270,13 +266,14 @@ const Todo = forwardRef(({ employeeId }, ref) => {
                     onClick={() => handleStatusUpdate(item.id, !item.completed)}
                     disabled={submitting}
                   />,
-                  <Button
-                    type="text"
-                    danger
-                    icon={<DeleteOutlined />}
-                    onClick={() => handleDelete(item.id)}
-                    disabled={submitting}
-                  />
+                <Button
+  type="text"
+  danger
+  icon={<DeleteOutlined />}
+  onClick={() => handleDelete(item.id)}
+  disabled={deletingId === item.id}
+/>
+
                 ]}
               >
                 <List.Item.Meta
