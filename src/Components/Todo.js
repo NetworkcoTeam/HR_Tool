@@ -75,22 +75,29 @@ const Todo = forwardRef(({ employeeId }, ref) => {
       setLoading(false);
     }
   };
+const addTodo = async (todoData) => {
+  console.log("Adding todo:", todoData);
+  console.log("Employee ID:", employeeId, "Type:", typeof employeeId);
+  
+  try {
+    setSubmitting(true);
 
-  const addTodo = async (todoData) => {
+    const payload = {
+      ...todoData,
+      EmployeeId: employeeId, // Match your database column name
+      status: "Pending"
+    };
 
-    try {
-      setSubmitting(true);
-      const response = await fetch(`${API_BASE}/api/ToDo`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-          ...todoData,
-          employeeId
-        })
-      });
+    console.log("Full payload:", payload);
+
+    const response = await fetch(`${API_BASE}/api/ToDo`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
+      body: JSON.stringify(payload)
+    });
 
      if (!response.ok) {
   const errorText = await response.text(); // <---- CHANGED FROM .json() TO .text()

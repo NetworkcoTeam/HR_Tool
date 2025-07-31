@@ -42,33 +42,42 @@ namespace HR_Tool.Api.Controllers
 
         // POST: api/todo
         [HttpPost]
-        public async Task<IActionResult> CreateTodo([FromBody] TodoDto dto)
-        {
-            var todo = new Todo
-            {
-                Title = dto.Title,
-                Status = dto.Status,
-                DueDate = dto.DueDate,
-                Priority = dto.Priority,
-                CreatedAt = DateTime.UtcNow
-            };
+public async Task<IActionResult> CreateTodo([FromBody] TodoDto dto)
+{
+    // Add validation
+    if (dto.EmployeeId <= 0)
+    {
+        return BadRequest("EmployeeId must be a positive number");
+    }
 
-            var response = await _supabase.From<Todo>().Insert(todo);
+    var todo = new Todo
+    {
+        Title = dto.Title,
+        Status = dto.Status,
+        DueDate = dto.DueDate,
+        Priority = dto.Priority,
+        EmployeeId = dto.EmployeeId, // THIS WASN'T BEING SET
+        CreatedAt = DateTime.UtcNow,
+        UpdatedAt = DateTime.UtcNow
+    };
 
-            var createdDto = new TodoDto
-            {
-                Id = response.Model.Id,
-                Title = response.Model.Title,
-                Status = response.Model.Status,
-                DueDate = response.Model.DueDate,
-                Priority = response.Model.Priority,
-                CreatedAt = response.Model.CreatedAt,
-                UpdatedAt = response.Model.UpdatedAt
-            };
+    Console.WriteLine($"Creating todo for EmployeeId: {todo.EmployeeId}"); // Debug log
 
-            return Ok(createdDto);
-        }
-        // GET: api/todo/employee/500
+    var response = await _supabase.From<Todo>().Insert(todo);
+
+    // Return the created todo with its EmployeeId
+    return Ok(new TodoDto
+    {
+        Id = response.Model.Id,
+        Title = response.Model.Title,
+        Status = response.Model.Status,
+        DueDate = response.Model.DueDate,
+        Priority = response.Model.Priority,
+        EmployeeId = response.Model.EmployeeId, // Include in response
+        CreatedAt = response.Model.CreatedAt,
+        UpdatedAt = response.Model.UpdatedAt
+    });
+}
 [HttpGet("employee/{employeeId}")]
 public async Task<IActionResult> GetTodosByEmployee(long employeeId)
 {
