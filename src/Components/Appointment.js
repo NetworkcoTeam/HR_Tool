@@ -161,8 +161,7 @@ const Appointment = () => {
       const startTime = values.time[0].format('HH:mm:ss');
       const endTime = values.time[1].format('HH:mm:ss');
 
-      // Combine date and time to create a full datetime object in local time
-      // For example, 2025-09-30 08:00:00 (SAST)
+      // Combine date and time to create a full datetime object in local time (SAST)
       const startDateTimeLocal = moment(`${appointmentDate}T${startTime}`);
       const endDateTimeLocal = moment(`${appointmentDate}T${endTime}`);
 
