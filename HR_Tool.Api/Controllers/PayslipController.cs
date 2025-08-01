@@ -217,6 +217,7 @@ namespace HR_Tool.Api.Controllers
                     {
                         PaySlipId = payslipResponse.PaySlipId,
                         EmployeeName = $"{employeeResponse?.FirstName} {employeeResponse?.LastName}".Trim(),
+                        UserId = employeeResponse?.UserId ?? "N/A",
                         Position = employeeResponse?.Position ?? "Not specified",
                         Period = $"{payslipResponse.PeriodStart:dd MMM yyyy} - {payslipResponse.PeriodEnd:dd MMM yyyy}",
                         BasicSalary = payslipResponse.BasicSalary,
@@ -275,6 +276,7 @@ namespace HR_Tool.Api.Controllers
                     PaySlipId = payslipResponse.PaySlipId,
                     EmployeeId = (int)payslipResponse.EmployeeId,
                     EmployeeName = $"{employeeResponse?.FirstName} {employeeResponse?.LastName}".Trim(),
+                    UserId = employeeResponse?.UserId ?? "N/A",
                     Position = employeeResponse?.Position ?? "Not specified",
                     BasicSalary = payslipResponse.BasicSalary,
                     TaxAmount = payslipResponse.TaxAmount ?? 0m,
@@ -310,6 +312,7 @@ namespace HR_Tool.Api.Controllers
                 EmployeeName = employeeResponse != null 
                     ? $"{employeeResponse.FirstName} {employeeResponse.LastName}".Trim()
                     : "Unknown Employee",
+                UserId = employeeResponse?.UserId ?? "N/A",
                 Position = employeeResponse?.Position ?? "Not specified",
                 BasicSalary = payslip.BasicSalary,
                 TaxAmount = payslip.TaxAmount ?? 0m,
@@ -408,6 +411,9 @@ namespace HR_Tool.Api.Controllers
             yPosition += 20;
             graphics.DrawString($"Employee Name: {payslip.EmployeeName}", normalFont, XBrushes.Black, new XPoint(50, yPosition));
             yPosition += 20;
+            graphics.DrawString($"ID Number: {payslip.UserId ?? "N/A"}", normalFont, XBrushes.Black, new XPoint(50, yPosition));
+            yPosition += 20;
+
             graphics.DrawString($"Employee ID: {payslip.EmployeeId}", normalFont, XBrushes.Black, new XPoint(50, yPosition));
             yPosition += 20;
             graphics.DrawString($"Position: {payslip.Position}", normalFont, XBrushes.Black, new XPoint(50, yPosition));
@@ -541,6 +547,7 @@ namespace HR_Tool.Api.Controllers
                 PaySlipId = insertedPayslip.PaySlipId,
                 EmployeeId = (int)insertedPayslip.EmployeeId,
                 EmployeeName = $"{employee.FirstName} {employee.LastName}",
+                UserId = employee.UserId ?? "N/A", 
                 Position = employee.Position,
                 BasicSalary = insertedPayslip.BasicSalary,
                 TaxAmount = insertedPayslip.TaxAmount ?? 0m,
@@ -620,6 +627,7 @@ namespace HR_Tool.Api.Controllers
         public int PaySlipId { get; set; }
         public int EmployeeId { get; set; }
         public string EmployeeName { get; set; } = string.Empty;
+        public string UserId { get; set; } = "N/A";
         public string? Position { get; set; }
         public decimal BasicSalary { get; set; }
         public decimal TaxAmount { get; set; }
