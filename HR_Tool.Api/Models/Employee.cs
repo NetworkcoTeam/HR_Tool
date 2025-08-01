@@ -10,7 +10,7 @@ namespace HR_Tool.Api.Models
         public long EmployeeId { get; set; }  
 
         [Column("user_id")]
-        public long? UserId { get; set; }
+        public string? UserId { get; set; }
 
         [Column("first_name")]
         public string FirstName { get; set; } = null!;

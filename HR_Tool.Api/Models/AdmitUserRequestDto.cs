@@ -21,6 +21,9 @@ namespace HR_Tool.Api.Models
         [StringLength(100, ErrorMessage = "Position cannot exceed 100 characters")]
         public string EmployeePosition { get; set; }
 
+        [StringLength(100, ErrorMessage = "Position cannot exceed 100 characters")]
+        public string Department { get; set; }
+
         [Required(ErrorMessage = "Contract type is required")]
         [StringLength(50, ErrorMessage = "Contract type cannot exceed 50 characters")]
         public string ContractType { get; set; }

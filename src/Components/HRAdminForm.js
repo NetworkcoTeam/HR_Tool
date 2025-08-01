@@ -40,6 +40,12 @@ const HrAdminForm = () => {
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
 
+  const [statusMessage, setStatusMessage] = useState({
+    success: null,
+    message: ''
+  });
+
+
   // Check if user is admin on component mount
   useEffect(() => {
     const checkAdminStatus = () => {
@@ -65,7 +71,6 @@ const HrAdminForm = () => {
       const data = await response.json();
       
       if (response.ok) {
-        console.log("API Response:", data);
         setErrorMessage(null);
         setUserData(data);
         form.setFieldsValue({
@@ -73,31 +78,43 @@ const HrAdminForm = () => {
           employeeLastName: data.surname,
           userIdNumber: searchIdNumber
         });
-        message.success('User found! Please complete the form');
-        
-
+        setStatusMessage({
+          success: true,
+          message: 'Employee found! Please complete the form'
+        });
       } else {
-        setErrorMessage(data.status || 'User not found');
+        const errorMsg = data.status || 'Employee not found';
+        setErrorMessage(errorMsg);
         setUserData(null);
         form.resetFields();
-       }
+        setStatusMessage({
+          success: false,
+          message: errorMsg
+        });
+      }
     } catch (error) {
-      message.error('Error fetching user data');
+      setStatusMessage({
+        success: false,
+        message: 'Error fetching employee data'
+      });
       console.error("Fetch error:", error);
     } finally {
       setLoading(false);
     }
   };
 
+
   const handleSubmit = async (values) => {
     try {
       setLoading(true);
+      setStatusMessage({ success: null, message: '' });
       
       const requestData = {
         userIdNumber: values.userIdNumber,
         employeeFirstName: values.employeeFirstName,
         employeeLastName: values.employeeLastName,
         employeePosition: values.position,
+        department: values.department, 
         contractType: values.contractType,
         contractStartDate: values.startDate.format('YYYY-MM-DD'),
         contractEndDate: values.endDate?.format('YYYY-MM-DD'),
@@ -116,15 +133,25 @@ const HrAdminForm = () => {
       const result = await response.json();
 
       if (response.ok) {
-        message.success('User admitted successfully!');
+        setStatusMessage({
+          success: true,
+          message: 'Employee admitted successfully!'
+        });
         form.resetFields();
         setUserData(null);
         setSearchIdNumber('');
       } else {
-        message.error(result.message || 'Failed to admit user');
+        setStatusMessage({
+          success: false,
+          message: result.message || 'Failed to admit employee'
+        });
       }
     } catch (error) {
-      message.error('Error submitting form');
+      setStatusMessage({
+        success: false,
+        message: 'Error submitting form. Please try again.'
+      });
+      console.error('Submission error:', error);
     } finally {
       setLoading(false);
     }
@@ -167,6 +194,11 @@ const HrAdminForm = () => {
         <Content style={{ margin: '0 16px' }}>
           <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
             <Card title="HR Admin - Employee Admission" bordered={false}>
+            {statusMessage.message && (
+                <div className={`status-message ${statusMessage.success ? 'success' : 'error'}`}>
+                  {statusMessage.message}
+                </div>
+              )}
               <Row gutter={16}>
                 <Col span={24}>
                 <div style={{ marginBottom: 16 }}>
@@ -269,6 +301,24 @@ const HrAdminForm = () => {
                       </Form.Item>
                     </Col>
                   </Row>
+
+                  <Row gutter={16}>
+  <Col span={12}>
+    <Form.Item
+      name="department"
+      label="Department"
+      rules={[{ required: true, message: 'Please select department!' }]}
+    >
+      <Select placeholder="Select department">
+        <Option value="IT">IT</Option>
+        <Option value="HR">HR</Option>
+        <Option value="Marketing">Marketing</Option>
+        <Option value="Finance">Finance</Option>
+        <Option value="Other">Other</Option>
+      </Select>
+    </Form.Item>
+  </Col>
+</Row>
 
                   <Divider orientation="left">Contract Details</Divider>
 

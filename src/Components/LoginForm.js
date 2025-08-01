@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './LoginForm.css';
 import { useNavigate } from 'react-router-dom';
-import { Spin, message } from 'antd';
+import { Spin } from 'antd';
 
 const LoginPopup = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,52 +9,77 @@ const LoginPopup = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loginStatus, setLoginStatus] = useState({
+    success: null,
+    message: ''
+  });
   const navigate = useNavigate();
 
-  const togglePopup = () => setIsOpen(!isOpen);
-const handleLogin = async (e) => {
-  e.preventDefault();
-  
-  if (!email || !password) {
-    message.error('Please enter both email and password');
-    return;
-  }
+  const togglePopup = () => {
+    setIsOpen(!isOpen);
+    // Reset status when closing popup
+    if (isOpen) {
+      setLoginStatus({
+        success: null,
+        message: ''
+      });
+    }
+  };
 
-  setLoading(true);
-  
-  try {
-    const response = await fetch('http://localhost:5143/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
-
-    const userData = await response.json();
-
-    if (!response.ok) {
-      throw new Error(userData.message || 'Login failed');
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    
+    if (!email || !password) {
+      setLoginStatus({
+        success: false,
+        message: 'Please enter both email and password'
+      });
+      return;
     }
 
-    // Store just the user data (no token)
-    localStorage.setItem('user', JSON.stringify(userData));
-    console.log('Login successful:', userData);
-    message.success('Login successful!');
-    togglePopup();
+    setLoading(true);
+    setLoginStatus({
+      success: null,
+      message: ''
+    });
     
-    // Check user role and navigate accordingly
-    if (userData.role ==='admin') {
-      navigate('/admin'); 
-    } else {
-      navigate('/home'); 
-    };
+    try {
+      const response = await fetch('http://localhost:5143/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
-  } catch (err) {
-    console.error('Login error:', err);
-    message.error(err.message || 'Login failed. Please try again.');
-  } finally {
-    setLoading(false);
-  }
-};
+      const userData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(userData.message || 'Login failed');
+      }
+
+      // Store just the user data (no token)
+      localStorage.setItem('user', JSON.stringify(userData));
+      setLoginStatus({
+        success: true,
+        message: 'Login successful!'
+      });
+      
+      // Check user role and navigate accordingly
+      if (userData.role === 'admin') {
+        navigate('/admin'); 
+      } else {
+        navigate('/home'); 
+      };
+
+    } catch (err) {
+      console.error('Login error:', err);
+      setLoginStatus({
+        success: false,
+        message: err.message || 'Login failed. Please try again.'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="app-container">
@@ -70,6 +95,13 @@ const handleLogin = async (e) => {
             <div className="login-container">
               <div className="login-form">
                 <h1 className="form-title">Log in</h1>
+
+                {/* Status Message */}
+                {loginStatus.message && (
+                  <div className={`status-message ${loginStatus.success ? 'success' : 'error'}`}>
+                    {loginStatus.message}
+                  </div>
+                )}
 
                 <div className="form-group">
                   <label className="input-label">Email</label>
