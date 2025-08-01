@@ -150,7 +150,7 @@ const LoginPopup = () => {
                 </button>
 
                 <div className="register-link">
-                  Don't have an account? <a href="/register">Register here</a>
+                  <a href="/ForgotPassword">Forgot Password</a>
                 </div>
               </div>
 

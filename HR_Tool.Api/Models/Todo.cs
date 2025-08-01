@@ -1,7 +1,6 @@
-using System;
-using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
-using System.ComponentModel.DataAnnotations;
+using Supabase.Postgrest.Attributes;
+using System;
 
 namespace HR_Tool.Api.Models
 {
@@ -11,22 +10,25 @@ namespace HR_Tool.Api.Models
         [PrimaryKey("id")]
         public int Id { get; set; }
 
+        [Column("employee_id")]
+        public long EmployeeId { get; set; }
+
         [Column("title")]
         public string Title { get; set; }
 
-        [Column("due_date")]
-        public DateTime DueDate { get; set; }
-
-        [Column("status")]  
+        [Column("status")]
         public string Status { get; set; }
 
-        [Column("priority_level")]
-        public string PriorityLevel { get; set; }
+        [Column("due_date")]
+        public DateTime? DueDate { get; set; }
+
+        [Column("priority")]
+        public string Priority { get; set; }
 
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }
 
         [Column("updated_at")]
-        public DateTime? UpdatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }

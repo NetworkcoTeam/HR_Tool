@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Layout, 
@@ -10,26 +10,37 @@ import {
   Tag
 } from 'antd';
 import { 
-  TeamOutlined, 
   FileTextOutlined, 
   CalendarOutlined,
-  DollarOutlined
+  DollarOutlined,
+  PlusOutlined
 } from '@ant-design/icons';
-//import Sidebar from './Sidebar';
 import './Dashboard.css';
-
+import Todo from './Todo.js';
 
 const { Title } = Typography;
 const { Content } = Layout;
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [employeeId, setEmployeeId] = useState(null);
+  const todoRef = useRef();
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user?.employee_id) {
+      setEmployeeId(user.employee_id);
+    }
+  }, []);
 
   const handleViewAll = (route) => navigate(route);
 
+  const handleAddTaskClick = () => {
+    todoRef.current?.openModal();
+  };
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      
       <Layout className="site-layout">
         <Content className="dashboard-content">
           <div className="dashboard-header">
@@ -48,25 +59,21 @@ const Dashboard = () => {
 
           <div className="dashboard-grid">
             <div className="dashboard-row">
-              <Card 
-                title={
-                  <span>
-                    <TeamOutlined className="card-icon" />
-                    EMPLOYEE RECORDS
-                  </span>
-                }
+              <Card
+                title="TO DO LIST"
                 className="dashboard-card"
                 extra={
-                  <Button 
-                    type="link" 
-                    onClick={() => handleViewAll('/employees')}
-                    className="view-all-button"
+                  <Button
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    size="small"
+                    onClick={handleAddTaskClick}
                   >
-                    View All
+                    Add Task
                   </Button>
                 }
               >
-                <Empty description="No employee records found" />
+                <Todo ref={todoRef} employeeId={employeeId} />
               </Card>
 
               <Card 
@@ -125,7 +132,6 @@ const Dashboard = () => {
                 }
                 className="dashboard-card"
               >
-
                 <Empty description="No appointments scheduled" />
               </Card>
             </div>

@@ -23,10 +23,10 @@ function AdminSidebar() {
           <span>Profile</span>
         </li>
         
-        <li onClick={() => handleNavigation('/')}>
+        {/*<li onClick={() => handleNavigation('/')}>
           <FaFileInvoiceDollar className="sidebar-icon" />
           <span>Payslip</span>
-        </li>
+        </li>*/}
         
         <li onClick={() => handleNavigation('/documents')}>
           <FaFolder className="sidebar-icon" />
@@ -48,7 +48,7 @@ function AdminSidebar() {
           <span>HR Admission</span>
           </li>
         
-        <li className="logout" onClick={() => handleNavigation('/logout')}>
+        <li className="logout" onClick={() => handleNavigation('/')}>
           <FaRightFromBracket className="sidebar-icon" />
           <span>Log out</span>
         </li>

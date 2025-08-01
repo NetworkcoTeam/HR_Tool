@@ -5,12 +5,12 @@ import './Admin.css';
 
 function Admin() {
   return (
-    <div className="admin-container">
+    <>
       <AdminSidebar />
-      <div className="dashboard-main">
+      
         <Dashboard />
-      </div>
-    </div>
+      </>
+   
   );
 }
 
