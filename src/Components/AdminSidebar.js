@@ -23,10 +23,10 @@ function AdminSidebar() {
           <span>Profile</span>
         </li>
         
-        {/*<li onClick={() => handleNavigation('/')}>
+        {<li onClick={() => handleNavigation('/ContractEditorPage')}>
           <FaFileInvoiceDollar className="sidebar-icon" />
-          <span>Payslip</span>
-        </li>*/}
+          <span>Contract Management</span>
+        </li>}
         
         <li onClick={() => handleNavigation('/documents')}>
           <FaFolder className="sidebar-icon" />

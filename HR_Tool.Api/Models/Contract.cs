@@ -33,5 +33,12 @@ namespace HR_Tool.Api.Models
     [Column("created_at")]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+    [Column("allowance")]
+    public decimal? Allowance { get; set; }  
+
+    [Column("updated_at")]
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
+
     }
 }
