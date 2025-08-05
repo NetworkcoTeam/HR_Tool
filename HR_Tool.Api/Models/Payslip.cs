@@ -33,6 +33,12 @@ namespace HR_Tool.Api.Models
 
         [Column("net_salary")]
         public decimal? NetSalary { get; set; }
-          
+
+        [Column("allowance")]
+        public decimal? Allowance { get; set; }
+
+        [Column("bonus")]
+        public decimal? Bonus { get; set; }
+
     }
 }

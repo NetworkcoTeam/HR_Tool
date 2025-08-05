@@ -2,12 +2,10 @@ namespace HR_Tool.Api.Services
 {
 public class PayslipCalculator
 {
-    public (decimal tax, decimal uif, decimal net, string bracket) Calculate(string salaryString)
+    public (decimal tax, decimal uif, decimal net, string bracket) Calculate(decimal basicSalary, decimal allowance = 0, decimal bonus = 0)
     {
-        if (!decimal.TryParse(salaryString, out decimal salary))
-            throw new Exception("Invalid salary format");
-
-        var annualIncome = salary * 12;
+        var totalMonthlySalary = basicSalary + allowance + bonus;
+        var annualIncome = totalMonthlySalary * 12;
 
         decimal taxBeforeRebate;
         string bracket;
@@ -52,12 +50,21 @@ public class PayslipCalculator
         decimal taxAfterRebate = Math.Max(taxBeforeRebate - rebate, 0);
         decimal monthlyTax = taxAfterRebate / 12;
 
-        decimal uif = salary * 0.01m;
+        // UIF is calculated on total monthly salary (basic + allowance + bonus)
+        decimal uif = totalMonthlySalary * 0.01m;
         if (uif > 177.12m) uif = 177.12m;
 
-        decimal net = salary - monthlyTax - uif;
+        decimal net = totalMonthlySalary - monthlyTax - uif;
 
         return (monthlyTax, uif, net, bracket);
+    }
+
+    public (decimal tax, decimal uif, decimal net, string bracket) Calculate(string salaryString)
+    {
+        if (!decimal.TryParse(salaryString, out decimal salary))
+            throw new Exception("Invalid salary format");
+
+        return Calculate(salary, 0, 0);
     }
 }
 }

@@ -21,52 +21,52 @@ namespace HR_Tool.Api.Controllers
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-[HttpGet("user/{idNumber}")]
-public async Task<ActionResult<UserDetailsDto>> GetUserByIdNumber(string idNumber)
-{
-    if (string.IsNullOrEmpty(idNumber))
-    {
-        return BadRequest(new ErrorResponse { 
-            Status = "ID Number is required" 
-        });
-    }
-
-    try
-    {
-        var userQuery = _supabase.From<User>()
-            .Where(u => u.IdNumber == idNumber);
-
-        var userResponse = await userQuery.Get();
-
-        if (userResponse?.Models == null || !userResponse.Models.Any())
+        [HttpGet("user/{idNumber}")]
+        public async Task<ActionResult<UserDetailsDto>> GetUserByIdNumber(string idNumber)
         {
-            return NotFound(new ErrorResponse { 
-                Status = $"User with ID Number {idNumber} not found." 
-            });
+            if (string.IsNullOrEmpty(idNumber))
+            {
+                return BadRequest(new ErrorResponse { 
+                    Status = "ID Number is required" 
+                });
+            }
+
+            try
+            {
+                var userQuery = _supabase.From<User>()
+                    .Where(u => u.IdNumber == idNumber);
+
+                var userResponse = await userQuery.Get();
+
+                if (userResponse?.Models == null || !userResponse.Models.Any())
+                {
+                    return NotFound(new ErrorResponse { 
+                        Status = $"User with ID Number {idNumber} not found." 
+                    });
+                }
+
+                var user = userResponse.Models.First();
+
+                return Ok(new UserDetailsDto
+                {
+                    Status = user.Status,
+                    Name = user.Name,
+                    Surname = user.Surname,
+                    IdNumber = user.IdNumber
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ErrorResponse {
+                    Status = $"An unexpected error occurred: {ex.Message}" 
+                });
+            }
         }
 
-        var user = userResponse.Models.First();
-
-        return Ok(new UserDetailsDto
+        public class ErrorResponse
         {
-            Status = user.Status,
-            Name = user.Name,
-            Surname = user.Surname,
-            IdNumber = user.IdNumber
-        });
-    }
-    catch (Exception ex)
-    {
-        return StatusCode(500, new ErrorResponse {
-            Status = $"An unexpected error occurred: {ex.Message}" 
-        });
-    }
-}
-
-public class ErrorResponse
-{
-    public string Status { get; set; }
-}
+            public string Status { get; set; }
+        }
 
         [HttpPost("admit-user")]
         public async Task<IActionResult> AdmitUser([FromBody] AdmitUserRequestDto request)
@@ -255,6 +255,185 @@ public class ErrorResponse
                 {
                     Success = false,
                     Message = $"An unexpected error occurred: {ex.Message}"
+                });
+            }
+        }
+
+        [HttpGet("contracts/employee/{employeeId}")]
+        public async Task<ActionResult<ContractDto>> GetContractByEmployeeId(long employeeId)
+        {
+            try
+            {
+                // Get the contract
+                var contractResponse = await _supabase.From<Contract>()
+                    .Where(c => c.EmployeeId == employeeId)
+                    .Single();
+
+                if (contractResponse == null)
+                {
+                    return NotFound(new ErrorResponse { 
+                        Status = $"Contract for employee ID {employeeId} not found." 
+                    });
+                }
+
+                // Get the employee details
+                var employeeResponse = await _supabase.From<Employee>()
+                    .Where(e => e.EmployeeId == employeeId)
+                    .Single();
+
+                if (employeeResponse == null)
+                {
+                    return NotFound(new ErrorResponse { 
+                        Status = $"Employee with ID {employeeId} not found." 
+                    });
+                }
+
+                // Map to enhanced ContractDto with employee details included
+                var contractDto = new ContractDto
+                {
+                    ContractId = contractResponse.ContractId,
+                    EmployeeId = contractResponse.EmployeeId,
+                    FirstName = employeeResponse.FirstName,
+                    LastName = employeeResponse.LastName,
+                    Position = employeeResponse.Position,
+                    Department = employeeResponse.Department,
+                    ContractType = contractResponse.ContractType,
+                    StartDate = contractResponse.StartDate,
+                    EndDate = contractResponse.EndDate,
+                    BasicSalary = contractResponse.BasicSalary,
+                    Allowance = contractResponse.Allowance,
+                    Terms = contractResponse.Terms,
+                    IsActive = contractResponse.IsActive,
+                    CreatedAt = contractResponse.CreatedAt,
+                    UpdatedAt = contractResponse.UpdatedAt
+                };
+
+                return Ok(contractDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ErrorResponse {
+                    Status = $"An unexpected error occurred: {ex.Message}" 
+                });
+            }
+        }
+
+        [HttpPut("contracts/{contractId}")]
+        public async Task<IActionResult> UpdateContract(int contractId, [FromBody] ContractDto updatedContractDto)
+        {
+            if (updatedContractDto == null)
+            {
+                return BadRequest(new ErrorResponse { 
+                    Status = "Contract data is required" 
+                });
+            }
+
+            try
+            {
+                // Ensure we're updating the correct contract
+                if (updatedContractDto.ContractId != contractId)
+                {
+                    return BadRequest(new ErrorResponse { 
+                        Status = "Contract ID mismatch" 
+                    });
+                }
+
+                // First get the existing contract to preserve any fields we're not updating
+                var existingContract = await _supabase.From<Contract>()
+                    .Where(c => c.ContractId == contractId)
+                    .Single();
+
+                if (existingContract == null)
+                {
+                    return NotFound(new ErrorResponse { 
+                        Status = $"Contract with ID {contractId} not found." 
+                    });
+                }
+
+                // Update contract fields with proper null handling
+                existingContract.ContractType = updatedContractDto.ContractType;
+                existingContract.StartDate = updatedContractDto.StartDate;
+                existingContract.EndDate = updatedContractDto.EndDate;
+                existingContract.BasicSalary = updatedContractDto.BasicSalary;
+                existingContract.Allowance = updatedContractDto.Allowance ?? 0; // Default to 0 if null
+                existingContract.Terms = updatedContractDto.Terms;
+                existingContract.IsActive = updatedContractDto.IsActive;
+                existingContract.UpdatedAt = DateTime.UtcNow; // Set current timestamp
+
+                // Update the contract
+                var contractUpdateResponse = await _supabase.From<Contract>()
+                    .Where(c => c.ContractId == contractId)
+                    .Set(c => c.ContractType, existingContract.ContractType)
+                    .Set(c => c.StartDate, existingContract.StartDate)
+                    .Set(c => c.EndDate, existingContract.EndDate)
+                    .Set(c => c.BasicSalary, existingContract.BasicSalary)
+                    .Set(c => c.Allowance, existingContract.Allowance)
+                    .Set(c => c.Terms, existingContract.Terms)
+                    .Set(c => c.IsActive, existingContract.IsActive)
+                    .Set(c => c.UpdatedAt, existingContract.UpdatedAt)
+                    .Update();
+
+                if (contractUpdateResponse?.Models == null || !contractUpdateResponse.Models.Any())
+                {
+                    return StatusCode(500, new ErrorResponse { 
+                        Status = "Failed to update contract" 
+                    });
+                }
+
+                // Update employee details if provided
+                if (!string.IsNullOrEmpty(updatedContractDto.Position) || !string.IsNullOrEmpty(updatedContractDto.Department))
+                {
+                    var employeeUpdateResponse = await _supabase.From<Employee>()
+                        .Where(e => e.EmployeeId == existingContract.EmployeeId)
+                        .Set(e => e.Position, updatedContractDto.Position ?? string.Empty)
+                        .Set(e => e.Department, updatedContractDto.Department ?? string.Empty)
+                        .Update();
+
+                    if (employeeUpdateResponse?.Models == null || !employeeUpdateResponse.Models.Any())
+                    {
+                        _logger.LogWarning("Failed to update employee position/department for EmployeeId: {EmployeeId}", existingContract.EmployeeId);
+                        // Don't fail the entire operation, just log the warning
+                    }
+                    else
+                    {
+                        _logger.LogInformation("Successfully updated employee position/department for EmployeeId: {EmployeeId}", existingContract.EmployeeId);
+                    }
+                }
+
+                // Get the updated contract with employee details for the response
+                var updatedContract = contractUpdateResponse.Models.First();
+                
+                // Fetch updated employee details
+                var employeeResponse = await _supabase.From<Employee>()
+                    .Where(e => e.EmployeeId == updatedContract.EmployeeId)
+                    .Single();
+
+                var resultDto = new ContractDto
+                {
+                    ContractId = updatedContract.ContractId,
+                    EmployeeId = updatedContract.EmployeeId,
+                    FirstName = employeeResponse?.FirstName,
+                    LastName = employeeResponse?.LastName,
+                    Position = employeeResponse?.Position,
+                    Department = employeeResponse?.Department,
+                    ContractType = updatedContract.ContractType,
+                    StartDate = updatedContract.StartDate,
+                    EndDate = updatedContract.EndDate,
+                    BasicSalary = updatedContract.BasicSalary,
+                    Allowance = updatedContract.Allowance,
+                    Terms = updatedContract.Terms,
+                    IsActive = updatedContract.IsActive,
+                    CreatedAt = updatedContract.CreatedAt,
+                    UpdatedAt = updatedContract.UpdatedAt
+                };
+
+                return Ok(resultDto);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating contract {ContractId}", contractId);
+                return StatusCode(500, new ErrorResponse {
+                    Status = $"An unexpected error occurred: {ex.Message}" 
                 });
             }
         }

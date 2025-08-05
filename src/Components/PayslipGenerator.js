@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Select, DatePicker, Table, message, Spin, Card } from 'antd';
+import { Button, Select, DatePicker, Table, message, Spin, Card, InputNumber, Form, Row, Col, Divider } from 'antd';
 import './PayslipGenerator.css';
 
 const PayslipGenerator = () => {
@@ -12,6 +12,13 @@ const PayslipGenerator = () => {
   const [fetching, setFetching] = useState(false);
   const [generatedPayslips, setGeneratedPayslips] = useState([]);
   const [payslipDetails, setPayslipDetails] = useState(null);
+  const [bonusAmount, setBonusAmount] = useState(0);
+  const [allowanceAmount, setAllowanceAmount] = useState(0);
+  const [form] = Form.useForm();
+  const [status, setStatus] = useState({
+    success: null,
+    message: ''
+  });
 
   useEffect(() => {
     const fetchEmployees = async () => {
@@ -39,15 +46,29 @@ const PayslipGenerator = () => {
     ? employees.filter(emp => emp.position === selectedPosition)
     : employees;
 
+  const resetForm = () => {
+    setBonusAmount(0);
+    setAllowanceAmount(0);
+    setPayslipDetails(null);
+    form.resetFields(['bonus', 'allowance']);
+  };
+
   const generatePayslip = async () => {
     if (!selectedEmployee || !selectedMonth) {
-      message.error('Please select both employee and month');
+      setStatus({
+        success: false,
+        message: 'Please select both employee and month'
+      });
       return;
     }
 
     setLoading(true);
     setGeneratedPayslips([]);
     setPayslipDetails(null);
+    setStatus({
+      success: null,
+      message: ''
+    });
 
     try {
       const month = selectedMonth.month() + 1; // moment months are 0-indexed
@@ -56,7 +77,9 @@ const PayslipGenerator = () => {
       const requestBody = {
         month: month,
         year: year,
-        employeeId: selectedEmployee
+        employeeId: selectedEmployee,
+        bonus: bonusAmount || 0,
+        allowance: allowanceAmount || 0
       };
 
       const response = await fetch('http://localhost:5143/api/payslips/generate', {
@@ -75,21 +98,35 @@ const PayslipGenerator = () => {
       const data = await response.json();
       
       if (data.success) {
-        message.success(`Payslip generated successfully for ${data.employees[0]?.name} ${data.employees[0]?.surname}`);
+        const employeeName = `${data.employees[0]?.name} ${data.employees[0]?.surname}`;
+        let successMessage = `Payslip generated successfully for ${employeeName}`;
+        
+        if (bonusAmount > 0) {
+          successMessage += ` with bonus of R${bonusAmount.toFixed(2)}`;
+        }
+        if (allowanceAmount > 0) {
+          successMessage += ` with allowance of R${allowanceAmount.toFixed(2)}`;
+        }
+        
+        setStatus({
+          success: true,
+          message: successMessage
+        });
         setGeneratedPayslips(data.employees);
         
-        // Fetch the generated payslip details to display
         await fetchPayslipDetails(selectedEmployee, year, month);
       } else {
         throw new Error('Failed to generate payslip');
       }
     } catch (error) {
-      message.error(error.message);
+      setStatus({
+        success: false,
+        message: error.message
+      });
     } finally {
       setLoading(false);
     }
   };
-
 
   const fetchPayslipDetails = async (employeeId, year, month) => {
     const maxRetries = 5;
@@ -116,6 +153,9 @@ const PayslipGenerator = () => {
             Period: raw.period || 'Not specified',
             GeneratedDate: raw.generatedDate || 'Not specified',
             BasicSalary: raw.basicSalary || 0,
+            Allowance: raw.allowance || 0,
+            Bonus: raw.bonus || 0,
+            GrossSalary: raw.grossSalary || 0,
             TaxAmount: raw.taxAmount || 0,
             UIF: raw.uif || 0,
             NetSalary: raw.netSalary || 0
@@ -140,17 +180,22 @@ const PayslipGenerator = () => {
     }
   };
   
-
-  
   const generateBulkPayslips = async () => {
     if (!selectedPosition || !selectedMonth) {
-      message.error('Please select both position and month for bulk generation');
+      setStatus({
+        success: false,
+        message: 'Please select both position and month for bulk generation'
+      });
       return;
     }
 
     setLoading(true);
     setGeneratedPayslips([]);
     setPayslipDetails(null);
+    setStatus({
+      success: null,
+      message: ''
+    });
 
     try {
       const month = selectedMonth.month() + 1;
@@ -159,7 +204,9 @@ const PayslipGenerator = () => {
       const requestBody = {
         month: month,
         year: year,
-        position: selectedPosition
+        position: selectedPosition,
+        bonus: bonusAmount || 0,
+        allowance: allowanceAmount || 0
       };
 
       const response = await fetch('http://localhost:5143/api/payslips/generate', {
@@ -178,13 +225,28 @@ const PayslipGenerator = () => {
       const data = await response.json();
       
       if (data.success) {
-        message.success(`Generated ${data.count} payslips for ${data.position}`);
+        let successMessage = `Generated ${data.count} payslips for ${data.position}`;
+        
+        if (bonusAmount > 0) {
+          successMessage += ` with bonus of R${bonusAmount.toFixed(2)} each`;
+        }
+        if (allowanceAmount > 0) {
+          successMessage += ` with allowance of R${allowanceAmount.toFixed(2)} each`;
+        }
+        
+        setStatus({
+          success: true,
+          message: successMessage
+        });
         setGeneratedPayslips(data.employees);
       } else {
         throw new Error('Failed to generate payslips');
       }
     } catch (error) {
-      message.error(error.message);
+      setStatus({
+        success: false,
+        message: error.message
+      });
     } finally {
       setLoading(false);
     }
@@ -234,16 +296,34 @@ const PayslipGenerator = () => {
     
     // Convert all values to numbers to ensure proper calculation
     const basicSalary = Number(payslipDetails.BasicSalary) || 0;
+    const allowance = Number(payslipDetails.Allowance) || 0;
+    const bonus = Number(payslipDetails.Bonus) || 0;
     const taxAmount = Number(payslipDetails.TaxAmount) || 0;
     const uif = Number(payslipDetails.UIF) || 0;
     const netSalary = Number(payslipDetails.NetSalary) || 0;
     
-    return [
-      { key: '1', type: 'Basic Salary', amount: basicSalary },
-      { key: '2', type: 'PAYE Tax', amount: -taxAmount }, // Negative for deduction
-      { key: '3', type: 'UIF Contribution', amount: -uif }, // Negative for deduction
-      { key: '4', type: 'Net Pay', amount: netSalary },
+    const breakdown = [
+      { key: '1', type: 'Basic Salary', amount: basicSalary }
     ];
+
+    // Add allowance if present
+    if (allowance > 0) {
+      breakdown.push({ key: '2', type: 'Allowance', amount: allowance });
+    }
+
+    // Add bonus if present
+    if (bonus > 0) {
+      breakdown.push({ key: '3', type: 'Bonus', amount: bonus });
+    }
+
+    // Add deductions
+    breakdown.push(
+      { key: '4', type: 'PAYE Tax', amount: -taxAmount },
+      { key: '5', type: 'UIF Contribution', amount: -uif },
+      { key: '6', type: 'Net Pay', amount: netSalary }
+    );
+    
+    return breakdown;
   };
 
   // Helper function to safely format currency
@@ -276,10 +356,24 @@ const PayslipGenerator = () => {
     return payslipDetails.GeneratedDate || 'Not specified';
   };
 
+  // Helper function to get gross salary
+  const getGrossSalary = () => {
+    if (!payslipDetails) return 0;
+    const basic = Number(payslipDetails.BasicSalary) || 0;
+    const allowance = Number(payslipDetails.Allowance) || 0;
+    const bonus = Number(payslipDetails.Bonus) || 0;
+    return basic + allowance + bonus;
+  };
+
   return (
     <div className="section payslip">
       <h3>Payslip Generator</h3>
       <div className="section-content">
+      {status.message && (
+          <div className={`status-message ${status.success ? 'success' : 'error'}`}>
+            {status.message}
+          </div>
+        )}
         <Spin spinning={fetching}>
           <Card size="small" style={{ marginBottom: 20 }}>
             <div style={{ display: 'grid', gap: 16 }}>
@@ -291,7 +385,7 @@ const PayslipGenerator = () => {
                   setSelectedPosition(value);
                   setSelectedEmployee(null);
                   setGeneratedPayslips([]);
-                  setPayslipDetails(null);
+                  resetForm();
                 }}
                 options={positions.map(pos => ({
                   value: pos,
@@ -325,6 +419,73 @@ const PayslipGenerator = () => {
                 }}
                 placeholder="Select Month"
               />
+
+              <Divider style={{ margin: '16px 0' }}>Additional Compensation</Divider>
+              
+              <Form form={form} layout="vertical">
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Form.Item 
+                      label="Allowance Amount" 
+                      name="allowance"
+                      
+                    >
+                      <InputNumber
+                        style={{ width: '100%' }}
+                        min={0}
+                        step={100}
+                        precision={2}
+                        placeholder="0.00"
+                        prefix="R"
+                        value={allowanceAmount}
+                        onChange={value => setAllowanceAmount(value || 0)}
+                        formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                        parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item 
+                      label="Bonus Amount" 
+                      name="bonus"
+                      
+                    >
+                      <InputNumber
+                        style={{ width: '100%' }}
+                        min={0}
+                        step={100}
+                        precision={2}
+                        placeholder="0.00"
+                        prefix="R"
+                        value={bonusAmount}
+                        onChange={value => setBonusAmount(value || 0)}
+                        formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                        parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+              </Form>
+
+              {(bonusAmount > 0 || allowanceAmount > 0) && (
+                <div style={{ 
+                  background: '#f6ffed', 
+                  border: '1px solid #b7eb8f', 
+                  borderRadius: '6px', 
+                  padding: '12px',
+                  fontSize: '14px'
+                }}>
+                  <strong>Additional Compensation Summary:</strong>
+                  <br />
+                  {allowanceAmount > 0 && (
+                    <span>• Allowance: <strong>R{allowanceAmount.toFixed(2)}</strong><br /></span>
+                  )}
+                  {bonusAmount > 0 && (
+                    <span>• Bonus: <strong>R{bonusAmount.toFixed(2)}</strong><br /></span>
+                  )}
+                  <span>• Total Additional: <strong>R{(allowanceAmount + bonusAmount).toFixed(2)}</strong></span>
+                </div>
+              )}
             </div>
           </Card>
         </Spin>
@@ -339,16 +500,18 @@ const PayslipGenerator = () => {
             style={{ flex: 1 }}
           >
             Generate Individual Payslip
+          
           </Button>
 
           <Button 
             type="default"
             onClick={generateBulkPayslips}
             loading={loading}
-            disabled={!selectedPosition || !selectedMonth}
+            disabled={!selectedPosition || !selectedMonth || selectedEmployee}
             style={{ flex: 1 }}
           >
             Generate Bulk Payslips
+            
           </Button>
         </div>
 
@@ -372,9 +535,16 @@ const PayslipGenerator = () => {
         {payslipDetails && (
           <Card title={`Payslip Details - ${getEmployeeName()}`} style={{ marginTop: 20 }}>
             <div style={{ marginBottom: 16 }}>
-              <p><strong>Position:</strong> {getPosition()}</p>
-              <p><strong>Period:</strong> {getPeriod()}</p>
-              <p><strong>Generated:</strong> {getGeneratedDate()}</p>
+              <Row gutter={16}>
+                <Col span={12}>
+                  <p><strong>Position:</strong> {getPosition()}</p>
+                  <p><strong>Period:</strong> {getPeriod()}</p>
+                </Col>
+                <Col span={12}>
+                  <p><strong>Generated:</strong> {getGeneratedDate()}</p>
+                  <p><strong>Gross Salary:</strong> <span style={{ color: '#1890ff', fontWeight: 'bold' }}>{formatCurrency(getGrossSalary())}</span></p>
+                </Col>
+              </Row>
             </div>
             <Table 
               columns={payslipDataColumns} 
