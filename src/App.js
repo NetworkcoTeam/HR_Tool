@@ -17,6 +17,7 @@ import DocumentsPage from './Pages/DocumentsPage';
 import AppointmentBooking from './Pages/AppointmentBooking';
 import Profile from './Pages/Profile';
 import ContractEditorPage from './Pages/ContractEditorPage';
+import PayslipPage from './Pages/PayslipPage';
 
 import Logout from './Components/Logout';
 import ForgotPasswordPage from './Pages/ForgotPasswordPage';
@@ -38,6 +39,7 @@ function App() {
         <Route path="/Admin" element={<Admin/>}/>
         <Route path="/LeaveManagement" element={<LeaveManagement/>}/>
         <Route path="/PayslipManagement" element={<PayslipManagement/>}/>
+        <Route path="/PayslipPage" element={<PayslipPage/>}/>
         
 
         <Route path="/AppointmentBooking" element={<AppointmentBooking/>}/>

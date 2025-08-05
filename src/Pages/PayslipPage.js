@@ -1,58 +1,48 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import {
   Layout,
   Card,
   Button,
   List,
-  Tag,
-  Divider,
-  Avatar,
   Spin,
   message,
   Empty,
   Modal,
+  Input,
   Row,
   Col,
   Space,
-  Typography
+  Typography,
+  Divider,
+  Tooltip
 } from 'antd';
 import {
-  CheckCircleOutlined,
   FilePdfOutlined,
   EyeOutlined,
+  SearchOutlined,
+  DownloadOutlined,
   CalendarOutlined,
-  PlusOutlined,
-  UserOutlined,
+  DollarOutlined,
   ExclamationCircleOutlined
 } from '@ant-design/icons';
+import moment from 'moment';
 
 import Sidebar from '../Components/Sidebar';
-import AppointmentsTile from '../Components/AppointmentTile';
-import Todo from '../Components/Todo';
-
 import './Home.css';
 
 const API_BASE = 'http://localhost:5143';
 const { Content } = Layout;
-const { Text } = Typography;
+const { Title, Text } = Typography;
 
-const Home = () => {
-  const navigate = useNavigate();
-  const leaveCache = useRef(null);
-  const todoRef = useRef();
+const Payslips = () => {
   const [loading, setLoading] = useState(true);
   const [payslipData, setPayslipData] = useState([]);
-  const [leaveData, setLeaveData] = useState([]);
-  const [appointments, setAppointments] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [error, setError] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentPayslipDetails, setCurrentPayslipDetails] = useState(null);
   const [employeeId, setEmployeeId] = useState(null);
-
-  const handleAddTaskClick = () => {
-    todoRef.current?.openModal();
-  };
+  const [searchText, setSearchText] = useState('');
 
   useEffect(() => {
     const stored = localStorage.getItem("user");
@@ -74,8 +64,9 @@ const Home = () => {
     return isNaN(date.getTime()) ? new Date() : date;
   };
 
-  const fetchPayslips = async (empId) => {
+  const fetchAllPayslips = async (empId) => {
     try {
+      setLoading(true);
       const res = await fetch(`${API_BASE}/api/Payslips/employee/${empId}/payslips`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const { success, payslips, error } = await res.json();
@@ -90,42 +81,20 @@ const Home = () => {
           MonthNumber: end.getMonth() + 1,
           Year: end.getFullYear(),
           FormattedPeriodEnd: end.toLocaleDateString('en-US'),
+          FormattedPeriodStart: start.toLocaleDateString('en-US'),
           RawPeriodEnd: end,
           RawPeriodStart: start
         };
-      }).sort((a, b) => b.RawPeriodEnd - a.RawPeriodEnd)
-        .slice(0, 3); // Only show top 3 latest payslips for dashboard
+      }).sort((a, b) => b.RawPeriodEnd - a.RawPeriodEnd);
 
       setPayslipData(processed);
+      setFilteredData(processed);
     } catch (err) {
       console.error(err);
       setError('Failed to load payslips');
       message.error('Failed to load payslips: ' + err.message);
-    }
-  };
-
-  const fetchLeaveRequests = async (empId) => {
-    if (leaveCache.current) return setLeaveData(leaveCache.current);
-    try {
-      const res = await fetch(`${API_BASE}/api/LeaveRequest/employee/${empId}`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      const formatted = data.map(r => ({
-        id: r.id,
-        type: r.typeOfLeave || 'Leave',
-        status: r.status?.toLowerCase() || 'pending',
-        days: r.totalDays || Math.ceil((new Date(r.leaveEnd) - new Date(r.leaveStart)) / 86400000) + 1,
-        startDate: new Date(r.leaveStart).toLocaleDateString(),
-        endDate: new Date(r.leaveEnd).toLocaleDateString()
-      }));
-      leaveCache.current = formatted;
-      setLeaveData(formatted);
-    } catch (err) {
-      console.error(err);
-      setError(err.message);
-      message.error("Failed to load leave requests");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -149,6 +118,7 @@ const Home = () => {
 
   const handleDownloadPayslip = async (year, month) => {
     try {
+      message.loading('Preparing download...', 0);
       const res = await fetch(`${API_BASE}/api/Payslips/download/${employeeId}/${year}/${month}`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const blob = await res.blob();
@@ -160,31 +130,47 @@ const Home = () => {
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
-      message.success('Payslip downloaded!');
+      message.destroy();
+      message.success('Payslip downloaded successfully!');
     } catch (err) {
+      message.destroy();
       message.error('Download failed: ' + err.message);
     }
   };
 
-  const handleApplyLeave = () => navigate("/leaveForm");
-  const handleModalCancel = () => setIsModalVisible(false);
-  const handleViewAllPayslips = () => navigate("/payslips");
+  const handleModalCancel = () => {
+    setIsModalVisible(false);
+    setCurrentPayslipDetails(null);
+  };
+
+  // Filter functions
+  const applyFilters = () => {
+    let filtered = [...payslipData];
+
+    if (searchText) {
+      filtered = filtered.filter(item => 
+        item.MonthName.toLowerCase().includes(searchText.toLowerCase()) ||
+        item.Year.toString().includes(searchText)
+      );
+    }
+
+    setFilteredData(filtered);
+  };
+
+  const clearFilters = () => {
+    setSearchText('');
+    setFilteredData(payslipData);
+  };
 
   useEffect(() => {
-    const loadData = async () => {
-      if (!employeeId) return;
-      setLoading(true);
-      try {
-        await Promise.all([fetchPayslips(employeeId), fetchLeaveRequests(employeeId)]);
-      } catch (err) {
-        console.error('Dashboard error:', err);
-        setError('Failed to load dashboard data');
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadData();
+    if (employeeId) {
+      fetchAllPayslips(employeeId);
+    }
   }, [employeeId]);
+
+  useEffect(() => {
+    applyFilters();
+  }, [searchText, payslipData]);
 
   if (error) {
     return (
@@ -193,7 +179,7 @@ const Home = () => {
         <Content className="error-content">
           <div className="error-state">
             <ExclamationCircleOutlined style={{ fontSize: '48px', color: '#ff4d4f' }} />
-            <h2>Unable to load dashboard</h2>
+            <h2>Unable to load payslips</h2>
             <p>{error}</p>
             <Button onClick={() => window.location.reload()}>Retry</Button>
           </div>
@@ -207,13 +193,21 @@ const Home = () => {
       <Sidebar />
       <Layout className="site-layout">
         <Content className="home-content">
+          {/* Header */}
           <div className="dashboard-header">
-            <h1>Employee Dashboard</h1>
-            <div className="current-date">
-              <CalendarOutlined /> {new Date().toLocaleDateString('en-US', {
-                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-              })}
-            </div>
+            <Row justify="space-between" align="middle">
+              <Col>
+                <Title level={2} style={{ margin: 0 }}>
+                  <DollarOutlined style={{ marginRight: 8 }} />
+                  My Payslips
+                </Title>
+              </Col>
+              <Col>
+                <Text type="secondary">
+                  Total: {filteredData.length} payslip{filteredData.length !== 1 ? 's' : ''}
+                </Text>
+              </Col>
+            </Row>
           </div>
 
           <Divider />
@@ -221,102 +215,117 @@ const Home = () => {
           {loading ? (
             <div className="loading-state">
               <Spin size="large" />
-              <p>Loading dashboard...</p>
+              <p>Loading payslips...</p>
             </div>
           ) : (
-            <div className="dashboard-grid">
-              {/* First Row */}
-              <div className="dashboard-row">
-                <Card title="TODO" className="dashboard-card"
-                   extra={
-                    <Button
-                      type="primary"
-                      icon={<PlusOutlined />}
-                      size="small"
-                      onClick={handleAddTaskClick}
-                    >
-                      Add Task
+            <div>
+              {/* Filters */}
+              <Card style={{ marginBottom: 24 }}>
+                <Row gutter={[16, 16]}>
+                  <Col xs={24} sm={12} md={6}>
+                    <Input
+                      placeholder="Search by month or year"
+                      prefix={<SearchOutlined />}
+                      value={searchText}
+                      onChange={(e) => setSearchText(e.target.value)}
+                      allowClear
+                    />
+                  </Col>
+                  <Col xs={24} sm={12} md={4}>
+                    <Button onClick={clearFilters} style={{ width: '100%' }}>
+                      Clear Filters
                     </Button>
-                  }>
-                 <Todo ref={todoRef} employeeId={employeeId} />
-                </Card>
-                
-                <Card 
-                  title="PAYSLIPS" 
-                  className="dashboard-card"
-                  extra={<Button type="link" onClick={handleViewAllPayslips}>View All</Button>}
-                  style={{ minHeight: 250 }}
-                >
-                  {payslipData.length > 0 ? (
+                  </Col>
+                </Row>
+              </Card>
+
+              {/* Payslips List */}
+              <Card className="dashboard-card">
+                <Spin spinning={loading}>
+                  {filteredData.length > 0 ? (
                     <List
-                      dataSource={payslipData}
+                      itemLayout="horizontal"
+                      dataSource={filteredData}
+                      pagination={{
+                        pageSize: 10,
+                        showSizeChanger: true,
+                        showQuickJumper: true,
+                        showTotal: (total, range) => 
+                          `${range[0]}-${range[1]} of ${total} payslips`,
+                      }}
                       renderItem={item => (
                         <List.Item
                           actions={[
-                            <Button icon={<EyeOutlined />} type="link" onClick={() => handleViewPayslip(item.Year, item.MonthNumber)}>View</Button>,
-                            <Button icon={<FilePdfOutlined />} onClick={() => handleDownloadPayslip(item.Year, item.MonthNumber)}>Download</Button>
+                            <Tooltip title="View Details">
+                              <Button 
+                                icon={<EyeOutlined />} 
+                                type="link" 
+                                onClick={() => handleViewPayslip(item.Year, item.MonthNumber)}
+                              >
+                                View
+                              </Button>
+                            </Tooltip>,
+                            <Tooltip title="Download PDF">
+                              <Button 
+                                icon={<DownloadOutlined />} 
+                                onClick={() => handleDownloadPayslip(item.Year, item.MonthNumber)}
+                              >
+                                Download
+                              </Button>
+                            </Tooltip>
                           ]}
                         >
-                          <List.Item.Meta title={`${item.MonthName} ${item.Year}`} description={`Pay Date: ${item.FormattedPeriodEnd}`} />
-                        </List.Item>
-                      )}
-                    />
-                  ) : (
-                    <div style={{ textAlign: 'center', padding: '20px 0' }}>
-                      <p style={{ marginTop: 10 }}>No payslips available</p>
-                    </div>
-                  )}
-                </Card>
-              </div>
-
-              {/* Second Row */}
-              <div className="dashboard-row">
-                <Card title="LEAVE STATUS" className="dashboard-card">
-                  {leaveData.length > 0 ? (
-                    <>
-                      <List
-                        dataSource={leaveData}
-                        renderItem={item => (
-                          <List.Item>
-                            <List.Item.Meta
-                              avatar={<Tag color={item.status === 'approved' ? 'green' : item.status === 'pending' ? 'blue' : 'red'}>{item.status.toUpperCase()}</Tag>}
-                              title={item.type}
-                              description={`${item.days} days (${item.startDate} - ${item.endDate})`}
-                            />
-                          </List.Item>
-                        )}
-                      />
-                      <Button type="dashed" icon={<PlusOutlined />} style={{ width: '100%', maxWidth: 300 }} onClick={handleApplyLeave}>
-                        Apply for Leave
-                      </Button>
-                    </>
-                  ) : (
-                    <Empty description="No leave records">
-                      <Button type="primary" icon={<PlusOutlined />} onClick={handleApplyLeave}>Apply for Leave</Button>
-                    </Empty>
-                  )}
-                </Card>
-
-                <Card title={<div className="appointments-header">APPOINTMENTS <Tag color="blue">Today</Tag></div>} className="dashboard-card">
-                  {appointments.length > 0 ? (
-                    <List
-                      dataSource={appointments}
-                      renderItem={item => (
-                        <List.Item>
                           <List.Item.Meta
-                            avatar={<Avatar icon={<UserOutlined />} style={{ backgroundColor: item.type === 'internal' ? '#1890ff' : '#722ed1' }} />}
-                            title={item.title}
-                            description={<><div>{item.time}</div><div>With: {item.with}</div></>}
+                            avatar={<FilePdfOutlined style={{ fontSize: 24, color: '#1890ff' }} />}
+                            title={
+                              <Space>
+                                <Text strong>{item.MonthName} {item.Year}</Text>
+                                {item.netSalary && (
+                                  <Text type="success" strong>
+                                    R{item.netSalary.toFixed(2)}
+                                  </Text>
+                                )}
+                              </Space>
+                            }
+                            description={
+                              <div>
+                                <div>
+                                  <CalendarOutlined style={{ marginRight: 4 }} />
+                                  Pay Period: {item.FormattedPeriodStart} - {item.FormattedPeriodEnd}
+                                </div>
+                                {item.generatedDate && (
+                                  <div style={{ marginTop: 4 }}>
+                                    <Text type="secondary">
+                                      Generated: {new Date(item.generatedDate).toLocaleDateString()}
+                                    </Text>
+                                  </div>
+                                )}
+                              </div>
+                            }
                           />
                         </List.Item>
                       )}
                     />
-                  ) : <AppointmentsTile />}
-                </Card>
-              </div>
+                  ) : (
+                    <Empty 
+                      description={
+                        payslipData.length === 0 
+                          ? "No payslips available" 
+                          : "No payslips match your filters"
+                      }
+                      style={{ padding: '50px 0' }}
+                    >
+                      {payslipData.length > 0 && (
+                        <Button onClick={clearFilters}>Clear Filters</Button>
+                      )}
+                    </Empty>
+                  )}
+                </Spin>
+              </Card>
             </div>
           )}
 
+          {/* Payslip Details Modal */}
           <Modal 
             title={
               <Space>
@@ -324,7 +333,7 @@ const Home = () => {
                 Payslip Details
               </Space>
             }
-            visible={isModalVisible} 
+            open={isModalVisible} 
             onCancel={handleModalCancel} 
             footer={[
               <Button key="close" onClick={handleModalCancel}>
@@ -395,4 +404,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Payslips;
