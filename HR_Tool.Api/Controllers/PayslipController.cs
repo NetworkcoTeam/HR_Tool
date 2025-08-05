@@ -24,7 +24,7 @@ namespace HR_Tool.Api.Controllers
         private readonly Client _supabase;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-         public PayslipsController(PayslipCalculator payslipCalculator, IWebHostEnvironment webHostEnvironment)
+        public PayslipsController(PayslipCalculator payslipCalculator, IWebHostEnvironment webHostEnvironment)
         {
             _payslipCalculator = payslipCalculator ?? throw new ArgumentNullException(nameof(payslipCalculator));
             _webHostEnvironment = webHostEnvironment ?? throw new ArgumentNullException(nameof(webHostEnvironment));
@@ -46,9 +46,6 @@ namespace HR_Tool.Api.Controllers
             }
         }
 
-        /// <summary>
-        /// HR Admin: Generates payslips for specified employees or positions and returns summary info.
-        /// </summary>
         [HttpPost("generate")]
         public async Task<IActionResult> GeneratePayslips([FromBody] PayslipGenerationRequest request)
         {
@@ -96,7 +93,13 @@ namespace HR_Tool.Api.Controllers
                 {
                     if (employee == null) continue;
 
-                    var payslip = await GeneratePayslip(employee, request.Month, request.Year);
+                    var payslip = await GeneratePayslip(
+                        employee,
+                        request.Month,
+                        request.Year,
+                        request.Allowance,
+                        request.Bonus
+                    );
 
                     if (payslip != null)
                     {
@@ -106,6 +109,14 @@ namespace HR_Tool.Api.Controllers
                             Surname = employee.LastName,
                             Position = employee.Position,
                             EmployeeId = (int)employee.EmployeeId
+                        });
+                    }
+                    else if (request.EmployeeId.HasValue) // Individual generation case
+                    {
+                        return BadRequest(new
+                        {
+                            success = false,
+                            error = $"Payslip already generated for {employee.FirstName} {employee.LastName} in {request.Month}/{request.Year}"
                         });
                     }
                 }
@@ -127,8 +138,6 @@ namespace HR_Tool.Api.Controllers
                 });
             }
         }
-
-        
 
         [HttpGet("employee/{employeeId}/payslips")]
         public async Task<IActionResult> GetEmployeePayslips(int employeeId)
@@ -152,7 +161,6 @@ namespace HR_Tool.Api.Controllers
                     PaySlipId = p.PaySlipId,
                     PeriodEnd = p.PeriodEnd.ToString("yyyy-MM-dd") 
                 }).ToList();
-
 
                 return Ok(new
                 {
@@ -184,7 +192,6 @@ namespace HR_Tool.Api.Controllers
                         error = "Month must be between 1 and 12"
                     });
                 }
-
                 // Calculate the date range for the requested month/year
                 var startDate = new DateTime(year, month, 1);
                 var endDate = startDate.AddMonths(1).AddDays(-1);
@@ -210,6 +217,11 @@ namespace HR_Tool.Api.Controllers
                     .Where(x => x.EmployeeId == payslipResponse.EmployeeId)
                     .Single();
 
+                // Calculate total gross salary for display
+                var grossSalary = payslipResponse.BasicSalary + 
+                                (payslipResponse.Allowance ?? 0m) + 
+                                (payslipResponse.Bonus ?? 0m);
+
                 return Ok(new
                 {
                     success = true,
@@ -217,9 +229,13 @@ namespace HR_Tool.Api.Controllers
                     {
                         PaySlipId = payslipResponse.PaySlipId,
                         EmployeeName = $"{employeeResponse?.FirstName} {employeeResponse?.LastName}".Trim(),
+                        UserId = employeeResponse?.UserId ?? "N/A",
                         Position = employeeResponse?.Position ?? "Not specified",
                         Period = $"{payslipResponse.PeriodStart:dd MMM yyyy} - {payslipResponse.PeriodEnd:dd MMM yyyy}",
                         BasicSalary = payslipResponse.BasicSalary,
+                        Allowance = payslipResponse.Allowance ?? 0m,
+                        Bonus = payslipResponse.Bonus ?? 0m,
+                        GrossSalary = grossSalary,
                         TaxAmount = payslipResponse.TaxAmount ?? 0m,
                         UIF = payslipResponse.UIF ?? 0m,
                         NetSalary = payslipResponse.NetSalary ?? 0m,
@@ -275,8 +291,11 @@ namespace HR_Tool.Api.Controllers
                     PaySlipId = payslipResponse.PaySlipId,
                     EmployeeId = (int)payslipResponse.EmployeeId,
                     EmployeeName = $"{employeeResponse?.FirstName} {employeeResponse?.LastName}".Trim(),
+                    UserId = employeeResponse?.UserId ?? "N/A",
                     Position = employeeResponse?.Position ?? "Not specified",
                     BasicSalary = payslipResponse.BasicSalary,
+                    Allowance = payslipResponse.Allowance ?? 0m,
+                    Bonus = payslipResponse.Bonus ?? 0m,
                     TaxAmount = payslipResponse.TaxAmount ?? 0m,
                     UIF = payslipResponse.UIF ?? 0m,
                     NetSalary = payslipResponse.NetSalary ?? 0m,
@@ -295,6 +314,7 @@ namespace HR_Tool.Api.Controllers
                 return StatusCode(500, $"Error generating PDF: {ex.Message}");
             }
         }
+
         private async Task<PayslipDto> MapToDto(Payslip payslip)
         {
             // Fetch employee data separately
@@ -310,8 +330,11 @@ namespace HR_Tool.Api.Controllers
                 EmployeeName = employeeResponse != null 
                     ? $"{employeeResponse.FirstName} {employeeResponse.LastName}".Trim()
                     : "Unknown Employee",
+                UserId = employeeResponse?.UserId ?? "N/A",
                 Position = employeeResponse?.Position ?? "Not specified",
                 BasicSalary = payslip.BasicSalary,
+                Allowance = payslip.Allowance ?? 0m,
+                Bonus = payslip.Bonus ?? 0m,
                 TaxAmount = payslip.TaxAmount ?? 0m,
                 UIF = payslip.UIF ?? 0m,
                 NetSalary = payslip.NetSalary ?? 0m,
@@ -341,7 +364,7 @@ namespace HR_Tool.Api.Controllers
         }
 
         //PDF PAYSLIP
-         private byte[] GeneratePayslipPdf(PayslipDto payslip)
+        private byte[] GeneratePayslipPdf(PayslipDto payslip)
         {
             var document = new PdfDocument();
             var page = document.AddPage();
@@ -385,8 +408,8 @@ namespace HR_Tool.Api.Controllers
                 Console.WriteLine($"Error loading logo: {ex.Message}");
                 xPosition = 50;
             }
+
             // Company Header (now next to the logo)
-            // If logo was drawn, xPosition is already adjusted
             graphics.DrawString("THE NETWORKCO", headerFont, XBrushes.Black, new XPoint(xPosition, yPosition));
             yPosition += 25; // Move down for the next line
             graphics.DrawString("1 Asparagus Rd, Office Park, Midrand, 1686", normalFont, XBrushes.Black, new XPoint(xPosition, yPosition));
@@ -408,6 +431,9 @@ namespace HR_Tool.Api.Controllers
             yPosition += 20;
             graphics.DrawString($"Employee Name: {payslip.EmployeeName}", normalFont, XBrushes.Black, new XPoint(50, yPosition));
             yPosition += 20;
+            graphics.DrawString($"ID Number: {payslip.UserId ?? "N/A"}", normalFont, XBrushes.Black, new XPoint(50, yPosition));
+            yPosition += 20;
+
             graphics.DrawString($"Employee ID: {payslip.EmployeeId}", normalFont, XBrushes.Black, new XPoint(50, yPosition));
             yPosition += 20;
             graphics.DrawString($"Position: {payslip.Position}", normalFont, XBrushes.Black, new XPoint(50, yPosition));
@@ -418,10 +444,39 @@ namespace HR_Tool.Api.Controllers
             // Earnings Section
             graphics.DrawString("EARNINGS", boldFont, XBrushes.DarkGreen, new XPoint(50, yPosition));
             yPosition += 20;
+            
+            // Basic Salary
             graphics.DrawString($"Basic Salary:", normalFont, XBrushes.Black, new XPoint(50, yPosition));
             graphics.DrawString($"R{payslip.BasicSalary:N2}", normalFont, XBrushes.Black, 
                 new XPoint(page.Width - 100, yPosition), XStringFormats.TopRight);
-            yPosition += 40;
+            yPosition += 20;
+
+            // Allowance (only show if > 0)
+            if (payslip.Allowance > 0)
+            {
+                graphics.DrawString($"Allowance:", normalFont, XBrushes.Black, new XPoint(50, yPosition));
+                graphics.DrawString($"R{payslip.Allowance:N2}", normalFont, XBrushes.Black, 
+                    new XPoint(page.Width - 100, yPosition), XStringFormats.TopRight);
+                yPosition += 20;
+            }
+
+            // Bonus (only show if > 0)
+            if (payslip.Bonus > 0)
+            {
+                graphics.DrawString($"Bonus:", normalFont, XBrushes.Black, new XPoint(50, yPosition));
+                graphics.DrawString($"R{payslip.Bonus:N2}", normalFont, XBrushes.Black, 
+                    new XPoint(page.Width - 100, yPosition), XStringFormats.TopRight);
+                yPosition += 20;
+            }
+
+            // Gross Total line
+            var grossTotal = payslip.BasicSalary + payslip.Allowance + payslip.Bonus;
+            graphics.DrawLine(XPens.Gray, 50, yPosition, page.Width - 50, yPosition);
+            yPosition += 5;
+            graphics.DrawString($"Gross Total:", boldFont, XBrushes.Black, new XPoint(50, yPosition));
+            graphics.DrawString($"R{grossTotal:N2}", boldFont, XBrushes.Black, 
+                new XPoint(page.Width - 100, yPosition), XStringFormats.TopRight);
+            yPosition += 30;
 
             // Deductions Section
             graphics.DrawString("DEDUCTIONS", boldFont, XBrushes.DarkRed, new XPoint(50, yPosition));
@@ -456,7 +511,6 @@ namespace HR_Tool.Api.Controllers
             return stream.ToArray();
         }
 
-
         private async Task<List<Employee>> GetActiveEmployees(string position = null)
         {
             var contractsResponse = await _supabase
@@ -479,9 +533,7 @@ namespace HR_Tool.Api.Controllers
                     .Single();
 
                 if (employeeResponse != null)
-                {
                     employees.Add(employeeResponse);
-                }
             }
 
             if (!string.IsNullOrEmpty(position))
@@ -495,7 +547,7 @@ namespace HR_Tool.Api.Controllers
             return employees;
         }
 
-        private async Task<PayslipDto?> GeneratePayslip(Employee employee, int month, int year)
+        private async Task<PayslipDto?> GeneratePayslip(Employee employee, int month, int year, decimal? requestAllowance = null, decimal? requestBonus = null)
         {
             if (employee == null)
                 throw new ArgumentNullException(nameof(employee));
@@ -511,7 +563,36 @@ namespace HR_Tool.Api.Controllers
             var periodStart = new DateTime(year, month, 1);
             var periodEnd = new DateTime(year, month, DateTime.DaysInMonth(year, month));
 
-            var (tax, uif, net, _) = _payslipCalculator.Calculate(contractResponse.BasicSalary.ToString());
+            // --- Check if payslip already exists for that month/year ---
+            var existingPayslip = await _supabase
+                .From<Payslip>()
+                .Where(x => x.EmployeeId == employee.EmployeeId)
+                .Where(x => x.PeriodEnd >= periodStart && x.PeriodEnd <= periodEnd)
+                .Single();
+
+            if (existingPayslip != null)
+            {
+                // Return null for bulk mode to skip; handled in GeneratePayslips
+                return null;
+            }
+
+            // --- Fallback allowance logic ---
+            decimal allowance = 0m;
+            if (requestAllowance.HasValue && requestAllowance.Value > 0)
+            {
+                allowance = requestAllowance.Value;
+            }
+            else if (contractResponse.Allowance.HasValue && contractResponse.Allowance.Value > 0)
+            {
+                allowance = contractResponse.Allowance.Value;
+            }
+
+            // Bonus defaults to 0 if not provided
+            decimal bonus = requestBonus.HasValue && requestBonus.Value > 0
+                ? requestBonus.Value
+                : 0m;
+
+            var (tax, uif, net, _) = _payslipCalculator.Calculate(contractResponse.BasicSalary, allowance, bonus);
 
             var payslip = new Payslip
             {
@@ -519,6 +600,8 @@ namespace HR_Tool.Api.Controllers
                 PeriodStart = periodStart,
                 PeriodEnd = periodEnd,
                 BasicSalary = contractResponse.BasicSalary,
+                Allowance = allowance,
+                Bonus = bonus,
                 TaxAmount = tax,
                 UIF = uif,
                 NetSalary = net,
@@ -530,9 +613,7 @@ namespace HR_Tool.Api.Controllers
                 .Insert(payslip);
 
             if (insertedPayslipResponse?.Models == null || !insertedPayslipResponse.Models.Any())
-            {
                 throw new Exception("Failed to insert payslip into database.");
-            }
 
             var insertedPayslip = insertedPayslipResponse.Models.First();
 
@@ -541,8 +622,11 @@ namespace HR_Tool.Api.Controllers
                 PaySlipId = insertedPayslip.PaySlipId,
                 EmployeeId = (int)insertedPayslip.EmployeeId,
                 EmployeeName = $"{employee.FirstName} {employee.LastName}",
+                UserId = employee.UserId ?? "N/A",
                 Position = employee.Position,
                 BasicSalary = insertedPayslip.BasicSalary,
+                Allowance = insertedPayslip.Allowance ?? 0m,
+                Bonus = insertedPayslip.Bonus ?? 0m,
                 TaxAmount = insertedPayslip.TaxAmount ?? 0m,
                 UIF = insertedPayslip.UIF ?? 0m,
                 NetSalary = insertedPayslip.NetSalary ?? 0m,
@@ -551,6 +635,7 @@ namespace HR_Tool.Api.Controllers
                 GeneratedAt = insertedPayslip.GeneratedAt ?? DateTime.UtcNow
             };
         }
+
     }
 
     public class RobotoFontResolver : IFontResolver
@@ -605,6 +690,8 @@ namespace HR_Tool.Api.Controllers
         public int Year { get; set; }
         public int? EmployeeId { get; set; }
         public string? Position { get; set; }
+        public decimal? Allowance { get; set; } 
+        public decimal? Bonus { get; set; }     
     }
 
     public class EmployeeSlipInfo
@@ -620,8 +707,11 @@ namespace HR_Tool.Api.Controllers
         public int PaySlipId { get; set; }
         public int EmployeeId { get; set; }
         public string EmployeeName { get; set; } = string.Empty;
+        public string UserId { get; set; } = "N/A";
         public string? Position { get; set; }
         public decimal BasicSalary { get; set; }
+        public decimal Allowance { get; set; }
+        public decimal Bonus { get; set; }
         public decimal TaxAmount { get; set; }
         public decimal UIF { get; set; }
         public decimal NetSalary { get; set; }
@@ -630,4 +720,4 @@ namespace HR_Tool.Api.Controllers
         public DateTime PeriodEnd { get; set; }
         public DateTime GeneratedAt { get; set; }
     }
-} 
+}

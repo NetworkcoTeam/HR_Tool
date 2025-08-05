@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Supabase;
 using HR_Tool.Api.Models;
 using BCrypt.Net;
+using Microsoft.AspNetCore.Authentication; 
 
 [ApiController]
 [Route("api/[controller]")]
@@ -29,48 +30,58 @@ public class LoginController : ControllerBase
     }
 
     [HttpPost]
-public async Task<IActionResult> Login([FromBody] LoginRequest request)
+    public async Task<IActionResult> Login([FromBody] LoginRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
+        {
+            return BadRequest(new { message = "Email and Password are required." });
+        }
+
+        await _supabase.InitializeAsync();
+
+        var response = await _supabase.From<User>()
+            .Where(u => u.Email == request.Email)
+            .Get();
+
+        var user = response.Models.FirstOrDefault();
+
+        if (user == null)
+        {
+            return Unauthorized(new { message = "Invalid email or password." });
+        }
+
+        
+        var valid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
+
+        if (!valid)
+        {
+            return Unauthorized(new { message = "Invalid email or password." });
+        }
+
+        
+        if (user.EmployeeId == null)
+        {
+            return Unauthorized(new { message = "Employee ID not assigned. Please contact HR." });
+        }
+
+        return Ok(new
+        {
+            name = user.Name,
+            surname = user.Surname,
+            email = user.Email,
+            role = user.Role,
+            idNumber = user.IdNumber,
+            employee_id = user.EmployeeId
+        });
+    }
+
+    [HttpPost("logout")]
+public async Task<IActionResult> Logout()
 {
-    if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
+    if (HttpContext.User.Identity.IsAuthenticated)
     {
-        return BadRequest(new { message = "Email and Password are required." });
+        await HttpContext.SignOutAsync();
     }
-
-    await _supabase.InitializeAsync();
-
-    var response = await _supabase.From<User>()
-        .Where(u => u.Email == request.Email)
-        .Get();
-
-    var user = response.Models.FirstOrDefault();
-
-    if (user == null)
-    {
-        return Unauthorized(new { message = "Invalid email or password." });
-    }
-
-    
-    var valid = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
-
-    if (!valid)
-    {
-        return Unauthorized(new { message = "Invalid email or password." });
-    }
-
-    
-    if (user.EmployeeId == null)
-    {
-        return Unauthorized(new { message = "Employee ID not assigned. Please contact HR." });
-    }
-
-    return Ok(new
-    {
-        name = user.Name,
-        surname = user.Surname,
-        email = user.Email,
-        role = user.Role,
-        idNumber = user.IdNumber,
-        employee_id = user.EmployeeId
-    });
+    return Ok(new { message = "Logged out successfully" });
 }
 }

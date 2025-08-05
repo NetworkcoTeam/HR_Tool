@@ -1,27 +1,88 @@
 .site-layout-background {
-    background: #fff;
-    padding: 24px;
-    min-height: 360px;
+  background: #fff;
+  padding: 24px;
+  min-height: 360px;
+}
+
+.ant-card {
+  margin-top: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+}
+
+.ant-divider {
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+.ant-form-item-label label {
+  font-weight: 500;
+}
+
+.ant-input-number, .ant-picker {
+  width: 100%;
+}
+
+.ant-btn {
+  margin-right: 8px;
+}
+
+.status-message {
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 13px;
+}
+
+.status-message.success {
+  background-color: #d4edda;
+  color: green;
+  border: 1px solid #c3e6cb;
+}
+
+.status-message.error {
+  background-color: #f8d7da;
+  color: red;
+  border: 1px solid #f5c6cb;
+}
+
+/* Table styles */
+.ant-table {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.ant-table-thead > tr > th {
+  background-color: #f0f2f5;
+  font-weight: 600;
+}
+
+/* Form input styles */
+.ant-input-affix-wrapper, 
+.ant-select-selector,
+.ant-picker {
+  border-radius: 4px !important;
+}
+
+/* Button styles */
+.ant-btn-primary {
+  background-color: #1890ff;
+  border-color: #1890ff;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .ant-form-item {
+    margin-bottom: 16px;
   }
   
-  .ant-card {
-    margin-top: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+  .ant-row {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
   }
   
-  .ant-divider {
-    margin-top: 24px;
-    margin-bottom: 24px;
+  .ant-col {
+    padding-right: 0 !important;
+    padding-left: 0 !important;
   }
-  
-  .ant-form-item-label label {
-    font-weight: 500;
-  }
-  
-  .ant-input-number, .ant-picker {
-    width: 100%;
-  }
-  
-  .ant-btn {
-    margin-right: 8px;
-  }
+}

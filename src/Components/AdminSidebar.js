@@ -23,10 +23,10 @@ function AdminSidebar() {
           <span>Profile</span>
         </li>
         
-        {/*<li onClick={() => handleNavigation('/')}>
+        {<li onClick={() => handleNavigation('/ContractEditorPage')}>
           <FaFileInvoiceDollar className="sidebar-icon" />
-          <span>Payslip</span>
-        </li>*/}
+          <span>Contract Management</span>
+        </li>}
         
         <li onClick={() => handleNavigation('/documents')}>
           <FaFolder className="sidebar-icon" />
@@ -43,7 +43,7 @@ function AdminSidebar() {
           <span>Appointments</span>
         </li>
 
-        <li onClick={() => handleNavigation('/HRAdminForm')}>
+        <li onClick={() => handleNavigation('/EmployeeManagement')}>
           <FaCalendarCheck className="sidebar-icon" />
           <span>HR Admission</span>
           </li>

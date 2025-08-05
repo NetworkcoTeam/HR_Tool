@@ -154,13 +154,30 @@ const Appointment = () => {
 
   const onFinish = async (values) => {
     try {
+      // Get the date from the form
+      const appointmentDate = values.date.format('YYYY-MM-DD');
+
+      // Get the start time and end time
+      const startTime = values.time[0].format('HH:mm:ss');
+      const endTime = values.time[1].format('HH:mm:ss');
+
+      // Combine date and time to create a full datetime object in local time (SAST)
+      const startDateTimeLocal = moment(`${appointmentDate}T${startTime}`);
+      const endDateTimeLocal = moment(`${appointmentDate}T${endTime}`);
+
+      // Convert the local datetimes to UTC ISO 8601 strings
+      // The .toISOString() method automatically converts to UTC
+      const startDateTimeUTC = startDateTimeLocal.toISOString();
+      const endDateTimeUTC = endDateTimeLocal.toISOString();
+
       const request = {
         employeeId: parseInt(userData.employee_id),
         subject: values.subject,
         description: values.description,
-        appointmentDate: values.date.format('YYYY-MM-DD'),
-        startTime: values.time[0].format('HH:mm:ss'),
-        endTime: values.time[1].format('HH:mm:ss'),
+        // Send the full UTC datetime strings to the backend
+        appointmentDate: startDateTimeUTC, 
+        startTime: startTime,
+        endTime: endTime,
         contactNumber: values.contactNumber.toString(),
         status: 'Pending'
       };

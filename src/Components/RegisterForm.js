@@ -13,9 +13,30 @@ const RegisterForm = () => {
     password: '',
     confirmPassword: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [registrationStatus, setRegistrationStatus] = useState({
+    success: null,
+    message: ''
+  });
 
   const togglePopup = () => {
     setIsOpen(!isOpen);
+    if (isOpen) {
+      setFormData({
+        name: '',
+        surname: '',
+        email: '',
+        role: '',
+        IdNumber: '',
+        startDate: '',
+        password: '',
+        confirmPassword: ''
+      });
+      setRegistrationStatus({
+        success: null,
+        message: ''
+      });
+    }
   };
 
   const handleChange = (e) => {
@@ -28,10 +49,18 @@ const RegisterForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setRegistrationStatus({
+      success: null,
+      message: ''
+    });
 
-    // Basic client-side validation
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
+      setRegistrationStatus({
+        success: false,
+        message: 'Passwords do not match!'
+      });
+      setIsSubmitting(false);
       return;
     }
 
@@ -52,15 +81,37 @@ const RegisterForm = () => {
         }),
       });
 
+      const data = await response.json();
+
       if (response.ok) {
-        console.log('User registered successfully!');
-        // Optional: Redirect or show success message
+        setRegistrationStatus({
+          success: true,
+          message: 'Registration successful! Please wait for HR validation.'
+        });
+        setFormData({
+          name: '',
+          surname: '',
+          email: '',
+          role: '',
+          IdNumber: '',
+          startDate: '',
+          password: '',
+          confirmPassword: ''
+        });
       } else {
-        console.error('Registration failed.');
-        // Handle errors — maybe show a message
+        setRegistrationStatus({
+          success: false,
+          message: data.message || 'Registration failed. Please try again.'
+        });
       }
     } catch (error) {
       console.error('Error:', error);
+      setRegistrationStatus({
+        success: false,
+        message: 'An error occurred. Please try again later.'
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -72,7 +123,7 @@ const RegisterForm = () => {
 
       {isOpen && (
         <div className="popup-backdrop" onClick={togglePopup}>
-          <div className="popup-content" onClick={(e) => e.stopPropagation()}>
+          <div className="popup-content compact-form" onClick={(e) => e.stopPropagation()}>
             <button className="close-button" onClick={togglePopup}>
               ×
             </button>
@@ -81,16 +132,21 @@ const RegisterForm = () => {
               <div className="registration-form">
                 <h2 className="form-title">Sign Up</h2>
                 
+                {registrationStatus.message && (
+                  <div className={`status-message ${registrationStatus.success ? 'success' : 'error'}`}>
+                    {registrationStatus.message}
+                  </div>
+                )}
+
                 <form onSubmit={handleSubmit}>
-                  <div className="form-group">
-                    <label className="input-label">Name</label>
-                    <div className="input-wrapper">
+                  <div className="form-group compact-group">
+                    <label className="input-label compact-label">Name</label>
+                    <div className="input-wrapper compact-input">
                       <span className="input-icon user-icon"></span>
                       <input
                         type="text"
                         name="name"
                         className="form-input"
-                        placeholder=""
                         value={formData.name}
                         onChange={handleChange}
                         required
@@ -98,15 +154,14 @@ const RegisterForm = () => {
                     </div>
                   </div>
 
-                  <div className="form-group">
-                    <label className="input-label">Surname</label>
-                    <div className="input-wrapper">
+                  <div className="form-group compact-group">
+                    <label className="input-label compact-label">Surname</label>
+                    <div className="input-wrapper compact-input">
                       <span className="input-icon user-icon"></span>
                       <input
                         type="text"
                         name="surname"
                         className="form-input"
-                        placeholder=""
                         value={formData.surname}
                         onChange={handleChange}
                         required
@@ -114,15 +169,14 @@ const RegisterForm = () => {
                     </div>
                   </div>
 
-                  <div className="form-group">
-                    <label className="input-label">Email</label>
-                    <div className="input-wrapper">
+                  <div className="form-group compact-group">
+                    <label className="input-label compact-label">Email</label>
+                    <div className="input-wrapper compact-input">
                       <span className="input-icon email-icon"></span>
                       <input
                         type="email"
                         name="email"
                         className="form-input"
-                        placeholder=""
                         value={formData.email}
                         onChange={handleChange}
                         required
@@ -130,9 +184,9 @@ const RegisterForm = () => {
                     </div>
                   </div>
 
-                  <div className="form-group">
-                    <label className="input-label">Role</label>
-                    <div className="input-wrapper">
+                  <div className="form-group compact-group">
+                    <label className="input-label compact-label">Role</label>
+                    <div className="input-wrapper compact-input">
                       <span className="input-icon role-icon"></span>
                       <select
                         name="role"
@@ -148,15 +202,14 @@ const RegisterForm = () => {
                     </div>
                   </div>
 
-                  <div className="form-group">
-                    <label className="input-label">ID Number</label>
-                    <div className="input-wrapper">
+                  <div className="form-group compact-group">
+                    <label className="input-label compact-label">ID Number</label>
+                    <div className="input-wrapper compact-input">
                       <span className="input-icon id-icon"></span>
                       <input
                         type="text"
                         name="IdNumber"
                         className="form-input"
-                        placeholder=""
                         value={formData.IdNumber}
                         onChange={handleChange}
                         required
@@ -164,9 +217,9 @@ const RegisterForm = () => {
                     </div>
                   </div>
 
-                  <div className="form-group">
-                    <label className="input-label">Start Date</label>
-                    <div className="input-wrapper">
+                  <div className="form-group compact-group">
+                    <label className="input-label compact-label">Start Date</label>
+                    <div className="input-wrapper compact-input">
                       <span className="input-icon date-icon"></span>
                       <input
                         type="date"
@@ -179,15 +232,14 @@ const RegisterForm = () => {
                     </div>
                   </div>
 
-                  <div className="form-group">
-                    <label className="input-label">Password</label>
-                    <div className="input-wrapper">
+                  <div className="form-group compact-group">
+                    <label className="input-label compact-label">Password</label>
+                    <div className="input-wrapper compact-input">
                       <span className="input-icon password-icon"></span>
                       <input
                         type="password"
                         name="password"
                         className="form-input"
-                        placeholder=""
                         value={formData.password}
                         onChange={handleChange}
                         required
@@ -205,15 +257,14 @@ const RegisterForm = () => {
                     </div>
                   </div>
 
-                  <div className="form-group">
-                    <label className="input-label">Confirm Password</label>
-                    <div className="input-wrapper">
+                  <div className="form-group compact-group">
+                    <label className="input-label compact-label">Confirm Password</label>
+                    <div className="input-wrapper compact-input">
                       <span className="input-icon password-icon"></span>
                       <input
                         type="password"
                         name="confirmPassword"
                         className="form-input"
-                        placeholder=""
                         value={formData.confirmPassword}
                         onChange={handleChange}
                         required
@@ -231,12 +282,16 @@ const RegisterForm = () => {
                     </div>
                   </div>
 
-                  <button type="submit" className="register-btn">
-                    Register
+                  <button 
+                    type="submit" 
+                    className="register-btn compact-btn"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? 'Registering...' : 'Register'}
                   </button>
                 </form>
 
-                <div className="login-prompt">
+                <div className="login-prompt compact-prompt">
                   Already have an account? 
                   <a href="#" className="login-link">Login here!</a>
                 </div>
