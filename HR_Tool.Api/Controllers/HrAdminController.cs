@@ -59,66 +59,66 @@ namespace HR_Tool.Api.Controllers
         }
 
         [HttpGet("admitted-users")]
-public async Task<ActionResult<List<UserDetailsDto>>> GetAdmittedUsers()
-{
-    try
-    {
-        var userQuery = _supabase.From<User>()
-            .Where(u => u.Status == "Admitted");
-
-        var userResponse = await userQuery.Get();
-
-        if (userResponse?.Models == null)
+        public async Task<ActionResult<List<UserDetailsDto>>> GetAdmittedUsers()
         {
-            return Ok(new List<UserDetailsDto>());
+            try
+            {
+                var userQuery = _supabase.From<User>()
+                    .Where(u => u.Status == "Admitted");
+
+                var userResponse = await userQuery.Get();
+
+                if (userResponse?.Models == null)
+                {
+                    return Ok(new List<UserDetailsDto>());
+                }
+
+                var users = userResponse.Models.Select(u => new UserDetailsDto
+                {
+                    Status = u.Status,
+                    Name = u.Name,
+                    Surname = u.Surname,
+                    IdNumber = u.IdNumber
+                }).ToList();
+
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching admitted users");
+                return StatusCode(500);
+            }
         }
 
-        var users = userResponse.Models.Select(u => new UserDetailsDto
+        [HttpGet("all-users")]
+        public async Task<ActionResult<List<UserDetailsDto>>> GetAllUsers()
         {
-            Status = u.Status,
-            Name = u.Name,
-            Surname = u.Surname,
-            IdNumber = u.IdNumber
-        }).ToList();
+            try
+            {
+                var userQuery = _supabase.From<User>();
+                var userResponse = await userQuery.Get();
 
-        return Ok(users);
-    }
-    catch (Exception ex)
-    {
-        _logger.LogError(ex, "Error fetching admitted users");
-        return StatusCode(500);
-    }
-}
+                if (userResponse?.Models == null)
+                {
+                    return Ok(new List<UserDetailsDto>());
+                }
 
-[HttpGet("all-users")]
-public async Task<ActionResult<List<UserDetailsDto>>> GetAllUsers()
-{
-    try
-    {
-        var userQuery = _supabase.From<User>();
-        var userResponse = await userQuery.Get();
+                var users = userResponse.Models.Select(u => new UserDetailsDto
+                {
+                    Status = u.Status,
+                    Name = u.Name,
+                    Surname = u.Surname,
+                    IdNumber = u.IdNumber
+                }).ToList();
 
-        if (userResponse?.Models == null)
-        {
-            return Ok(new List<UserDetailsDto>());
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching all users");
+                return StatusCode(500);
+            }
         }
-
-        var users = userResponse.Models.Select(u => new UserDetailsDto
-        {
-            Status = u.Status,
-            Name = u.Name,
-            Surname = u.Surname,
-            IdNumber = u.IdNumber
-        }).ToList();
-
-        return Ok(users);
-    }
-    catch (Exception ex)
-    {
-        _logger.LogError(ex, "Error fetching all users");
-        return StatusCode(500);
-    }
-}
 
         [HttpPost("admit-user")]
         public async Task<IActionResult> AdmitUser([FromBody] AdmitUserRequestDto request)
@@ -134,9 +134,9 @@ public async Task<ActionResult<List<UserDetailsDto>>> GetAllUsers()
             if (!ModelState.IsValid)
             {
                 _logger.LogWarning("Admission request validation failed: {@Errors}", ModelState.Values.SelectMany(v => v.Errors));
-                return BadRequest(new AdmitUserResponseDto 
-                { 
-                    Success = false, 
+                return BadRequest(new AdmitUserResponseDto
+                {
+                    Success = false,
                     Message = "Validation failed: " + string.Join(", ", ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)))
                 });
             }
@@ -152,10 +152,10 @@ public async Task<ActionResult<List<UserDetailsDto>>> GetAllUsers()
                 if (userResponse?.Models == null || !userResponse.Models.Any())
                 {
                     _logger.LogWarning("User with ID Number {UserIdNumber} not found for admission.", request.UserIdNumber);
-                    return NotFound(new AdmitUserResponseDto 
-                    { 
-                        Success = false, 
-                        Message = $"User with ID Number {request.UserIdNumber} not found." 
+                    return NotFound(new AdmitUserResponseDto
+                    {
+                        Success = false,
+                        Message = $"User with ID Number {request.UserIdNumber} not found."
                     });
                 }
 
@@ -164,10 +164,10 @@ public async Task<ActionResult<List<UserDetailsDto>>> GetAllUsers()
                 if (user.Status == "Admitted")
                 {
                     _logger.LogWarning("User with ID Number {UserIdNumber} is already admitted.", request.UserIdNumber);
-                    return Conflict(new AdmitUserResponseDto 
-                    { 
-                        Success = false, 
-                        Message = $"User with ID Number {request.UserIdNumber} is already admitted." 
+                    return Conflict(new AdmitUserResponseDto
+                    {
+                        Success = false,
+                        Message = $"User with ID Number {request.UserIdNumber} is already admitted."
                     });
                 }
 
@@ -208,9 +208,9 @@ public async Task<ActionResult<List<UserDetailsDto>>> GetAllUsers()
                 {
                     EmployeeId = newEmployeeId,
                     ContractType = request.ContractType,
-                     StartDate = DateTime.Parse(request.ContractStartDate),  // Add parsing here
-                    EndDate = !string.IsNullOrEmpty(request.ContractEndDate) 
-                    ? DateTime.Parse(request.ContractEndDate) 
+                    StartDate = DateTime.Parse(request.ContractStartDate),  // Add parsing
+                    EndDate = !string.IsNullOrEmpty(request.ContractEndDate)
+                    ? DateTime.Parse(request.ContractEndDate)
                     : (DateTime?)null,
                     BasicSalary = request.BasicSalary,
                     Terms = request.ContractTerms,
@@ -231,7 +231,7 @@ public async Task<ActionResult<List<UserDetailsDto>>> GetAllUsers()
                             newEmployeeId, responseContent);
                         errorMessage += $" Details: {responseContent}";
                     }
-                    
+
                     try
                     {
                         await _supabase.From<Employee>()
@@ -243,14 +243,14 @@ public async Task<ActionResult<List<UserDetailsDto>>> GetAllUsers()
                     {
                         _logger.LogError(cleanupEx, "Failed to cleanup employee record {EmployeeId} after contract creation failure", newEmployeeId);
                     }
-                    
+
                     throw new Exception(errorMessage);
                 }
 
                 var createdContract = contractInsertResponse.Models.First();
                 int newContractId = createdContract.ContractId;
 
-                _logger.LogInformation("Contract created successfully with ID: {ContractId} for Employee: {EmployeeId}", 
+                _logger.LogInformation("Contract created successfully with ID: {ContractId} for Employee: {EmployeeId}",
                     newContractId, newEmployeeId);
 
                 // 4. Update User Record
@@ -278,7 +278,7 @@ public async Task<ActionResult<List<UserDetailsDto>>> GetAllUsers()
                         await _supabase.From<Employee>()
                             .Where(e => e.EmployeeId == newEmployeeId)
                             .Delete();
-                        _logger.LogInformation("Cleaned up employee {EmployeeId} and contract {ContractId} records after user update failure", 
+                        _logger.LogInformation("Cleaned up employee {EmployeeId} and contract {ContractId} records after user update failure",
                             newEmployeeId, newContractId);
                     }
                     catch (Exception cleanupEx)
@@ -312,7 +312,104 @@ public async Task<ActionResult<List<UserDetailsDto>>> GetAllUsers()
                 });
             }
         }
+
+        [HttpPost("offboard-user/{idNumber}")]
+        public async Task<IActionResult> OffboardUser(string idNumber)
+        {
+            try
+            {
+                // Find the user to offboard 
+                var userQuery = _supabase.From<User>()
+                    .Where(u => u.IdNumber == idNumber && u.Status == "Admitted");
+
+                var userResponse = await userQuery.Get();
+
+                if (userResponse?.Models == null || !userResponse.Models.Any())
+                {
+                    return NotFound(new { Success = false, Message = "Admitted user not found." });
+                }
+
+                var user = userResponse.Models.First();
+
+                // Create archived user record
+                var archivedUser = new archived_users
+                {
+                    Name = user.Name,
+                    Surname = user.Surname,
+                    Email = user.Email,
+                    Role = user.Role,
+                    IdNumber = user.IdNumber,
+                    StartDate = user.StartDate,
+                    PasswordHash = user.PasswordHash,
+                    Status = "Offboarded",
+                    EmployeeId = user.EmployeeId,
+                    ResetToken = user.ResetToken,
+                    ResetTokenExpiry = user.ResetTokenExpiry,
+                    LastPasswordReset = user.LastPasswordReset,
+                    ArchivedAt = DateTime.UtcNow
+                };
+
+                // Add to archived users table
+                var archiveResponse = await _supabase.From<archived_users>()
+                    .Insert(archivedUser);
+
+                if (archiveResponse?.Models == null || !archiveResponse.Models.Any())
+                {
+                    throw new Exception("Failed to archive user");
+                }
+
+                // Remove from active users table
+                await _supabase.From<User>()
+                    .Where(u => u.IdNumber == idNumber)
+                    .Delete();
+
+                return Ok(new { Success = true, Message = "User offboarded successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error offboarding user with ID: {IdNumber}", idNumber);
+                return StatusCode(500, new { Success = false, Message = $"Error offboarding user: {ex.Message}" });
+            }
+        }
+    
+        [HttpGet("offboarded-users")]
+public async Task<ActionResult<List<ArchivedUserDto>>> GetOffboardedUsers()
+{
+    try
+    {
+        var response = await _supabase.From<archived_users>().Get();
+
+        if (response?.Models == null)
+        {
+            return Ok(new List<ArchivedUserDto>());
+        }
+
+        return Ok(response.Models.Select(u => new ArchivedUserDto
+        {
+            IdNumber = u.IdNumber,
+            Name = u.Name,
+            Surname = u.Surname,
+            Status = u.Status,
+            ArchivedAt = u.ArchivedAt
+        }).ToList());
     }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error fetching offboarded users");
+        return StatusCode(500);
+    }
+}
+
+}
+
+    public class ArchivedUserDto
+{
+    public string IdNumber { get; set; }
+    public string Name { get; set; }
+    public string Surname { get; set; }
+    public string Status { get; set; }
+    public DateTime ArchivedAt { get; set; }
+}
 
     public class ErrorResponse
     {

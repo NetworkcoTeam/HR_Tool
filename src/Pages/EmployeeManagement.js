@@ -9,7 +9,8 @@ import {
   Alert,
   Card,
   Tabs,
-  Tag
+  Tag,
+  Popconfirm
 } from 'antd';
 import { 
   UserOutlined, 
@@ -17,7 +18,9 @@ import {
   ExclamationCircleOutlined,
   TeamOutlined,
   SolutionOutlined,
-  UsergroupAddOutlined
+  UsergroupAddOutlined,
+  ExportOutlined,
+  HistoryOutlined
 } from '@ant-design/icons';
 import AdminSidebar from '../Components/AdminSidebar';
 import HRAdminForm from '../Components/HRAdminForm';
@@ -66,6 +69,9 @@ const EmployeeManagement = () => {
         case 'all':
           endpoint = 'http://localhost:5143/api/HrAdmin/all-users';
           break;
+        case 'offboarded':
+          endpoint = 'http://localhost:5143/api/HrAdmin/offboarded-users';
+          break;
         default:
           endpoint = 'http://localhost:5143/api/HrAdmin/non-admitted-users';
       }
@@ -113,6 +119,30 @@ const EmployeeManagement = () => {
     setActiveTab(key);
   };
 
+  const handleOffboardClick = async (user) => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `http://localhost:5143/api/HrAdmin/offboard-user/${user.idNumber}`,
+        { method: 'POST' }
+      );
+      
+      const result = await response.json();
+      
+      if (response.ok) {
+        message.success(result.message || 'User offboarded successfully');
+        fetchUsers(); // Refresh the current tab
+      } else {
+        message.error(result.message || 'Failed to offboard user');
+      }
+    } catch (error) {
+      message.error('Error offboarding user');
+      console.error("Offboard error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const columns = [
     {
       title: 'ID Number',
@@ -131,7 +161,10 @@ const EmployeeManagement = () => {
       key: 'status',
       width: 120,
       render: (status) => (
-        <Tag color={status === 'Admitted' ? 'green' : 'orange'}>
+        <Tag color={
+          status === 'Admitted' ? 'green' : 
+          status === 'Offboarded' ? 'red' : 'orange'
+        }>
           {status}
         </Tag>
       ),
@@ -139,19 +172,48 @@ const EmployeeManagement = () => {
     {
       title: 'Action',
       key: 'action',
-      width: 120,
+      width: 180,
       render: (_, record) => (
-        record.status !== 'Admitted' && (
-          <Button 
-            type="primary" 
-            icon={<CheckOutlined />}
-            onClick={() => handleAdmitClick(record)}
-          >
-            Admit
-          </Button>
-        )
+        <>
+          {record.status === 'Pending' && (
+            <Button 
+              type="primary" 
+              icon={<CheckOutlined />}
+              onClick={() => handleAdmitClick(record)}
+              style={{ marginRight: 8 }}
+            >
+              Admit
+            </Button>
+          )}
+          {record.status === 'Admitted' && (
+            <Popconfirm
+              title="Are you sure you want to offboard this user?"
+              onConfirm={() => handleOffboardClick(record)}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button 
+                danger
+                icon={<ExportOutlined />}
+              >
+                Offboard
+              </Button>
+            </Popconfirm>
+          )}
+        </>
       ),
     },
+  ];
+
+  // Add Archived At column for offboarded users tab
+  const offboardedColumns = [
+    ...columns.filter(col => col.key !== 'action'), // Remove action column
+    {
+      title: 'Archived At',
+      dataIndex: 'archivedAt',
+      key: 'archivedAt',
+      render: (date) => new Date(date).toLocaleString(),
+    }
   ];
 
   if (isCheckingAuth) {
@@ -233,7 +295,25 @@ const EmployeeManagement = () => {
                   key="admitted"
                 >
                   <Table 
-                    columns={columns.filter(col => col.key !== 'action')}
+                    columns={columns} 
+                    dataSource={users} 
+                    rowKey="idNumber"
+                    loading={loading}
+                    pagination={{ pageSize: 10 }}
+                    scroll={{ x: true }}
+                  />
+                </TabPane>
+                <TabPane
+                  tab={
+                    <span>
+                      <HistoryOutlined />
+                      Offboarded
+                    </span>
+                  }
+                  key="offboarded"
+                >
+                  <Table 
+                    columns={offboardedColumns} 
                     dataSource={users} 
                     rowKey="idNumber"
                     loading={loading}
