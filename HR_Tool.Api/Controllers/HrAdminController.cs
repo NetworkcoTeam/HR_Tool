@@ -5,6 +5,7 @@ using HR_Tool.Api.Models;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace HR_Tool.Api.Controllers
 {
@@ -21,51 +22,102 @@ namespace HR_Tool.Api.Controllers
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-[HttpGet("user/{idNumber}")]
-public async Task<ActionResult<UserDetailsDto>> GetUserByIdNumber(string idNumber)
-{
-    if (string.IsNullOrEmpty(idNumber))
-    {
-        return BadRequest(new ErrorResponse { 
-            Status = "ID Number is required" 
-        });
-    }
+        // get all users who are not admitted
+        [HttpGet("non-admitted-users")]
+        public async Task<ActionResult<List<UserDetailsDto>>> GetNonAdmittedUsers()
+        {
+            try
+            {
+                var userQuery = _supabase.From<User>()
+                    .Where(u => u.Status == "Pending");
 
+                var userResponse = await userQuery.Get();
+
+                if (userResponse?.Models == null)
+                {
+                    return Ok(new List<UserDetailsDto>());
+                }
+
+                var users = userResponse.Models.Select(u => new UserDetailsDto
+                {
+                    Status = u.Status,
+                    Name = u.Name,
+                    Surname = u.Surname,
+                    IdNumber = u.IdNumber
+                }).ToList();
+
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while fetching non-admitted users");
+                return StatusCode(500, new ErrorResponse
+                {
+                    Status = $"An unexpected error occurred: {ex.Message}"
+                });
+            }
+        }
+
+        [HttpGet("admitted-users")]
+public async Task<ActionResult<List<UserDetailsDto>>> GetAdmittedUsers()
+{
     try
     {
         var userQuery = _supabase.From<User>()
-            .Where(u => u.IdNumber == idNumber);
+            .Where(u => u.Status == "Admitted");
 
         var userResponse = await userQuery.Get();
 
-        if (userResponse?.Models == null || !userResponse.Models.Any())
+        if (userResponse?.Models == null)
         {
-            return NotFound(new ErrorResponse { 
-                Status = $"User with ID Number {idNumber} not found." 
-            });
+            return Ok(new List<UserDetailsDto>());
         }
 
-        var user = userResponse.Models.First();
-
-        return Ok(new UserDetailsDto
+        var users = userResponse.Models.Select(u => new UserDetailsDto
         {
-            Status = user.Status,
-            Name = user.Name,
-            Surname = user.Surname,
-            IdNumber = user.IdNumber
-        });
+            Status = u.Status,
+            Name = u.Name,
+            Surname = u.Surname,
+            IdNumber = u.IdNumber
+        }).ToList();
+
+        return Ok(users);
     }
     catch (Exception ex)
     {
-        return StatusCode(500, new ErrorResponse {
-            Status = $"An unexpected error occurred: {ex.Message}" 
-        });
+        _logger.LogError(ex, "Error fetching admitted users");
+        return StatusCode(500);
     }
 }
 
-public class ErrorResponse
+[HttpGet("all-users")]
+public async Task<ActionResult<List<UserDetailsDto>>> GetAllUsers()
 {
-    public string Status { get; set; }
+    try
+    {
+        var userQuery = _supabase.From<User>();
+        var userResponse = await userQuery.Get();
+
+        if (userResponse?.Models == null)
+        {
+            return Ok(new List<UserDetailsDto>());
+        }
+
+        var users = userResponse.Models.Select(u => new UserDetailsDto
+        {
+            Status = u.Status,
+            Name = u.Name,
+            Surname = u.Surname,
+            IdNumber = u.IdNumber
+        }).ToList();
+
+        return Ok(users);
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error fetching all users");
+        return StatusCode(500);
+    }
 }
 
         [HttpPost("admit-user")]
@@ -156,8 +208,10 @@ public class ErrorResponse
                 {
                     EmployeeId = newEmployeeId,
                     ContractType = request.ContractType,
-                    StartDate = request.ContractStartDate,
-                    EndDate = request.ContractEndDate,
+                     StartDate = DateTime.Parse(request.ContractStartDate),  // Add parsing here
+                    EndDate = !string.IsNullOrEmpty(request.ContractEndDate) 
+                    ? DateTime.Parse(request.ContractEndDate) 
+                    : (DateTime?)null,
                     BasicSalary = request.BasicSalary,
                     Terms = request.ContractTerms,
                     IsActive = true,
@@ -258,5 +312,43 @@ public class ErrorResponse
                 });
             }
         }
+    }
+
+    public class ErrorResponse
+    {
+        public string Status { get; set; }
+    }
+
+    public class AdmitUserRequestDto
+    {
+        public string UserIdNumber { get; set; }
+        public string EmployeeFirstName { get; set; }
+        public string EmployeeLastName { get; set; }
+        public string EmployeePosition { get; set; }
+        public string Department { get; set; }
+        public string ContractType { get; set; }
+        public string ContractStartDate { get; set; }
+        public string ContractEndDate { get; set; }
+        public decimal BasicSalary { get; set; }
+        public string ContractTerms { get; set; }
+    }
+
+    public class AdmitUserResponseDto
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; }
+        public string UserIdNumber { get; set; }
+        public long EmployeeId { get; set; }
+        public int ContractId { get; set; }
+        public string UserNewStatus { get; set; }
+    }
+
+    // New DTO for non-admitted users endpoint
+    public class UserDetailsDto
+    {
+        public string Status { get; set; }
+        public string Name { get; set; }
+        public string Surname { get; set; }
+        public string IdNumber { get; set; }
     }
 }
