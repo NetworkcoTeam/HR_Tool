@@ -43,7 +43,7 @@ function AdminSidebar() {
           <span>Appointments</span>
         </li>
 
-        <li onClick={() => handleNavigation('/HRAdminForm')}>
+        <li onClick={() => handleNavigation('/EmployeeManagement')}>
           <FaCalendarCheck className="sidebar-icon" />
           <span>HR Admission</span>
           </li>

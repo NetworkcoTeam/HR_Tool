@@ -22,6 +22,7 @@ import PayslipPage from './Pages/PayslipPage';
 import Logout from './Components/Logout';
 import ForgotPasswordPage from './Pages/ForgotPasswordPage';
 import PasswordResetPage from './Pages/PasswordResetPage';
+import EmployeeManagement from './Pages/EmployeeManagement';
 
 function App() {
   return (
@@ -51,6 +52,7 @@ function App() {
          <Route path="/logout" element={<Logout />} />
         <Route path="/ForgotPassword" element={<ForgotPasswordPage/>}/>
         <Route path="/reset-password/:token" element={<PasswordResetPage/>}/>
+        <Route path="/EmployeeManagement" element={<EmployeeManagement/>}/>
       </Routes>
       
        
