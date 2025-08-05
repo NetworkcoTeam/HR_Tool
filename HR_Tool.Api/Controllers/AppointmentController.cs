@@ -34,7 +34,7 @@ public class AppointmentController : ControllerBase
     {
         try
         {
-            _logger.LogInformation("Received appointment booking request: {@Request}", request);
+            //_logger.LogInformation("Received appointment booking request: {@Request}", request);
 
             // Validation
             if (request.EmployeeId <= 0 ||
