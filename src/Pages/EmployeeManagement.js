@@ -143,78 +143,85 @@ const EmployeeManagement = () => {
     }
   };
 
-  const columns = [
-    {
-      title: 'ID Number',
-      dataIndex: 'idNumber',
-      key: 'idNumber',
-      width: 150,
-    },
-    {
-      title: 'Name',
-      key: 'name',
-      render: (_, record) => `${record.name} ${record.surname}`,
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      width: 120,
-      render: (status) => (
-        <Tag color={
-          status === 'Admitted' ? 'green' : 
-          status === 'Offboarded' ? 'red' : 'orange'
-        }>
-          {status}
-        </Tag>
-      ),
-    },
-    {
-      title: 'Action',
-      key: 'action',
-      width: 180,
-      render: (_, record) => (
-        <>
-          {record.status === 'Pending' && (
-            <Button 
-              type="primary" 
-              icon={<CheckOutlined />}
-              onClick={() => handleAdmitClick(record)}
-              style={{ marginRight: 8 }}
-            >
-              Admit
-            </Button>
-          )}
-          {record.status === 'Admitted' && (
-            <Popconfirm
-              title="Are you sure you want to offboard this user?"
-              onConfirm={() => handleOffboardClick(record)}
-              okText="Yes"
-              cancelText="No"
-            >
+  const getColumns = (tabKey) => {
+    const baseColumns = [
+      {
+        title: tabKey === 'nonAdmitted' ? 'ID Number' : 'Employee ID',
+        key: tabKey === 'nonAdmitted' ? 'idNumber' : 'employeeId',
+        width: 150,
+        render: (_, record) => (
+          tabKey === 'nonAdmitted' ? record.idNumber : (record.employeeId || 'N/A')
+        ),
+      },
+      {
+        title: 'Name',
+        key: 'name',
+        render: (_, record) => `${record.name} ${record.surname}`,
+      },
+      {
+        title: 'Status',
+        dataIndex: 'status',
+        key: 'status',
+        width: 120,
+        render: (status) => (
+          <Tag color={
+            status === 'Admitted' ? 'green' : 
+            status === 'Offboarded' ? 'red' : 'orange'
+          }>
+            {status}
+          </Tag>
+        ),
+      },
+      {
+        title: 'Action',
+        key: 'action',
+        width: 180,
+        render: (_, record) => (
+          <>
+            {record.status === 'Pending' && (
               <Button 
-                danger
-                icon={<ExportOutlined />}
+                type="primary" 
+                icon={<CheckOutlined />}
+                onClick={() => handleAdmitClick(record)}
+                style={{ marginRight: 8 }}
               >
-                Offboard
+                Admit
               </Button>
-            </Popconfirm>
-          )}
-        </>
-      ),
-    },
-  ];
+            )}
+            {record.status === 'Admitted' && (
+              <Popconfirm
+                title="Are you sure you want to offboard this user?"
+                onConfirm={() => handleOffboardClick(record)}
+                okText="Yes"
+                cancelText="No"
+              >
+                <Button 
+                  danger
+                  icon={<ExportOutlined />}
+                >
+                  Offboard
+                </Button>
+              </Popconfirm>
+            )}
+          </>
+        ),
+      },
+    ];
 
-  // Add Archived At column for offboarded users tab
-  const offboardedColumns = [
-    ...columns.filter(col => col.key !== 'action'), // Remove action column
-    {
-      title: 'Archived At',
-      dataIndex: 'archivedAt',
-      key: 'archivedAt',
-      render: (date) => new Date(date).toLocaleString(),
+    if (tabKey === 'offboarded') {
+      return [
+        ...baseColumns.filter(col => col.key !== 'action'),
+        {
+          title: 'Archived At',
+          dataIndex: 'archivedAt',
+          key: 'archivedAt',
+          render: (date) => new Date(date).toLocaleString(),
+        }
+      ];
     }
-  ];
+
+    return baseColumns;
+  };
 
   if (isCheckingAuth) {
     return (
@@ -277,7 +284,7 @@ const EmployeeManagement = () => {
                   key="nonAdmitted"
                 >
                   <Table 
-                    columns={columns} 
+                    columns={getColumns('nonAdmitted')} 
                     dataSource={users} 
                     rowKey="idNumber"
                     loading={loading}
@@ -295,7 +302,7 @@ const EmployeeManagement = () => {
                   key="admitted"
                 >
                   <Table 
-                    columns={columns} 
+                    columns={getColumns('admitted')} 
                     dataSource={users} 
                     rowKey="idNumber"
                     loading={loading}
@@ -313,7 +320,7 @@ const EmployeeManagement = () => {
                   key="offboarded"
                 >
                   <Table 
-                    columns={offboardedColumns} 
+                    columns={getColumns('offboarded')} 
                     dataSource={users} 
                     rowKey="idNumber"
                     loading={loading}
@@ -331,7 +338,7 @@ const EmployeeManagement = () => {
                   key="all"
                 >
                   <Table 
-                    columns={columns} 
+                    columns={getColumns('all')} 
                     dataSource={users} 
                     rowKey="idNumber"
                     loading={loading}

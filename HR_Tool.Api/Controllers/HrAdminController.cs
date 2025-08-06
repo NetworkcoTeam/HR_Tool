@@ -88,7 +88,8 @@ namespace HR_Tool.Api.Controllers
                     Status = u.Status,
                     Name = u.Name,
                     Surname = u.Surname,
-                    IdNumber = u.IdNumber
+                    IdNumber = u.IdNumber,
+                    EmployeeId = u.EmployeeId
                 }).ToList();
 
                 return Ok(users);
@@ -123,7 +124,8 @@ namespace HR_Tool.Api.Controllers
                     Status = u.Status,
                     Name = u.Name,
                     Surname = u.Surname,
-                    IdNumber = u.IdNumber
+                    IdNumber = u.IdNumber,
+                    EmployeeId = u.EmployeeId
                 }).ToList();
 
                 return Ok(users);
@@ -153,7 +155,8 @@ namespace HR_Tool.Api.Controllers
                     Status = u.Status,
                     Name = u.Name,
                     Surname = u.Surname,
-                    IdNumber = u.IdNumber
+                    IdNumber = u.IdNumber,
+                    EmployeeId = u.EmployeeId
                 }).ToList();
 
                 return Ok(users);
@@ -621,7 +624,8 @@ public async Task<IActionResult> UpdateContract(int contractId, [FromBody] Contr
                     Name = u.Name,
                     Surname = u.Surname,
                     Status = u.Status,
-                    ArchivedAt = u.ArchivedAt
+                    ArchivedAt = u.ArchivedAt,
+                    EmployeeId = u.EmployeeId
                 }).ToList());
             }
             catch (Exception ex)
@@ -644,6 +648,7 @@ public async Task<IActionResult> UpdateContract(int contractId, [FromBody] Contr
         public string Surname { get; set; }
         public string Status { get; set; }
         public DateTime ArchivedAt { get; set; }
+        public long? EmployeeId { get; set; }
     }
 
     public class AdmitUserRequestDto
@@ -676,6 +681,7 @@ public async Task<IActionResult> UpdateContract(int contractId, [FromBody] Contr
         public string Name { get; set; }
         public string Surname { get; set; }
         public string IdNumber { get; set; }
+        public long? EmployeeId { get; set; }
     }
 
     public class ContractDto
