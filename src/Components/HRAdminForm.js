@@ -32,6 +32,8 @@ const { Option } = Select;
 
 
 const HrAdminForm = () => {
+  const API_BASE_URL = `${process.env.REACT_APP_API_BASE_URL}/HrAdmin`;
+
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState(null);
@@ -67,7 +69,7 @@ const HrAdminForm = () => {
   const fetchUserData = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:5143/api/HrAdmin/user/${searchIdNumber}`);
+      const response = await fetch(`${API_BASE_URL}/user/${searchIdNumber}`);
       const data = await response.json();
       
       if (response.ok) {
@@ -122,7 +124,7 @@ const HrAdminForm = () => {
         contractTerms: values.terms
       };
 
-      const response = await fetch('http://localhost:5143/api/HrAdmin/admit-user', {
+      const response = await fetch(`${API_BASE_URL}/admit-user`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

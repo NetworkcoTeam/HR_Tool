@@ -26,6 +26,8 @@ import './Appointment.css';
 const { Option } = Select;
 
 const Appointment = () => {
+  const API_BASE_URL = `${process.env.REACT_APP_API_BASE_URL}/appointment`;
+
   const [appointments, setAppointments] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -47,8 +49,6 @@ const Appointment = () => {
     'Contract Negotiation',
     'Other HR Matter'
   ];
-
-  const API_BASE_URL = 'http://localhost:5143/api/appointment';
 
   // Load user from localStorage and determine admin status
   useEffect(() => {

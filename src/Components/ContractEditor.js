@@ -19,6 +19,8 @@ import './LoginForm.css'; //for for status message classes
 const { Option } = Select;
 
 const ContractEditor = () => {
+  const API_BASE_URL = `${process.env.REACT_APP_API_BASE_URL}/HrAdmin/contracts`;
+  
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [searching, setSearching] = useState(false);
@@ -29,7 +31,13 @@ const ContractEditor = () => {
     message: ''
   });
 
-  const fetchContractData = async () => {
+  useEffect(() => {
+    setStatus({ success: null, message: '' });
+  }, [employeeId]);
+  
+
+  // Pass a flag to control message
+  const fetchContractData = async (suppressMessage = false, customMessage = '') => {
     if (!employeeId) {
       setStatus({
         success: false,
@@ -37,25 +45,22 @@ const ContractEditor = () => {
       });
       return;
     }
-
+  
     try {
       setSearching(true);
-      setStatus({
-        success: null,
-        message: ''
-      });
-      
-      const response = await fetch(`http://localhost:5143/api/HrAdmin/contracts/employee/${employeeId}`);
-      
+      if (!suppressMessage) {
+        setStatus({ success: null, message: '' });
+      }
+  
+      const response = await fetch(`${API_BASE_URL}/employee/${employeeId}`);
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.status || 'Contract not found');
       }
-
+  
       const data = await response.json();
       setContractData(data);
-      
-      // Set form values with the fetched data
+  
       form.setFieldsValue({
         contractType: data.contractType,
         startDate: data.startDate ? moment(data.startDate) : null,
@@ -67,11 +72,13 @@ const ContractEditor = () => {
         position: data.position,
         department: data.department
       });
-      
-      setStatus({
-        success: true,
-        message: 'Contract data updated successfully'
-      });
+  
+      if (!suppressMessage) {
+        setStatus({
+          success: true,
+          message: customMessage || 'Contract data uploaded successfully'
+        });
+      }
     } catch (error) {
       setStatus({
         success: false,
@@ -83,6 +90,8 @@ const ContractEditor = () => {
       setSearching(false);
     }
   };
+  
+  
 
   const handleSubmit = async (values) => {
     if (!contractData) return;
@@ -110,7 +119,7 @@ const ContractEditor = () => {
         createdAt: contractData.createdAt
       };
   
-      const response = await fetch(`http://localhost:5143/api/HrAdmin/contracts/${contractData.contractId}`, {
+      const response = await fetch(`${API_BASE_URL}/${contractData.contractId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -134,13 +143,8 @@ const ContractEditor = () => {
   
       const result = await response.json();
       
-      setStatus({
-        success: true,
-        message: 'Contract updated successfully'
-      });
-      
-      // Refresh the data to show updated values
-      await fetchContractData();
+      await fetchContractData(false, 'Contract updated successfully');
+
     } catch (error) {
       setStatus({
         success: false,

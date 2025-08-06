@@ -3,6 +3,8 @@ import { Table, Button, Tag, message, Spin } from 'antd';
 import './LeaveRequestAdmin.css';
 
 const LeaveRequestsAdmin = () => {
+  const API_BASE_URL = `${process.env.REACT_APP_API_BASE_URL}/LeaveRequest`;
+
   const [leaveRequests, setLeaveRequests] = useState([]);
   const [loading, setLoading] = useState(false);
   const [updating, setUpdating] = useState(false);
@@ -10,7 +12,7 @@ const LeaveRequestsAdmin = () => {
   const fetchLeaveRequests = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5143/api/LeaveRequest/all');
+      const res = await fetch(`${API_BASE_URL}/all`);
       if (!res.ok) {
         throw new Error('Failed to fetch leave requests');
       }
@@ -27,7 +29,7 @@ const LeaveRequestsAdmin = () => {
   const updateStatus = async (id, newStatus) => {
     setUpdating(true);
     try {
-      const res = await fetch(`http://localhost:5143/api/LeaveRequest/status/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/status/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { Spin } from 'antd';
 
 const LoginPopup = () => {
+  const API_BASE_URL = `${process.env.REACT_APP_API_BASE_URL}/login`;
+
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -44,7 +46,7 @@ const LoginPopup = () => {
     });
     
     try {
-      const response = await fetch('http://localhost:5143/api/login', {
+      const response = await fetch(API_BASE_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
