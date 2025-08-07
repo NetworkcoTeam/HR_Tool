@@ -35,6 +35,8 @@ const { Content } = Layout;
 const { Title, Text } = Typography;
 
 const Payslips = () => {
+  const API_BASE_URL = `${process.env.REACT_APP_API_BASE_URL}/Payslips`;
+
   const [loading, setLoading] = useState(true);
   const [payslipData, setPayslipData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -67,7 +69,7 @@ const Payslips = () => {
   const fetchAllPayslips = async (empId) => {
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE}/api/Payslips/employee/${empId}/payslips`);
+      const res = await fetch(`${API_BASE_URL}/employee/${empId}/payslips`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const { success, payslips, error } = await res.json();
       if (!success) return message.error(error || 'Failed to load payslips');
@@ -101,7 +103,7 @@ const Payslips = () => {
   const handleViewPayslip = async (year, month) => {
     try {
       message.loading('Fetching payslip details...', 0);
-      const res = await fetch(`${API_BASE}/api/Payslips/view/${employeeId}/${year}/${month}`);
+      const res = await fetch(`${API_BASE_URL}/view/${employeeId}/${year}/${month}`);
       const result = await res.json();
       message.destroy();
       if (result.success && result.payslip) {
@@ -119,7 +121,7 @@ const Payslips = () => {
   const handleDownloadPayslip = async (year, month) => {
     try {
       message.loading('Preparing download...', 0);
-      const res = await fetch(`${API_BASE}/api/Payslips/download/${employeeId}/${year}/${month}`);
+      const res = await fetch(`${API_BASE_URL}/download/${employeeId}/${year}/${month}`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const blob = await res.blob();
       const url = window.URL.createObjectURL(blob);

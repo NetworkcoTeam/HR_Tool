@@ -21,9 +21,9 @@ import {
   ExclamationCircleOutlined
 } from '@ant-design/icons';
 
-const API_BASE = 'http://localhost:5143';
-
 const Todo = forwardRef(({ employeeId }, ref) => {
+  const API_BASE_URL = `${process.env.REACT_APP_API_BASE_URL}/ToDo`;
+
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -44,7 +44,7 @@ const Todo = forwardRef(({ employeeId }, ref) => {
     
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE}/api/ToDo/employee/${employeeId}`, {
+      const response = await fetch(`${API_BASE_URL}/employee/${employeeId}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -90,7 +90,7 @@ const addTodo = async (todoData) => {
 
     console.log("Full payload:", payload);
 
-    const response = await fetch(`${API_BASE}/api/ToDo`, {
+    const response = await fetch(API_BASE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -100,8 +100,8 @@ const addTodo = async (todoData) => {
     });
 
      if (!response.ok) {
-  const errorText = await response.text(); // <---- CHANGED FROM .json() TO .text()
-  console.error("Server response:", errorText); // <-- log exact server error text
+  const errorText = await response.text(); 
+  console.error("Server response:", errorText);
   throw new Error(errorText || 'Failed to add todo');
 }
 
@@ -127,7 +127,7 @@ const addTodo = async (todoData) => {
     const existing = todos.find(t => t.id === id);
     if (!existing) throw new Error('Task not found');
 
-    const response = await fetch(`${API_BASE}/api/ToDo/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -168,7 +168,7 @@ const deleteTodo = async (id) => {
   console.log("Sending DELETE request for:", id);
   setDeletingId(id);
   try {
-    const response = await fetch(`${API_BASE}/api/ToDo/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/${id}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`

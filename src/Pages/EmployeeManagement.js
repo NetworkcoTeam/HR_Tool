@@ -30,6 +30,8 @@ const { Content } = Layout;
 const { TabPane } = Tabs;
 
 const EmployeeManagement = () => {
+  const API_BASE_URL = `${process.env.REACT_APP_API_BASE_URL}/HrAdmin`;
+
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -64,16 +66,16 @@ const EmployeeManagement = () => {
       
       switch(activeTab) {
         case 'admitted':
-          endpoint = 'http://localhost:5143/api/HrAdmin/admitted-users';
+          endpoint = `${API_BASE_URL}/admitted-users`;
           break;
         case 'all':
-          endpoint = 'http://localhost:5143/api/HrAdmin/all-users';
+          endpoint = `${API_BASE_URL}/all-users`;
           break;
         case 'offboarded':
-          endpoint = 'http://localhost:5143/api/HrAdmin/offboarded-users';
+          endpoint = `${API_BASE_URL}/offboarded-users`;
           break;
         default:
-          endpoint = 'http://localhost:5143/api/HrAdmin/non-admitted-users';
+          endpoint = `${API_BASE_URL}/non-admitted-users`;
       }
 
       const response = await fetch(endpoint);
@@ -123,7 +125,7 @@ const EmployeeManagement = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://localhost:5143/api/HrAdmin/offboard-user/${user.idNumber}`,
+        `${API_BASE_URL}/offboard-user/${user.idNumber}`,
         { method: 'POST' }
       );
       
