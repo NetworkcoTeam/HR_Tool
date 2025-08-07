@@ -97,11 +97,12 @@ const ContractEditor = () => {
     if (!contractData) return;
   
     try {
-      setLoading(true);
+      // Clear previous status immediately
       setStatus({
         success: null,
         message: ''
       });
+      setLoading(true);
       
       // Prepare the updated contract data
       const updatedContract = {
@@ -143,8 +144,15 @@ const ContractEditor = () => {
   
       const result = await response.json();
       
-      await fetchContractData(false, 'Contract updated successfully');
-
+      // Set success status before refreshing data
+      setStatus({
+        success: true,
+        message: 'Contract updated successfully'
+      });
+      
+      // Refresh contract data without setting message
+      await fetchContractData(false);
+  
     } catch (error) {
       setStatus({
         success: false,
@@ -152,6 +160,14 @@ const ContractEditor = () => {
       });
     } finally {
       setLoading(false);
+      
+      // Clear the message after 5 seconds
+      setTimeout(() => {
+        setStatus(prev => ({
+          ...prev,
+          message: ''
+        }));
+      }, 5000);
     }
   };
 
