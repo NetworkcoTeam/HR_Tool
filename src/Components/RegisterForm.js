@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './RegisterForm.css';
 
 const RegisterForm = () => {
+  const API_BASE_URL = `${process.env.REACT_APP_API_BASE_URL}/register`;
   const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -65,7 +66,7 @@ const RegisterForm = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:5143/api/register', {
+      const response = await fetch(API_BASE_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -26,6 +26,7 @@ import './LeaveForm.css';
 const { Content } = Layout;
 
 const Leave = () => {
+  const API_BASE_URL = `${process.env.REACT_APP_API_BASE_URL}/LeaveRequest`;
   const [form] = Form.useForm();
   const [leaveType, setLeaveType] = useState('');
   const [fileList, setFileList] = useState([]);
@@ -91,7 +92,7 @@ const onFinish = async (values) => {
 
     console.log('Submitting payload:', payload);
 
-    const response = await fetch('http://localhost:5143/api/LeaveRequest', {
+    const response = await fetch(API_BASE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

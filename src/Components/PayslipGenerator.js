@@ -3,6 +3,8 @@ import { Button, Select, DatePicker, Table, message, Spin, Card, InputNumber, Fo
 import './PayslipGenerator.css';
 
 const PayslipGenerator = () => {
+  const API_BASE_URL = `${process.env.REACT_APP_API_BASE_URL}`;
+
   const [loading, setLoading] = useState(false);
   const [employees, setEmployees] = useState([]);
   const [positions, setPositions] = useState([]);
@@ -24,7 +26,7 @@ const PayslipGenerator = () => {
     const fetchEmployees = async () => {
       setFetching(true);
       try {
-        const res = await fetch('http://localhost:5143/api/employees');
+        const res = await fetch(`${API_BASE_URL}/employees`);
         if (!res.ok) throw new Error('Failed to fetch employees');
         const data = await res.json();
         setEmployees(data);
@@ -82,7 +84,7 @@ const PayslipGenerator = () => {
         allowance: allowanceAmount || 0
       };
 
-      const response = await fetch('http://localhost:5143/api/payslips/generate', {
+      const response = await fetch(`${API_BASE_URL}/payslips/generate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -134,9 +136,9 @@ const PayslipGenerator = () => {
   
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        console.log(`⏳ Attempt ${attempt}: Fetching payslip for ${employeeId} ${month}/${year}`);
+        console.log(`Attempt ${attempt}: Fetching payslip for ${employeeId} ${month}/${year}`);
         
-        const response = await fetch(`http://localhost:5143/api/payslips/view/${employeeId}/${year}/${month}`);
+        const response = await fetch(`${API_BASE_URL}/payslips/view/${employeeId}/${year}/${month}`);
         
         if (!response.ok) {
           throw new Error(`Response not OK (status ${response.status})`);
@@ -209,7 +211,7 @@ const PayslipGenerator = () => {
         allowance: allowanceAmount || 0
       };
 
-      const response = await fetch('http://localhost:5143/api/payslips/generate', {
+      const response = await fetch(`${API_BASE_URL}/payslips/generate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
