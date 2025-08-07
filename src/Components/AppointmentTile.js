@@ -6,9 +6,9 @@ import { CalendarOutlined } from '@ant-design/icons';
 
 const { Text } = Typography;
 
-const API_BASE_URL = 'http://localhost:5143/api/appointment';
-
 const AppointmentsTile = () => {
+  const API_BASE_URL = `${process.env.REACT_APP_API_BASE_URL}/appointment`;
+
   const [upcomingAppointments, setUpcomingAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);

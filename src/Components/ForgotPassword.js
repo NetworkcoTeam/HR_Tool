@@ -4,12 +4,14 @@ import { MailOutlined } from '@ant-design/icons';
 import './ForgotPassword.css';
 
 const ForgotPassword = () => {
+  const API_BASE_URL = `${process.env.REACT_APP_API_BASE_URL}/passwordreset`;
+
   const [loading, setLoading] = useState(false);
 
   const onFinish = async (values) => {
   setLoading(true);
   try {
-    const response = await fetch('http://localhost:5143/api/passwordreset/forgot-password', {
+    const response = await fetch(`${API_BASE_URL}/forgot-password`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

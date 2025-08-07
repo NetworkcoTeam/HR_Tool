@@ -5,6 +5,8 @@ import { LockOutlined } from '@ant-design/icons';
 import './ResetPassword.css';
 
 const ResetPassword = () => {
+  const API_BASE_URL = `${process.env.REACT_APP_API_BASE_URL}/passwordreset`;
+
   const [loading, setLoading] = useState(false);
   const [tokenValid, setTokenValid] = useState(false);
   const { token } = useParams();
@@ -13,7 +15,7 @@ const ResetPassword = () => {
   useEffect(() => {
     const validateToken = async () => {
       try {
-        const response = await fetch('http://localhost:5143/api/passwordreset/validate-token', {
+        const response = await fetch(`${API_BASE_URL}/validate-token`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -43,7 +45,7 @@ const ResetPassword = () => {
   const onFinish = async (values) => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5143/api/passwordreset/reset-password', {
+      const response = await fetch(`${API_BASE_URL}/reset-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

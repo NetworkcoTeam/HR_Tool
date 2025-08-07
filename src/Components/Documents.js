@@ -8,6 +8,8 @@ import AdminSidebar from './AdminSidebar';
 const { Option } = Select;
 
 function Documents() {
+  const API_BASE_URL = `${process.env.REACT_APP_API_BASE_URL}/Document`;
+  
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
@@ -46,7 +48,7 @@ function Documents() {
   const fetchDocuments = async () => {
     setLoading(true);
     try {
-      let url = 'http://localhost:5143/api/Document';
+      let url = API_BASE_URL;
       if (userDetails?.role !== 'admin' && userDetails?.employeeId) {
         url += `?employeeId=${userDetails.employeeId}`;
       }
@@ -79,7 +81,7 @@ function Documents() {
 
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:5143/api/Document?employeeId=${searchEmployeeId}`, {
+      const res = await fetch(`${API_BASE_URL}?employeeId=${searchEmployeeId}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -99,7 +101,7 @@ function Documents() {
 
   const fetchEmployees = async () => {
     try {
-      const res = await fetch('http://localhost:5143/api/Document/search-employees', {
+      const res = await fetch(`${API_BASE_URL}/search-employees`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -116,7 +118,7 @@ function Documents() {
 
   const handleDownload = async (record) => {
     try {
-      const res = await fetch(`http://localhost:5143/api/Document/download/${record.docId}`, {
+      const res = await fetch(`${API_BASE_URL}/download/${record.docId}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -143,7 +145,7 @@ function Documents() {
 
   const handleView = async (record) => {
     try {
-      const res = await fetch(`http://localhost:5143/api/Document/download/${record.docId}`, {
+      const res = await fetch(`${API_BASE_URL}download/${record.docId}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -166,7 +168,7 @@ function Documents() {
     console.log("Deleting record:", record);
 
     try {
-      const res = await fetch(`http://localhost:5143/api/Document/${record.docId}`, {
+      const res = await fetch(`${API_BASE_URL}/${record.docId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -201,7 +203,7 @@ function Documents() {
       formData.append('DocType', values.docType);
       formData.append('LastName', values.lastName || userDetails.lastName);
 
-      const res = await fetch('http://localhost:5143/api/Document/upload', {
+      const res = await fetch(`${API_BASE_URL}/upload`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
