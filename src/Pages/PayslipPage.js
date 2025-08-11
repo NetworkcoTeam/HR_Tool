@@ -66,13 +66,21 @@ const Payslips = () => {
     return isNaN(date.getTime()) ? new Date() : date;
   };
 
-  const fetchAllPayslips = async (empId) => {
+  // Moved fetch logic into reusable function
+  const loadPayslips = async (empId) => {
+    setError(null);  // clear error before loading
     try {
       setLoading(true);
       const res = await fetch(`${API_BASE_URL}/employee/${empId}/payslips`);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const { success, payslips, error } = await res.json();
-      if (!success) return message.error(error || 'Failed to load payslips');
+      if (!success) {
+        message.error(error || 'Failed to load payslips');
+        setError(error || 'Failed to load payslips');
+        setPayslipData([]);
+        setFilteredData([]);
+        return;
+      }
 
       const processed = payslips.map(p => {
         const end = parseDate(p.periodEnd);
@@ -95,6 +103,8 @@ const Payslips = () => {
       console.error(err);
       setError('Failed to load payslips');
       message.error('Failed to load payslips: ' + err.message);
+      setPayslipData([]);
+      setFilteredData([]);
     } finally {
       setLoading(false);
     }
@@ -164,9 +174,10 @@ const Payslips = () => {
     setFilteredData(payslipData);
   };
 
+  // useEffect calls reusable fetch function
   useEffect(() => {
     if (employeeId) {
-      fetchAllPayslips(employeeId);
+      loadPayslips(employeeId);
     }
   }, [employeeId]);
 
@@ -180,10 +191,11 @@ const Payslips = () => {
         <Sidebar />
         <Content className="error-content">
           <div className="error-state">
-            <ExclamationCircleOutlined style={{ fontSize: '48px', color: '#ff4d4f' }} />
+            <ExclamationCircleOutlined style={{ fontSize: 48, color: '#ff4d4f' }} />
             <h2>Unable to load payslips</h2>
             <p>{error}</p>
-            <Button onClick={() => window.location.reload()}>Retry</Button>
+            {/* Call loadPayslips instead of reload */}
+            <Button onClick={() => loadPayslips(employeeId)}>Retry</Button>
           </div>
         </Content>
       </Layout>
@@ -252,24 +264,24 @@ const Payslips = () => {
                         pageSize: 10,
                         showSizeChanger: true,
                         showQuickJumper: true,
-                        showTotal: (total, range) => 
+                        showTotal: (total, range) =>
                           `${range[0]}-${range[1]} of ${total} payslips`,
                       }}
                       renderItem={item => (
                         <List.Item
                           actions={[
-                            <Tooltip title="View Details">
-                              <Button 
-                                icon={<EyeOutlined />} 
-                                type="link" 
+                            <Tooltip key="view" title="View Details">
+                              <Button
+                                icon={<EyeOutlined />}
+                                type="link"
                                 onClick={() => handleViewPayslip(item.Year, item.MonthNumber)}
                               >
                                 View
                               </Button>
                             </Tooltip>,
-                            <Tooltip title="Download PDF">
-                              <Button 
-                                icon={<DownloadOutlined />} 
+                            <Tooltip key="download" title="Download PDF">
+                              <Button
+                                icon={<DownloadOutlined />}
                                 onClick={() => handleDownloadPayslip(item.Year, item.MonthNumber)}
                               >
                                 Download
@@ -309,10 +321,10 @@ const Payslips = () => {
                       )}
                     />
                   ) : (
-                    <Empty 
+                    <Empty
                       description={
-                        payslipData.length === 0 
-                          ? "No payslips available" 
+                        payslipData.length === 0
+                          ? "No payslips available"
                           : "No payslips match your filters"
                       }
                       style={{ padding: '50px 0' }}
@@ -328,15 +340,15 @@ const Payslips = () => {
           )}
 
           {/* Payslip Details Modal */}
-          <Modal 
+          <Modal
             title={
               <Space>
                 <FilePdfOutlined />
                 Payslip Details
               </Space>
             }
-            open={isModalVisible} 
-            onCancel={handleModalCancel} 
+            open={isModalVisible}
+            onCancel={handleModalCancel}
             footer={[
               <Button key="close" onClick={handleModalCancel}>
                 Close
@@ -368,9 +380,9 @@ const Payslips = () => {
                     <Text>{currentPayslipDetails.generatedDate}</Text>
                   </Col>
                 </Row>
-                
+
                 <Divider />
-                
+
                 <Row gutter={[16, 16]}>
                   <Col span={12}>
                     <Text strong>Basic Salary:</Text>

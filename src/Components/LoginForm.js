@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './LoginForm.css';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Spin } from 'antd';
 
 const LoginPopup = () => {
@@ -152,7 +153,7 @@ const LoginPopup = () => {
                 </button>
 
                 <div className="register-link">
-                  <a href="/ForgotPassword">Forgot Password</a>
+                  <Link to="/ForgotPassword">Forgot Password</Link>
                 </div>
               </div>
 

@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import moment from 'moment';
-import { Card, Button, List, Typography, Spin, message } from 'antd'; 
-import { CalendarOutlined } from '@ant-design/icons'; 
+import { Card, Button, List, Typography, Spin, message } from 'antd';
+import { CalendarOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom'; 
 
 const { Text } = Typography;
 
@@ -12,6 +13,8 @@ const AppointmentsTile = () => {
   const [upcomingAppointments, setUpcomingAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
+
+  const navigate = useNavigate(); 
 
   // Load user data from localStorage
   useEffect(() => {
@@ -34,14 +37,17 @@ const AppointmentsTile = () => {
 
     try {
       setLoading(true);
-      // Fetch appointments specifically for the logged-in employee 
       const response = await axios.get(`${API_BASE_URL}/employee/${userData.employee_id}`);
-      
+
       const today = moment().startOf('day');
       const filteredAppointments = response.data
-        .filter(app => moment(app.appointmentDate).isSameOrAfter(today, 'day') && app.status !== 'Cancelled' && app.status !== 'Rejected') // Filter for upcoming and not cancelled/rejected 
-        .sort((a, b) => new Date(a.appointmentDate) - new Date(b.appointmentDate)) // Sort by date
-        .slice(0, 3); // Display top 3 upcoming appointments for the tile
+        .filter(app => 
+          moment(app.appointmentDate).isSameOrAfter(today, 'day') && 
+          app.status !== 'Cancelled' && 
+          app.status !== 'Rejected'
+        )
+        .sort((a, b) => new Date(a.appointmentDate) - new Date(b.appointmentDate))
+        .slice(0, 3);
 
       setUpcomingAppointments(filteredAppointments);
     } catch (error) {
@@ -59,20 +65,15 @@ const AppointmentsTile = () => {
   }, [userData, fetchEmployeeAppointments]);
 
   const handleViewAll = () => {
-
-    window.location.href = '/AppointmentBooking'; 
+    navigate('/AppointmentBooking'); 
   };
 
   return (
     <Card
-      title={
-        <>
-          <CalendarOutlined style={{ marginRight: 8 }} />
-          APPOINTMENTS
-        </>
-      }
+      title="APPOINTMENTS"
+      className="dashboard-card"
       extra={<Button type="link" onClick={handleViewAll}>View All</Button>}
-      style={{ minHeight: 250 }} // Adjust height as needed 
+      style={{ minHeight: 250 }}
     >
       <Spin spinning={loading}>
         {upcomingAppointments.length > 0 ? (
@@ -82,14 +83,12 @@ const AppointmentsTile = () => {
             renderItem={app => (
               <List.Item>
                 <List.Item.Meta
-                  title={
-                    <Text strong>
-                      {app.subject}
-                    </Text>
-                  }
+                  title={<Text strong>{app.subject}</Text>}
                   description={
                     <>
-                      <Text type="secondary">{moment(app.appointmentDate).format('ddd, MMM D YYYY')} at {app.startTime}</Text>
+                      <Text type="secondary">
+                        {moment(app.appointmentDate).format('ddd, MMM D YYYY')} at {app.startTime}
+                      </Text>
                       <br />
                       <Text ellipsis={true}>{app.description}</Text>
                     </>
