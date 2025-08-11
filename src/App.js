@@ -49,7 +49,7 @@ function App() {
         <Route path="/Documents" element={<DocumentsPage/>}/>
         <Route path="/ContractEditorPage" element={<ContractEditorPage/>}/>
 
-         <Route path="/logout" element={<Logout />} />
+        <Route path="/logout" element={<Logout />} />
         <Route path="/ForgotPassword" element={<ForgotPasswordPage/>}/>
         <Route path="/reset-password/:token" element={<PasswordResetPage/>}/>
         <Route path="/EmployeeManagement" element={<EmployeeManagement/>}/>
