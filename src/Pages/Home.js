@@ -105,22 +105,46 @@ const Home = () => {
   };
 
   const fetchLeaveRequests = async (empId) => {
-    if (leaveCache.current) return setLeaveData(leaveCache.current);
+    if (leaveCache.current) {
+      // Apply the same filtering logic to cached data
+      const filtered = leaveCache.current
+        .sort((a, b) => new Date(b.startDate) - new Date(a.startDate)) // Sort by most recent first
+        .slice(0, 3); // Take only top 3
+      setLeaveData(filtered);
+      return;
+    }
+    
     try {
       const res = await fetch(`${API_BASE}/LeaveRequest/employee/${empId}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
+      
       const formatted = data.map(r => ({
         id: r.id,
         type: r.typeOfLeave || 'Leave',
         status: r.status?.toLowerCase() || 'pending',
         days: r.totalDays || Math.ceil((new Date(r.leaveEnd) - new Date(r.leaveStart)) / 86400000) + 1,
         startDate: new Date(r.leaveStart).toLocaleDateString(),
-        endDate: new Date(r.leaveEnd).toLocaleDateString()
+        endDate: new Date(r.leaveEnd).toLocaleDateString(),
+        rawStartDate: new Date(r.leaveStart), // Keep raw date for sorting
+        rawEndDate: new Date(r.leaveEnd)
+      }))
+      .sort((a, b) => b.rawStartDate - a.rawStartDate) // Sort by most recent start date first
+      .slice(0, 3); // Take only top 3 most recent
+      
+      leaveCache.current = data.map(r => ({ // Cache the full data
+        id: r.id,
+        type: r.typeOfLeave || 'Leave',
+        status: r.status?.toLowerCase() || 'pending',
+        days: r.totalDays || Math.ceil((new Date(r.leaveEnd) - new Date(r.leaveStart)) / 86400000) + 1,
+        startDate: new Date(r.leaveStart).toLocaleDateString(),
+        endDate: new Date(r.leaveEnd).toLocaleDateString(),
+        rawStartDate: new Date(r.leaveStart),
+        rawEndDate: new Date(r.leaveEnd)
       }));
-      leaveCache.current = formatted;
+      
       setLeaveData(formatted);
     } catch (err) {
       console.error(err);
@@ -168,21 +192,23 @@ const Home = () => {
 
   const handleApplyLeave = () => navigate("/leaveForm");
   const handleModalCancel = () => setIsModalVisible(false);
-  const handleViewAllPayslips = () => navigate("/payslips");
+  const handleViewAllPayslips = () => navigate("/PayslipPage");
+
+  const loadData = async () => {
+    if (!employeeId) return;
+    setLoading(true);
+    setError(null); // Clear error when retrying
+    try {
+      await Promise.all([fetchPayslips(employeeId), fetchLeaveRequests(employeeId)]);
+    } catch (err) {
+      console.error('Dashboard error:', err);
+      setError('Failed to load dashboard data');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const loadData = async () => {
-      if (!employeeId) return;
-      setLoading(true);
-      try {
-        await Promise.all([fetchPayslips(employeeId), fetchLeaveRequests(employeeId)]);
-      } catch (err) {
-        console.error('Dashboard error:', err);
-        setError('Failed to load dashboard data');
-      } finally {
-        setLoading(false);
-      }
-    };
     loadData();
   }, [employeeId]);
 
@@ -195,7 +221,7 @@ const Home = () => {
             <ExclamationCircleOutlined style={{ fontSize: '48px', color: '#ff4d4f' }} />
             <h2>Unable to load dashboard</h2>
             <p>{error}</p>
-            <Button onClick={() => window.location.reload()}>Retry</Button>
+            <Button onClick={loadData}>Retry</Button>
           </div>
         </Content>
       </Layout>
@@ -271,48 +297,37 @@ const Home = () => {
 
               {/* Second Row */}
               <div className="dashboard-row">
-                <Card title="LEAVE STATUS" className="dashboard-card">
-                  {leaveData.length > 0 ? (
-                    <>
-                      <List
-                        dataSource={leaveData}
-                        renderItem={item => (
-                          <List.Item>
-                            <List.Item.Meta
-                              avatar={<Tag color={item.status === 'approved' ? 'green' : item.status === 'pending' ? 'blue' : 'red'}>{item.status.toUpperCase()}</Tag>}
-                              title={item.type}
-                              description={`${item.days} days (${item.startDate} - ${item.endDate})`}
-                            />
-                          </List.Item>
-                        )}
-                      />
-                      <Button type="dashed" icon={<PlusOutlined />} style={{ width: '100%', maxWidth: 300 }} onClick={handleApplyLeave}>
-                        Apply for Leave
-                      </Button>
-                    </>
-                  ) : (
-                    <Empty description="No leave records">
-                      <Button type="primary" icon={<PlusOutlined />} onClick={handleApplyLeave}>Apply for Leave</Button>
-                    </Empty>
-                  )}
-                </Card>
-
-                <Card title={<div className="appointments-header">APPOINTMENTS <Tag color="blue">Today</Tag></div>} className="dashboard-card">
-                  {appointments.length > 0 ? (
+              <Card 
+                title="LEAVE STATUS" 
+                className="dashboard-card"
+                extra={<Button type="link" onClick={() => navigate('/leaveForm')}>View All</Button>} 
+              >
+                {leaveData.length > 0 ? (
+                  <>
                     <List
-                      dataSource={appointments}
+                      dataSource={leaveData}
                       renderItem={item => (
                         <List.Item>
                           <List.Item.Meta
-                            avatar={<Avatar icon={<UserOutlined />} style={{ backgroundColor: item.type === 'internal' ? '#1890ff' : '#722ed1' }} />}
-                            title={item.title}
-                            description={<><div>{item.time}</div><div>With: {item.with}</div></>}
+                            avatar={<Tag color={item.status === 'approved' ? 'green' : item.status === 'pending' ? 'blue' : 'red'}>{item.status.toUpperCase()}</Tag>}
+                            title={item.type}
+                            description={`${item.days} days (${item.startDate} - ${item.endDate})`}
                           />
                         </List.Item>
                       )}
                     />
-                  ) : <AppointmentsTile />}
-                </Card>
+                    <Button type="dashed" icon={<PlusOutlined />} style={{ width: '100%', maxWidth: 300 }} onClick={handleApplyLeave}>
+                      Apply for Leave
+                    </Button>
+                  </>
+                ) : (
+                  <Empty description="No leave records">
+                    <Button type="primary" icon={<PlusOutlined />} onClick={handleApplyLeave}>Apply for Leave</Button>
+                  </Empty>
+                )}
+              </Card>
+
+                <AppointmentsTile />
               </div>
             </div>
           )}
