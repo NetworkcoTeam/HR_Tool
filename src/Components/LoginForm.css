@@ -262,6 +262,11 @@
        padding: 10px 30px;
        font-size:19px;
     }
+    .login-form{
+      padding: 10px;
+      width:400px;
+      
+    }
 }
 /* Large mobile */
 
