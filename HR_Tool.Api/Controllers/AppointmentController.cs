@@ -64,6 +64,18 @@ public class AppointmentController : ControllerBase
                 return BadRequest(new { message = "End time must be after start time." });
             }
 
+            // Check for conflicting appointments with 15-minute buffer
+            var conflictCheck = await CheckForTimeConflicts(request.AppointmentDate.Date, request.StartTime, request.EndTime);
+            if (!conflictCheck.IsAvailable)
+            {
+                _logger.LogWarning("Time conflict detected for appointment request: {@Request}", request);
+                return BadRequest(new { 
+                    message = "Time slot not available. Please choose a different time.", 
+                    details = conflictCheck.ConflictMessage,
+                    conflictingAppointments = conflictCheck.ConflictingAppointments 
+                });
+            }
+
             var appointment = new Appointment
             {
                 EmployeeId = request.EmployeeId,
@@ -98,38 +110,163 @@ public class AppointmentController : ControllerBase
         }
     }
 
-    [HttpGet("all")]
-public async Task<IActionResult> GetAllAppointments()
-{
-    try
+    private async Task<ConflictCheckResult> CheckForTimeConflicts(DateTime appointmentDate, TimeSpan requestedStartTime, TimeSpan requestedEndTime)
     {
-        var response = await _supabase.From<Appointment>()
-            .Select("*")
-            .Get();
-
-        var dtos = response.Models?.Select(a => new AppointmentDto
+        try
         {
-            AppointmentId = a.AppointmentId,
-            EmployeeId = a.EmployeeId,
-            Subject = a.Subject,
-            Description = a.Description,
-            AppointmentDate = a.AppointmentDate,
-            StartTime = a.StartTime,
-            EndTime = a.EndTime,
-            ContactNumber = a.ContactNumber,
-            Status = a.Status,
-            CreatedAt = a.CreatedAt
-        }).ToList();
+            // Create start and end of day for the requested date
+            var startOfDay = appointmentDate.Date;
+            var endOfDay = appointmentDate.Date.AddDays(1);
+            
+            // Get all non-cancelled/non-rejected appointments for the same date using date range
+            var existingAppointments = await _supabase.From<Appointment>()
+                .Select("*")
+                .Where(x => x.AppointmentDate >= startOfDay && x.AppointmentDate < endOfDay)
+                .Where(x => x.Status != "Cancelled" && x.Status != "Rejected")
+                .Get();
 
-        return Ok(dtos);
+            var conflictingAppointments = new List<object>();
+            const int bufferMinutes = 15;
+
+            // Add buffer to requested time slot
+            var requestedStartWithBuffer = requestedStartTime.Subtract(TimeSpan.FromMinutes(bufferMinutes));
+            var requestedEndWithBuffer = requestedEndTime.Add(TimeSpan.FromMinutes(bufferMinutes));
+
+            // Handle negative time (before midnight)
+            if (requestedStartWithBuffer.TotalSeconds < 0)
+                requestedStartWithBuffer = TimeSpan.Zero;
+
+            // Handle time beyond 24 hours
+            if (requestedEndWithBuffer.TotalHours >= 24)
+                requestedEndWithBuffer = TimeSpan.FromHours(23).Add(TimeSpan.FromMinutes(59));
+
+            foreach (var appointment in existingAppointments.Models ?? new List<Appointment>())
+            {
+                var existingStart = appointment.StartTime;
+                var existingEnd = appointment.EndTime;
+
+                // Check for overlap considering the buffer
+                bool hasConflict = !(requestedEndWithBuffer <= existingStart || requestedStartWithBuffer >= existingEnd);
+
+                if (hasConflict)
+                {
+                    conflictingAppointments.Add(new ConflictingAppointment
+                    {
+                        AppointmentId = appointment.AppointmentId,
+                        EmployeeId = appointment.EmployeeId,
+                        Subject = appointment.Subject,
+                        StartTime = FormatTimeSpan(existingStart),
+                        EndTime = FormatTimeSpan(existingEnd),
+                        Status = appointment.Status
+                    });
+                }
+            }
+
+            if (conflictingAppointments.Any())
+            {
+                var conflictMessage = $"Appointment conflicts with existing bookings (including 15-minute buffer). " +
+                    $"Conflicting times: {string.Join(", ", conflictingAppointments.Select(c => $"{((ConflictingAppointment)c).StartTime}-{((ConflictingAppointment)c).EndTime}"))}";
+
+                return new ConflictCheckResult
+                {
+                    IsAvailable = false,
+                    ConflictMessage = conflictMessage,
+                    ConflictingAppointments = conflictingAppointments
+                };
+            }
+
+            return new ConflictCheckResult { IsAvailable = true };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error checking for time conflicts");
+            // In case of error, allow the booking but log the issue
+            return new ConflictCheckResult { IsAvailable = true };
+        }
     }
-    catch (Exception ex)
+
+    // Method to get available time slots for a specific date
+    [HttpGet("available-slots/{date}")]
+    public async Task<IActionResult> GetAvailableSlots(string date)
     {
-        _logger.LogError(ex, "Error fetching all appointments");
-        return StatusCode(500, new { message = "Internal server error" });
-    }
-}
+        try
+        {
+            if (!DateTime.TryParse(date, out DateTime appointmentDate))
+            {
+                return BadRequest(new { message = "Invalid date format" });
+            }
 
+            // Create start and end of day for the requested date
+            var startOfDay = appointmentDate.Date;
+            var endOfDay = appointmentDate.Date.AddDays(1);
+            
+            // Get existing appointments for the date using date range
+            var existingAppointments = await _supabase.From<Appointment>()
+                .Select("*")
+                .Where(x => x.AppointmentDate >= startOfDay && x.AppointmentDate < endOfDay)
+                .Where(x => x.Status != "Cancelled" && x.Status != "Rejected")
+                .Order("start_time", Supabase.Postgrest.Constants.Ordering.Ascending)
+                .Get();
+
+            var occupiedSlots = new List<OccupiedSlot>();
+            
+            if (existingAppointments.Models != null)
+            {
+                occupiedSlots = existingAppointments.Models.Select(a => new OccupiedSlot
+                {
+                    StartTime = FormatTimeSpan(a.StartTime),
+                    EndTime = FormatTimeSpan(a.EndTime),
+                    Subject = a.Subject
+                }).ToList();
+                
+                _logger.LogInformation("Found {Count} occupied slots for date {Date}: {@Slots}", 
+                    occupiedSlots.Count, appointmentDate.ToString("yyyy-MM-dd"), occupiedSlots);
+            }
+
+            return Ok(new { 
+                date = appointmentDate.ToString("yyyy-MM-dd"),
+                occupiedSlots = occupiedSlots,
+                note = "Please ensure 15-minute gap between appointments"
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching available slots for date {Date}", date);
+            return StatusCode(500, new { message = "Error fetching available slots" });
+        }
+    }
+
+    [HttpGet("all")]
+    public async Task<IActionResult> GetAllAppointments()
+    {
+        try
+        {
+            var response = await _supabase.From<Appointment>()
+                .Select("*")
+                .Get();
+
+            var dtos = response.Models?.Select(a => new AppointmentDto
+            {
+                AppointmentId = a.AppointmentId,
+                EmployeeId = a.EmployeeId,
+                Subject = a.Subject,
+                Description = a.Description,
+                AppointmentDate = a.AppointmentDate,
+                StartTime = a.StartTime,
+                EndTime = a.EndTime,
+                ContactNumber = a.ContactNumber,
+                Status = a.Status,
+                CreatedAt = a.CreatedAt
+            }).ToList();
+
+            return Ok(dtos);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching all appointments");
+            return StatusCode(500, new { message = "Internal server error" });
+        }
+    }
 
     [HttpGet("employee/{employeeId}")]
     public async Task<IActionResult> GetAppointmentsByEmployee(int employeeId)
@@ -283,4 +420,46 @@ public async Task<IActionResult> GetAllAppointments()
             return StatusCode(500, new { message = "Error fetching upcoming appointments" });
         }
     }
+
+    // Helper method to safely format TimeSpan
+    private string FormatTimeSpan(TimeSpan timeSpan)
+    {
+        try
+        {
+            // Ensure consistent 24-hour format that matches frontend expectations
+            return $"{timeSpan.Hours:D2}:{timeSpan.Minutes:D2}";
+        }
+        catch
+        {
+            // Fallback if TimeSpan formatting fails
+            return "00:00";
+        }
+    }
+}
+
+// Helper class for conflict checking
+public class ConflictCheckResult
+{
+    public bool IsAvailable { get; set; }
+    public string ConflictMessage { get; set; } = string.Empty;
+    public List<object> ConflictingAppointments { get; set; } = new List<object>();
+}
+
+// Helper class for occupied slots
+public class OccupiedSlot
+{
+    public string StartTime { get; set; } = string.Empty;
+    public string EndTime { get; set; } = string.Empty;
+    public string Subject { get; set; } = string.Empty;
+}
+
+// Helper class for conflicting appointments
+public class ConflictingAppointment
+{
+    public int AppointmentId { get; set; }
+    public long EmployeeId { get; set; }
+    public string Subject { get; set; } = string.Empty;
+    public string StartTime { get; set; } = string.Empty;
+    public string EndTime { get; set; } = string.Empty;
+    public string Status { get; set; } = string.Empty;
 }
