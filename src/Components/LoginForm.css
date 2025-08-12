@@ -254,6 +254,23 @@
 }
 
 
+/* mobile */
+/*Small mobile*/
+@media (min-width: 320px) and (max-width : 480px)
+{
+    .login-trigger{
+       padding: 10px 30px;
+       font-size:19px;
+    }
+}
+/* Large mobile */
+
+@media (min-width: 481px) and (max-width : 599px)
+{
+    background-color: purple;
+}
+
+
 
 
 .status-message {
