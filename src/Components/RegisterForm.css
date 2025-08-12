@@ -272,6 +272,7 @@
 @media (max-width: 768px) {
   .registration-form {
     padding: 20px;
+    
   }
   
   .form-title {
@@ -286,12 +287,16 @@
 
 @media (max-width: 480px) {
   .registration-form {
-    padding: 15px;
+    width:350px;
+    height:550px;
+    
   }
   
   .form-title {
     font-size: 18px;
     margin-bottom: 15px;
+    margin-left: 30px;
+    
   }
   
   .form-group {
@@ -306,5 +311,7 @@
   .register-trigger{
     padding: 10px 30px;
     font-size:19px;
+
   }
+  
 }
