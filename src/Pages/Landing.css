@@ -108,10 +108,11 @@ p{
 
 @media (max-width : 1300px){
     .HeroImg{
-        width:500px; height: 400px; margin-bottom:-60; }
+        width:350px; height: 400px; margin-bottom:-60; margin-left:0; }
         .header-message{
             font-size: 48px;
             margin-top: 80px;
+
         }
         .title-platform{
             font-size:33px ;
@@ -146,4 +147,72 @@ p{
     display: inline;
 }
 
+}
+
+/* screen size */
+
+/* mobile */
+/*Small mobile*/
+@media (min-width: 320px) and (max-width : 480px)
+{   .Hero-image{
+    background-color: red;
+    width: 
+}
+}
+
+
+/* Large mobile */
+
+@media (min-width: 481px) and (max-width : 599px)
+{
+    background-color: purple;
+}
+
+/* Tablets*/
+
+/*Small tablets (Potrait)*/
+@media (min-width: 600px) and (max-width : 768px)
+{
+background-color: green;
+}
+
+/*standard tablets (Potrait)*/
+@media (min-width: 768px) and (max-width : 834px)
+{
+    background-color: yellow;
+    
+}
+
+/* tablets (landscape)*/
+@media (min-width: 834px) and (max-width : 1024px)
+{
+    background-color: blue;
+}
+
+/*Large tablets (landscape)*/
+@media (min-width: 1024px) and (max-width : 1280px)
+{
+    background-color: black;
+}
+
+
+
+
+
+/*Desktop Standard*/
+@media (min-width: 1280px) and (max-width : 768px)
+{
+    background-color: pink;
+}
+
+/*Desktop large*/
+@media (min-width: 1440px) and (max-width : 1919px)
+{
+    background-color: green;
+}
+/*Ultra-wide*/
+@media (min-width: 1920px)
+{
+    background-color: grey;
+    
 }
