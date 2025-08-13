@@ -264,7 +264,7 @@
     }
     .login-form{
       padding: 10px;
-      width:400px;
+      width:500px;
       
     }
 }
@@ -272,7 +272,76 @@
 
 @media (min-width: 481px) and (max-width : 599px)
 {
-    background-color: purple;
+    .login-trigger{
+       padding: 10px 50px;
+       font-size:21px;
+    }
+    
+    .login-form{
+      padding: 10px;
+      width:500px;
+      
+    }
+}
+
+
+/* Tablets*/
+
+/*Small tablets (Potrait)*/
+@media (min-width: 600px) and (max-width : 768px)
+{
+    .login-trigger{
+       padding: 10px 50px;
+       font-size:21px;
+    }
+    .login-form{
+      padding: 10px;
+      width:500px;
+      
+    }
+}
+
+/*standard tablets (Potrait)*/
+@media (min-width: 768px) and (max-width : 834px)
+{
+    .login-trigger{
+       padding: 10px 50px;
+       font-size:25px;
+    }
+    .login-form{
+      padding: 10px;
+      width:500px;
+      
+    }
+    
+}
+
+/* tablets (landscape)*/
+@media (min-width: 834px) and (max-width : 1024px)
+{
+   .login-trigger{
+       padding: 10px 50px;
+       font-size:25px;
+    }
+    .login-form{
+      padding: 10px;
+      width:500px;
+      
+    } 
+}
+
+/*Large tablets (landscape)*/
+@media (min-width: 1024px) and (max-width : 1280px)
+{
+     .login-trigger{
+       padding: 10px 30px;
+       font-size:19px;
+    }
+    .login-form{
+      padding: 10px;
+      width:500px;
+      
+    }
 }
 
 
