@@ -10,7 +10,8 @@ yarn-error.log*
 .cache/
 .next/
 out/
-
+package.json
+package-lock.json
 # ========== .NET Backend ==========
 bin/
 obj/

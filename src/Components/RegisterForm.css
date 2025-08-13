@@ -253,9 +253,10 @@
   }
   
   .registration-form {
-    width: 100%;
+    width: 450px;
+    height:550px;
     border-radius: 0 0 15px 15px;
-    padding: 25px; /* Adjusted for mobile */
+    padding: 35px; /* Adjusted for mobile */
   }
   
   .panel-image {
@@ -266,12 +267,14 @@
   .form-title {
     font-size: 22px; /* Adjusted for mobile */
     margin-bottom: 25px; /* Adjusted for mobile */
+    margin-left:10px;
   }
 }
 
 @media (max-width: 768px) {
   .registration-form {
     padding: 20px;
+    
   }
   
   .form-title {
@@ -282,16 +285,27 @@
   .form-group {
     margin-bottom: 15px;
   }
+
+  .register-trigger{
+    padding: 10px 50px;
+    font-size:21px;
+
+  }
+
 }
 
 @media (max-width: 480px) {
   .registration-form {
-    padding: 15px;
+    width:350px;
+    height:550px;
+    
   }
   
   .form-title {
     font-size: 18px;
     margin-bottom: 15px;
+    margin-left: 30px;
+    
   }
   
   .form-group {
@@ -302,4 +316,11 @@
     width: 200px;
     height: 200px;
   }
+
+  .register-trigger{
+    padding: 10px 30px;
+    font-size:19px;
+
+  }
+  
 }
