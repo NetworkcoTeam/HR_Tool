@@ -24,12 +24,17 @@ const { Content } = Layout;
 const Dashboard = () => {
   const navigate = useNavigate();
   const [employeeId, setEmployeeId] = useState(null);
+  const [user, setUser] = useState(null);
+  const [viewMode, setViewMode] = useState("admin");
   const todoRef = useRef();
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (user?.employee_id) {
-      setEmployeeId(user.employee_id);
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    if (storedUser) {
+      setUser(storedUser);
+      if (storedUser.employee_id) {
+        setEmployeeId(storedUser.employee_id);
+      }
     }
   }, []);
 
@@ -39,19 +44,38 @@ const Dashboard = () => {
     todoRef.current?.openModal();
   };
 
+  const toggleView = () => {
+    const newView = viewMode === "admin" ? "employee" : "admin";
+    setViewMode(newView);
+    navigate(newView === "admin" ? "/admin" : "/home");
+  };
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Layout className="site-layout">
         <Content className="dashboard-content">
           <div className="dashboard-header">
             <Title level={2}>ADMIN DASHBOARD</Title>
-            <div className="current-date">
-              <CalendarOutlined /> {new Date().toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-              })}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div className="current-date">
+                <CalendarOutlined /> {new Date().toLocaleDateString('en-US', { 
+                  weekday: 'long', 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </div>
+
+              {/* Show button only if role is Admin */}
+              {user?.role === "admin" && (
+                <Button 
+                  type="primary" 
+                  size="small"
+                  onClick={toggleView}
+                >
+                  {viewMode === "admin" ? "Switch to Employee View" : "Switch to Admin View"}
+                </Button>
+              )}
             </div>
           </div>
 
