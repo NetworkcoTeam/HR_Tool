@@ -334,8 +334,8 @@
 @media (min-width: 1024px) and (max-width : 1280px)
 {
      .login-trigger{
-       padding: 10px 30px;
-       font-size:19px;
+       padding: 10px 50px;
+       font-size:25px;
     }
     .login-form{
       padding: 10px;
