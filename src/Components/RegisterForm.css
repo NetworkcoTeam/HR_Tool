@@ -253,9 +253,10 @@
   }
   
   .registration-form {
-    width: 100%;
+    width: 450px;
+    height:550px;
     border-radius: 0 0 15px 15px;
-    padding: 25px; /* Adjusted for mobile */
+    padding: 35px; /* Adjusted for mobile */
   }
   
   .panel-image {
@@ -266,6 +267,7 @@
   .form-title {
     font-size: 22px; /* Adjusted for mobile */
     margin-bottom: 25px; /* Adjusted for mobile */
+    margin-left:10px;
   }
 }
 
@@ -283,6 +285,13 @@
   .form-group {
     margin-bottom: 15px;
   }
+
+  .register-trigger{
+    padding: 10px 30px;
+    font-size:19px;
+
+  }
+
 }
 
 @media (max-width: 480px) {
