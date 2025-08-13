@@ -24,7 +24,8 @@ import {
   CalendarOutlined,
   PlusOutlined,
   UserOutlined,
-  ExclamationCircleOutlined
+  ExclamationCircleOutlined,
+  SwapOutlined
 } from '@ant-design/icons';
 
 import Sidebar from '../Components/Sidebar';
@@ -33,11 +34,12 @@ import Todo from '../Components/Todo';
 
 import './Home.css';
 
-const API_BASE = `${process.env.REACT_APP_API_BASE_URL}`;
 const { Content } = Layout;
 const { Text } = Typography;
 
 const Home = () => {
+  const API_BASE_URL = `${process.env.REACT_APP_API_BASE_URL}`;
+
   const navigate = useNavigate();
   const leaveCache = useRef(null);
   const todoRef = useRef();
@@ -50,8 +52,14 @@ const Home = () => {
   const [currentPayslipDetails, setCurrentPayslipDetails] = useState(null);
   const [employeeId, setEmployeeId] = useState(null);
 
+  const [user, setUser] = useState(null); 
+
   const handleAddTaskClick = () => {
     todoRef.current?.openModal();
+  };
+
+  const handleSwitchToAdmin = () => {
+    navigate("/admin"); 
   };
 
   useEffect(() => {
@@ -59,6 +67,7 @@ const Home = () => {
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
+        setUser(parsed);
         if (parsed.employee_id) {
           setEmployeeId(parsed.employee_id);
         }
@@ -76,7 +85,9 @@ const Home = () => {
 
   const fetchPayslips = async (empId) => {
     try {
-      const res = await fetch(`${API_BASE}/Payslips/employee/${empId}/payslips`);
+
+      const res = await fetch( `${API_BASE_URL}/Payslips/employee/${empId}/payslips`);
+
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const { success, payslips, error } = await res.json();
       if (!success) return message.error(error || 'Failed to load payslips');
@@ -115,7 +126,9 @@ const Home = () => {
     }
     
     try {
-      const res = await fetch(`${API_BASE}/LeaveRequest/employee/${empId}`, {
+
+      const res = await fetch(`${API_BASE_URL}/LeaveRequest/employee/${empId}`, {
+
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -156,7 +169,9 @@ const Home = () => {
   const handleViewPayslip = async (year, month) => {
     try {
       message.loading('Fetching payslip details...', 0);
-      const res = await fetch(`${API_BASE}/Payslips/view/${employeeId}/${year}/${month}`);
+
+      const res = await fetch(`${API_BASE_URL}/Payslips/view/${employeeId}/${year}/${month}`);
+
       const result = await res.json();
       message.destroy();
       if (result.success && result.payslip) {
@@ -173,7 +188,9 @@ const Home = () => {
 
   const handleDownloadPayslip = async (year, month) => {
     try {
-      const res = await fetch(`${API_BASE}/Payslips/download/${employeeId}/${year}/${month}`);
+
+      const res = await fetch(`${API_BASE_URL}/Payslips/download/${employeeId}/${year}/${month}`);
+
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const blob = await res.blob();
       const url = window.URL.createObjectURL(blob);
@@ -240,6 +257,17 @@ const Home = () => {
                 weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
               })}
             </div>
+            {/* Only show this button if user role is Admin */}
+            {user?.role === "admin" && (
+              <Button
+                type="primary"
+                icon={<SwapOutlined />}
+                onClick={handleSwitchToAdmin}
+                style={{ marginTop: "10px" }}
+              >
+                Switch to Admin Dashboard
+              </Button>
+            )}
           </div>
 
           <Divider />
