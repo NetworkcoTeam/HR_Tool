@@ -111,7 +111,7 @@ p{
         width:350px; height: 400px; margin-bottom:-60; margin-left:0; }
         .header-message{
             font-size: 48px;
-            margin-top: 80px;
+            margin-top: 20px;
 
         }
         .title-platform{
@@ -154,9 +154,13 @@ p{
 /* mobile */
 /*Small mobile*/
 @media (min-width: 320px) and (max-width : 480px)
-{   .Hero-image{
-    background-color: red;
-    width: 
+{    .HeroImg{width:350px; height: 250px;}
+    .Hero-image{
+    width:250px;
+     height: 200px;
+     margin-bottom:21px;
+     margin-left:0; 
+    
 }
 }
 
@@ -165,7 +169,14 @@ p{
 
 @media (min-width: 481px) and (max-width : 599px)
 {
-    background-color: purple;
+    .HeroImg{margin-bottom:1px; width:350px; height: 300px;}
+    .Hero-image{
+     width:350px;
+     height: 300px;
+     margin-bottom:2px;
+     margin-left:0;
+    
+}
 }
 
 /* Tablets*/
@@ -173,26 +184,62 @@ p{
 /*Small tablets (Potrait)*/
 @media (min-width: 600px) and (max-width : 768px)
 {
-background-color: green;
+    .HeroImg{width:450px; height: 300px; margin-bottom:-10px;}
+    .Hero-image{
+     width:450px;
+     height: 300px;
+     margin-bottom:-10px;
+     margin-left:0;
+      
+    } 
+    
+    .Hero-grid{
+    display: inline;
+    }
 }
 
 /*standard tablets (Potrait)*/
 @media (min-width: 768px) and (max-width : 834px)
 {
-    background-color: yellow;
+    .HeroImg{margin-bottom:1px; width:450px; height: 400px; margin-top:2px;}
+    .Hero-image{
+     width:450px;
+     height: 400px;
+     margin-bottom:-10px;
+     margin-left:0;
+     margin-top:2px; 
+    } 
+    .Hero-grid{
+    display: inline;
+    }
     
 }
 
 /* tablets (landscape)*/
 @media (min-width: 834px) and (max-width : 1024px)
 {
-    background-color: blue;
+    .HeroImg{margin-bottom:1px; width:450px; height: 400px;}
+    .Hero-image{
+     width:450px;
+     height: 400px;
+     margin-bottom:10px;
+     margin-left:0;
+      
+    } 
 }
 
 /*Large tablets (landscape)*/
 @media (min-width: 1024px) and (max-width : 1280px)
 {
-    background-color: black;
+    .HeroImg{width:450px; height: 400px; }
+    
+     .Hero-image{
+     width:450px;
+     height: 400px;
+     margin-bottom:10px;
+     margin-left:0;
+      
+    } 
 }
 
 
@@ -200,9 +247,16 @@ background-color: green;
 
 
 /*Desktop Standard*/
-@media (min-width: 1280px) and (max-width : 768px)
+@media (min-width: 1280px) and (max-width : 1439px)
 {
-    background-color: pink;
+.HeroImg{width:550px; height: 450px; }
+.Hero-image{
+     width:450px;
+     height: 400px;
+     margin-bottom:10px;
+     margin-left:0;
+      
+    } 
 }
 
 /*Desktop large*/
