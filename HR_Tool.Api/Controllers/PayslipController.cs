@@ -13,6 +13,7 @@ using PdfSharp.Drawing;
 using System.IO;
 using PdfSharp.Fonts;
 using Microsoft.AspNetCore.Hosting;
+using PdfSharp.Drawing.Layout;
 
 namespace HR_Tool.Api.Controllers
 {
@@ -379,7 +380,12 @@ namespace HR_Tool.Api.Controllers
             var yPosition = 50;
             var xPosition = 50; 
 
-            string logoPath = Path.Combine(_webHostEnvironment.ContentRootPath, "Images", "the_network_company_sa_logo.jpeg");
+            string logoPath = Path.Combine(_webHostEnvironment.ContentRootPath, "Images", "Logo-with-tagline.jpeg");
+
+            // Define margins for alignment
+            double marginTop = 50;
+            double marginRight = page.Width - 50; // 50px padding from right edge
+            double logoHeight = 0;
 
             try
             {
@@ -389,42 +395,52 @@ namespace HR_Tool.Api.Controllers
 
                     // Define logo position and size
                     double logoWidth = 100; // Adjust as needed
-                    double logoHeight = logo.PixelHeight * logoWidth / logo.PixelWidth; // Maintain aspect ratio
+                    logoHeight = logo.PixelHeight * logoWidth / logo.PixelWidth; // Maintain aspect ratio
 
+                    // Draw logo top-left
                     graphics.DrawImage(logo, xPosition, yPosition, logoWidth, logoHeight);
-
-                    // Adjust yPosition for text after logo
-                    yPosition += (int)logoHeight / 2; // Move down to align text with middle of logo
-                    xPosition += (int)logoWidth + 10; // Move X position to the right of the logo, with some padding
                 }
                 else
                 {
-                    // If logo not found, just start text from original xPosition
-                    Console.WriteLine($"Logo file not found: {logoPath}"); // For debugging
+                    Console.WriteLine($"Logo file not found: {logoPath}");
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error loading logo: {ex.Message}");
-                xPosition = 50;
             }
 
-            // Company Header (now next to the logo)
-            graphics.DrawString("THE NETWORKCO", headerFont, XBrushes.Black, new XPoint(xPosition, yPosition));
-            yPosition += 25; // Move down for the next line
-            graphics.DrawString("1 Asparagus Rd, Office Park, Midrand, 1686", normalFont, XBrushes.Black, new XPoint(xPosition, yPosition));
-            yPosition += 20;
-            graphics.DrawString("Contact: info@networkco.com | 087 711 0008 ", normalFont, XBrushes.Black, new XPoint(xPosition, yPosition));
-            yPosition += 40; // Add more space after company details
+            // --- Company Info (Top Right) ---
+            double textTopY = yPosition + 5; // Align roughly with logo top
 
-            // Title (centered as before)
-            graphics.DrawString("PAYSLIP", headerFont, XBrushes.Black, 
+            graphics.DrawString("Reg No : 2016/174680/07", normalFont, XBrushes.Black,
+                new XRect(0, textTopY, page.Width - 50, 0), XStringFormats.TopRight);
+            textTopY += 15;
+            graphics.DrawString("SDL No : L740806973", normalFont, XBrushes.Black,
+                new XRect(0, textTopY, page.Width - 50, 0), XStringFormats.TopRight);
+            textTopY += 15;
+            graphics.DrawString("Unit C6, Halfway Gardens Office Park", normalFont, XBrushes.Black,
+                new XRect(0, textTopY, page.Width - 50, 0), XStringFormats.TopRight);
+            textTopY += 15;
+            graphics.DrawString("Cnr Fred Verseput & 1 Asparagus Road", normalFont, XBrushes.Black,
+                new XRect(0, textTopY, page.Width - 50, 0), XStringFormats.TopRight);
+            textTopY += 15;
+            graphics.DrawString("Halfway Gardens, 1685", normalFont, XBrushes.Black,
+                new XRect(0, textTopY, page.Width - 50, 0), XStringFormats.TopRight);
+
+            // --- Move down for title and rest of content ---
+            yPosition = (int)(marginTop + Math.Max(logoHeight, 80)) + 40; // move below header
+
+            // Title (centered)
+            graphics.DrawString("PAYSLIP", headerFont, XBrushes.Black,
                 new XPoint(page.Width / 2 - graphics.MeasureString("PAYSLIP", headerFont).Width / 2, yPosition));
-            yPosition += 10;
+            yPosition += 20;
 
-            graphics.DrawString($"  No.: {payslip.PaySlipId}", italicFont, XBrushes.Black,
-            new XPoint(page.Width / 2, yPosition), XStringFormats.Center);
+            // Slip number
+            graphics.DrawString($"No.: {payslip.PaySlipId}", italicFont, XBrushes.Black,
+                new XPoint(page.Width / 2, yPosition), XStringFormats.Center);
             yPosition += 30;
+
 
             // Employee Details
             graphics.DrawString("EMPLOYEE DETAILS", boldFont, XBrushes.DarkBlue, new XPoint(50, yPosition));
@@ -500,15 +516,42 @@ namespace HR_Tool.Api.Controllers
             graphics.DrawLine(XPens.Black, 50, yPosition, page.Width - 50, yPosition);
 
             // Footer
-            yPosition = (int)page.Height - 50;
-            graphics.DrawString($"Generated: {payslip.GeneratedAt:dd MMMM yyyy HH:mm}", italicFont, XBrushes.Gray, new XPoint(50, yPosition));
-            graphics.DrawString("This is an automatically generated payslip. No signature required.", 
-                italicFont, XBrushes.Gray, 
-                new XPoint(page.Width / 2 - graphics.MeasureString("This is an automatically generated payslip. No signature required.", italicFont).Width / 2, yPosition));
+            // Define base Y position slightly above bottom margin
+            double footerTopY = page.Height - 70; 
 
+            // Draw generated timestamp (left-aligned)
+            graphics.DrawString(
+                $"Generated: {payslip.GeneratedAt:dd MMMM yyyy HH:mm}",
+                italicFont,
+                XBrushes.Gray,
+                new XPoint(50, footerTopY)
+            );
+
+            // Footer text content (wrapped into two lines)
+            string footerText = 
+                "www.takusani.co.za | Address: Unit C6, Halfway Gardens Office Park, " +
+                "Cnr Fred Verseput & 1 Asparagus Road, Halfway Gardens, Midrand, 1685\n" +
+                "(010) 023 4449 | info@takusani.co.za";
+
+            // Create text formatter for wrapping and alignment
+            var tf = new XTextFormatter(graphics);
+
+            // Define rectangle for footer text block (centered)
+            XRect footerRect = new XRect(40, footerTopY + 15, page.Width - 80, 45);
+
+            // Apply styling
+            tf.Alignment = XParagraphAlignment.Center;
+
+            // Draw wrapped, centered footer text
+            tf.DrawString(footerText, new XFont("Arial", 8), XBrushes.Gray, footerRect, XStringFormats.TopLeft);
+
+
+
+            // Save and return
             using var stream = new MemoryStream();
-            document.Save(stream);
+            document.Save(stream, false);
             return stream.ToArray();
+
         }
 
         private async Task<List<Employee>> GetActiveEmployees(string position = null)
