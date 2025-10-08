@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Tag, message, Spin } from 'antd';
+import { Table, Button, Tag, message, Spin, Radio } from 'antd';
 import './LeaveRequestAdmin.css';
 
 const LeaveRequestsAdmin = () => {
   const API_BASE_URL = `${process.env.REACT_APP_API_BASE_URL}/LeaveRequest`;
 
   const [leaveRequests, setLeaveRequests] = useState([]);
+  const [filteredRequests, setFilteredRequests] = useState([]);
   const [loading, setLoading] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const [filter, setFilter] = useState('all'); // 'all', 'pending', 'approved', 'denied'
 
   const fetchLeaveRequests = async () => {
     setLoading(true);
@@ -18,6 +20,7 @@ const LeaveRequestsAdmin = () => {
       }
       const data = await res.json();
       setLeaveRequests(data);
+      setFilteredRequests(data); // Initially show all requests
     } catch (error) {
       console.error(error);
       message.error(error.message);
@@ -34,7 +37,7 @@ const LeaveRequestsAdmin = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ status: newStatus }), // Match the DTO structure
+        body: JSON.stringify({ status: newStatus }),
       });
 
       if (!res.ok) {
@@ -56,6 +59,17 @@ const LeaveRequestsAdmin = () => {
   useEffect(() => {
     fetchLeaveRequests();
   }, []);
+
+  useEffect(() => {
+    if (filter === 'all') {
+      setFilteredRequests(leaveRequests);
+    } else {
+      const filtered = leaveRequests.filter(request => 
+        request.status.toLowerCase() === filter.toLowerCase()
+      );
+      setFilteredRequests(filtered);
+    }
+  }, [filter, leaveRequests]);
 
   const columns = [
     {
@@ -138,10 +152,24 @@ const LeaveRequestsAdmin = () => {
   return (
     <div style={{ padding: '24px' }}>
       <h1>Leave Requests Management</h1>
+      
+      <div style={{ marginBottom: '16px' }}>
+        <Radio.Group 
+          value={filter} 
+          onChange={(e) => setFilter(e.target.value)}
+          buttonStyle="solid"
+        >
+          <Radio.Button value="all">All</Radio.Button>
+          <Radio.Button value="pending">Pending</Radio.Button>
+          <Radio.Button value="approved">Approved</Radio.Button>
+          <Radio.Button value="denied">Denied</Radio.Button>
+        </Radio.Group>
+      </div>
+      
       <Spin spinning={loading}>
         <Table 
           columns={columns} 
-          dataSource={leaveRequests} 
+          dataSource={filteredRequests} 
           rowKey="id"
           loading={loading}
         />

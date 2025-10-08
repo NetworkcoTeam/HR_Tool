@@ -85,7 +85,9 @@ const Home = () => {
 
   const fetchPayslips = async (empId) => {
     try {
+
       const res = await fetch( `${API_BASE_URL}/Payslips/employee/${empId}/payslips`);
+
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const { success, payslips, error } = await res.json();
       if (!success) return message.error(error || 'Failed to load payslips');
@@ -124,7 +126,9 @@ const Home = () => {
     }
     
     try {
+
       const res = await fetch(`${API_BASE_URL}/LeaveRequest/employee/${empId}`, {
+
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -165,7 +169,9 @@ const Home = () => {
   const handleViewPayslip = async (year, month) => {
     try {
       message.loading('Fetching payslip details...', 0);
+
       const res = await fetch(`${API_BASE_URL}/Payslips/view/${employeeId}/${year}/${month}`);
+
       const result = await res.json();
       message.destroy();
       if (result.success && result.payslip) {
@@ -182,7 +188,9 @@ const Home = () => {
 
   const handleDownloadPayslip = async (year, month) => {
     try {
+
       const res = await fetch(`${API_BASE_URL}/Payslips/download/${employeeId}/${year}/${month}`);
+
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const blob = await res.blob();
       const url = window.URL.createObjectURL(blob);
